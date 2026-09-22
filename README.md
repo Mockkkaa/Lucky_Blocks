@@ -55,6 +55,6 @@ Esta es la arquitectura estandar que utilizan "Juegos" como Slither.io o Agar.io
 * 🤝 Sistema de Intercambio (Trade System): Puedes pedirle a otro jugador intercambiar un ítem Omnisciente por 10 Leyendas en tiempo real.
 
 ## 🚧🚧 Próximamente
-⚔️ Carreras / Duelos de Lucky Blocks: Entrar a una sala con un amigo, presionar "EMPEZAR" y ver en pantalla dividida quién saca los mejores drops en 30 segundos.
-🖌️ Sistema de personalización de perfil
-📁 Fotos para diferenciar de mejor manera los objetos
+* ⚔️ Carreras / Duelos de Lucky Blocks: Entrar a una sala con un amigo, presionar "EMPEZAR" y ver en pantalla dividida quién saca los mejores drops en 30 segundos.
+* 🖌️ Sistema de personalización de perfil
+* 📁 Fotos para diferenciar de mejor manera los objetos
