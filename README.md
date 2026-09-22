@@ -58,3 +58,5 @@ Esta es la arquitectura estandar que utilizan "Juegos" como Slither.io o Agar.io
 * ⚔️ Carreras / Duelos de Lucky Blocks: Entrar a una sala con un amigo, presionar "EMPEZAR" y ver en pantalla dividida quién saca los mejores drops en 30 segundos.
 * 🖌️ Sistema de personalización de perfil
 * 📁 Fotos para diferenciar de mejor manera los objetos
+
+*Secreto para el rol Owner 👀*
