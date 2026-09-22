@@ -914,6 +914,16 @@ const LOOT_TABLE = [
             const xpPercent = Math.min(100, Math.floor((state.xp / reqXp) * 100));
             document.getElementById('headerXpFill').style.width = `${xpPercent}%`;
 
+            // Live Mod HUD Telemetry Dashboard
+            const modLvlEl = document.getElementById('modDashLevel');
+            const modCoinsEl = document.getElementById('modDashCoins');
+            const modSpooferEl = document.getElementById('modDashSpoofer');
+            const modSpeedEl = document.getElementById('modDashSpeed');
+            if (modLvlEl) modLvlEl.textContent = `Nivel ${state.level.toLocaleString()}`;
+            if (modCoinsEl) modCoinsEl.textContent = `${state.coins.toLocaleString()} 💰`;
+            if (modSpooferEl) modSpooferEl.textContent = ownerDropSpoofer === 'OFF' ? 'OFF (Normal)' : `100% ${ownerDropSpoofer}`;
+            if (modSpeedEl) modSpeedEl.textContent = `${ownerAutoSpeedOverride || 2000}ms`;
+
             // Pity Bar
             document.getElementById('pityText').textContent = `${state.pityCounter} / 100`;
             document.getElementById('pityBarFill').style.width = `${Math.min(100, state.pityCounter)}%`;
@@ -1615,10 +1625,42 @@ const LOOT_TABLE = [
                 showToast('🎁 REGALO ENVIADO', 'Niveles regalados al jugador.', 'Omnisciente');
             });
 
-            // Mod Menu Tab Switching logic
-            document.querySelectorAll('.mod-nav-btn').forEach(btn => {
+            // Stepper controls
+            document.getElementById('btnStepDecLvl')?.addEventListener('click', () => {
+                const input = document.getElementById('customLevelInput');
+                if (input) input.value = Math.max(1, (parseInt(input.value, 10) || 1000) - 100);
+            });
+            document.getElementById('btnStepIncLvl')?.addEventListener('click', () => {
+                const input = document.getElementById('customLevelInput');
+                if (input) input.value = (parseInt(input.value, 10) || 1000) + 100;
+            });
+
+            // Interactive Spoofer Cards Selection
+            document.querySelectorAll('.spoofer-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    document.querySelectorAll('.spoofer-card').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    const mode = card.getAttribute('data-spoofer');
+                    ownerDropSpoofer = mode;
+                    const selectEl = document.getElementById('modDropRarityOverride');
+                    if (selectEl) selectEl.value = mode;
+                    showToast('🎯 DROP SPOOFER', mode === 'OFF' ? 'Spoofer Desactivado (RNG Normal)' : `Drop forzado a: 100% ${mode}`, 'Omnisciente');
+                    renderAll();
+                });
+            });
+
+            // Speed Dial Visual Toggles
+            document.querySelectorAll('.speed-dial-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    document.querySelectorAll('.mod-nav-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.speed-dial-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                });
+            });
+
+            // Mod Menu Sidebar Rail Tab Switching logic
+            document.querySelectorAll('.mod-rail-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.mod-rail-btn').forEach(b => b.classList.remove('active'));
                     document.querySelectorAll('.mod-tab-content').forEach(c => c.classList.remove('active'));
 
                     btn.classList.add('active');
@@ -2177,18 +2219,18 @@ const LOOT_TABLE = [
             if (!drawerList) return;
 
             if (!state.inventory || state.inventory.length === 0) {
-                drawerList.innerHTML = '<span style="font-size: 0.8rem; color: var(--text-dim); padding: 0.5rem;">Tu inventario está vacío.</span>';
+                drawerList.innerHTML = '<span style="font-size: 0.8rem; color: var(--text-dim); padding: 0.5rem; text-align: center; width: 100%;">Tu inventario está vacío. Abre Lucky Blocks para conseguir ítems.</span>';
                 return;
             }
 
             drawerList.innerHTML = state.inventory.map(item => {
-                // Count how many of this item are already placed in my 4 slots
-                const placedCount = currentTradeSession.mySlots.filter(s => s.id === item.id).length;
+                // Count how many of this item are already placed in my 4 slots (by id or name)
+                const placedCount = (currentTradeSession.mySlots || []).filter(s => (s.id && s.id === item.id) || s.name === item.name).length;
                 const remaining = (item.count || 1) - placedCount;
-                const canAdd = remaining > 0 && currentTradeSession.mySlots.length < 4 && !currentTradeSession.myAccepted;
+                const canAdd = remaining > 0 && currentTradeSession.mySlots.length < 4;
 
                 return `
-                    <div class="adoptme-inv-item ${canAdd ? '' : 'disabled'}" onclick="${canAdd ? `addAdoptMeSlot('${item.id}')` : ''}">
+                    <div class="adoptme-inv-item ${canAdd ? '' : 'disabled'}" data-item-id="${item.id || ''}" data-item-name="${item.name.replace(/"/g, '&quot;')}">
                         <span style="font-size: 1.8rem;">${item.emoji}</span>
                         <span style="font-family: var(--font-heading); font-size: 0.75rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center;">${item.name}</span>
                         <span style="font-size: 0.65rem; color: var(--rarity-${item.rarity.toLowerCase()}); font-weight: 800;">${item.rarity}</span>
@@ -2198,19 +2240,40 @@ const LOOT_TABLE = [
             }).join('');
         }
 
-        window.addAdoptMeSlot = function(itemId) {
+        // Attach event delegation for drawer item clicks
+        document.getElementById('adoptMeInvList')?.addEventListener('click', (e) => {
+            const invItem = e.target.closest('.adoptme-inv-item');
+            if (!invItem) return;
+
+            if (invItem.classList.contains('disabled')) {
+                if (currentTradeSession && currentTradeSession.mySlots.length >= 4) {
+                    showToast('⚠️ Límite Alcanzado', 'Ya has alcanzado el máximo de 4 slots de intercambio.', 'Common');
+                }
+                return;
+            }
+
+            const itemId = invItem.getAttribute('data-item-id');
+            const itemName = invItem.getAttribute('data-item-name');
+            addAdoptMeSlot(itemId, itemName);
+        });
+
+        window.addAdoptMeSlot = function(itemId, itemName) {
             if (!currentTradeSession) return;
             if (currentTradeSession.mySlots.length >= 4) {
                 showToast('⚠️ Límite de Slots', 'Solo puedes añadir un máximo de 4 ítems (Estilo Adopt Me).', 'Common');
                 return;
             }
 
-            const item = state.inventory.find(i => i.id === itemId);
-            if (!item) return;
+            const item = state.inventory.find(i => (itemId && i.id === itemId) || (itemName && i.name === itemName));
+            if (!item) {
+                showToast('⚠️ Error de Ítem', 'No se encontró el ítem en tu inventario.', 'Common');
+                return;
+            }
 
-            const placedCount = currentTradeSession.mySlots.filter(s => s.id === item.id).length;
-            if (placedCount >= (item.count || 1)) {
-                showToast('⚠️ No tienes más copias', 'Ya has puesto todas tus copias de este ítem.', 'Common');
+            const placedCount = currentTradeSession.mySlots.filter(s => (s.id && s.id === item.id) || s.name === item.name).length;
+            const availableCount = item.count || 1;
+            if (placedCount >= availableCount) {
+                showToast('⚠️ Sin copias disponibles', 'Ya has puesto todas tus copias de este ítem.', 'Common');
                 return;
             }
 
@@ -2219,7 +2282,7 @@ const LOOT_TABLE = [
             currentTradeSession.myAccepted = false; // Reset acceptance on modification
 
             // Sync with server
-            if (socket) {
+            if (socket && socket.connected) {
                 socket.emit('trade:update_slots', {
                     tradeId: currentTradeSession.tradeId,
                     slots: currentTradeSession.mySlots
@@ -2237,7 +2300,7 @@ const LOOT_TABLE = [
             currentTradeSession.myAccepted = false;
 
             // Sync with server
-            if (socket) {
+            if (socket && socket.connected) {
                 socket.emit('trade:update_slots', {
                     tradeId: currentTradeSession.tradeId,
                     slots: currentTradeSession.mySlots

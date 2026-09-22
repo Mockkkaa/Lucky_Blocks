@@ -406,207 +406,355 @@
                         </div>
                     </div>
 
-                    <!-- Panel de Owner / Cyberpunk Mod Menu Trainer -->
-                    <div class="owner-panel mod-menu-container" id="ownerPanel">
-                        <div class="mod-menu-header">
-                            <div class="mod-menu-title-group">
-                                <span class="mod-menu-badge">HACK SUITE v3.0</span>
-                                <h4 class="mod-menu-title">⚡ OWNER MOD MENU & TRAINER</h4>
+                    <!-- Panel de Owner / Cyberpunk Mod Menu Trainer HUD v4.0 -->
+                    <div class="owner-panel mod-hud-container" id="ownerPanel">
+                        <!-- HUD Top Bar -->
+                        <div class="mod-hud-header">
+                            <div class="mod-hud-brand">
+                                <span class="mod-hud-badge">HUD PRO v4.0</span>
+                                <div class="mod-hud-title-wrap">
+                                    <h4 class="mod-hud-title">⚡ OWNER MOD MENU & TRAINER</h4>
+                                    <div class="mod-hud-status">
+                                        <span class="status-dot"></span>
+                                        <span class="status-txt">SISTEMA ROOT: ACTIVO | AUTENTICADO COMO CREADOR</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mod-menu-header-actions">
-                                <button class="btn-mod-header" id="btnToggleFloatingModMenu" type="button">📌 POP-OUT VENTANA</button>
-                                <span class="role-badge role-owner">CREADOR GENERAL</span>
+                            <div class="mod-hud-header-actions">
+                                <button class="btn-hud-action cyan" id="btnToggleFloatingModMenu" type="button">📌 DOCK FLOTANTE</button>
+                                <button class="btn-hud-action gold" id="btnOwnerGodModeHeader" type="button">🔥 MODO DIOS</button>
                             </div>
                         </div>
-                        
 
-
-                        <!-- Mod Menu Tabs -->
-                        <div class="mod-menu-nav">
-                            <button class="mod-nav-btn active" data-mod-tab="levels" type="button">⚡ Niveles & XP</button>
-                            <button class="mod-nav-btn" data-mod-tab="coins" type="button">💰 Economía & Coins</button>
-                            <button class="mod-nav-btn" data-mod-tab="drops" type="button">🎯 Spoofer & Drops</button>
-                            <button class="mod-nav-btn" data-mod-tab="godmode" type="button">🔥 God Mode & Speed</button>
-                            <button class="mod-nav-btn" data-mod-tab="server" type="button">🌐 Servidor & Gifts</button>
+                        <!-- Live Stat Dashboard Summary -->
+                        <div class="mod-hud-dashboard">
+                            <div class="dash-stat-item">
+                                <span class="dash-label">⚡ NIVEL ACTUAL</span>
+                                <span class="dash-val neon-cyan" id="modDashLevel">Nivel 1</span>
+                            </div>
+                            <div class="dash-stat-item">
+                                <span class="dash-label">💰 SALDO DE COINS</span>
+                                <span class="dash-val neon-gold" id="modDashCoins">0 💰</span>
+                            </div>
+                            <div class="dash-stat-item">
+                                <span class="dash-label">🎯 SPOOFER DROPS</span>
+                                <span class="dash-val neon-purple" id="modDashSpoofer">OFF (Normal)</span>
+                            </div>
+                            <div class="dash-stat-item">
+                                <span class="dash-label">⚡ SPEED AUTOCLICK</span>
+                                <span class="dash-val neon-green" id="modDashSpeed">2000ms</span>
+                            </div>
                         </div>
 
-                        <!-- Mod Menu Tab Content Container -->
-                        <div class="mod-menu-body">
+                        <!-- 2-Column Workstation Layout: Sidebar Rail + Main Workspace -->
+                        <div class="mod-hud-workstation">
                             
-                            <!-- Tab 1: Niveles & XP -->
-                            <div class="mod-tab-content active" id="modTabLevels">
-                                <div class="mod-section-header">
-                                    <span>⚡ INYECTOR Y CONTROL DE NIVELES (PRESETS & CUSTOM)</span>
-                                </div>
-                                
-                                <p class="mod-desc">Agrega la cantidad exacta de niveles que desees (desde +1 hasta +100,000+) o establece tu nivel a un valor preciso instantáneamente.</p>
+                            <!-- Left Sidebar Rail Navigation -->
+                            <nav class="mod-sidebar-rail">
+                                <button class="mod-rail-btn active" data-mod-tab="levels" type="button">
+                                    <span class="rail-icon">⚡</span>
+                                    <div class="rail-info">
+                                        <span class="rail-title">Niveles & XP</span>
+                                        <span class="rail-sub">+1 a +100k Niveles</span>
+                                    </div>
+                                </button>
+                                <button class="mod-rail-btn" data-mod-tab="coins" type="button">
+                                    <span class="rail-icon">💰</span>
+                                    <div class="rail-info">
+                                        <span class="rail-title">Economía & Coins</span>
+                                        <span class="rail-sub">Coins Ilimitadas</span>
+                                    </div>
+                                </button>
+                                <button class="mod-rail-btn" data-mod-tab="drops" type="button">
+                                    <span class="rail-icon">🎯</span>
+                                    <div class="rail-info">
+                                        <span class="rail-title">Drop Spoofer</span>
+                                        <span class="rail-sub">Fuerza 100% Drops</span>
+                                    </div>
+                                </button>
+                                <button class="mod-rail-btn" data-mod-tab="godmode" type="button">
+                                    <span class="rail-icon">🔥</span>
+                                    <div class="rail-info">
+                                        <span class="rail-title">God Mode & Speed</span>
+                                        <span class="rail-sub">Ultra Speed & Lote</span>
+                                    </div>
+                                </button>
+                                <button class="mod-rail-btn" data-mod-tab="server" type="button">
+                                    <span class="rail-icon">🌐</span>
+                                    <div class="rail-info">
+                                        <span class="rail-title">Servidor & Gifts</span>
+                                        <span class="rail-sub">Anuncios y Regalos</span>
+                                    </div>
+                                </button>
+                            </nav>
 
-                                <div class="mod-chips-grid">
-                                    <button class="mod-chip-btn" id="chipLvl1" type="button">+1 Nivel</button>
-                                    <button class="mod-chip-btn" id="chipLvl5" type="button">+5 Niveles</button>
-                                    <button class="mod-chip-btn" id="chipLvl10" type="button">+10 Niveles</button>
-                                    <button class="mod-chip-btn" id="chipLvl50" type="button">+50 Niveles</button>
-                                    <button class="mod-chip-btn highlight" id="chipLvl100" type="button">+100 Niveles</button>
-                                    <button class="mod-chip-btn highlight" id="chipLvl1k" type="button">+1,000 Niveles</button>
-                                    <button class="mod-chip-btn epic" id="chipLvl10k" type="button">+10,000 Niveles</button>
-                                    <button class="mod-chip-btn legendary" id="chipLvl100k" type="button">+100,000 Niveles</button>
-                                </div>
+                            <!-- Right Main Workspace -->
+                            <div class="mod-main-workspace">
 
-                                <div class="mod-custom-input-group">
-                                    <label>Cantidad de Niveles Personalizada:</label>
-                                    <div class="mod-input-row">
-                                        <input type="number" id="customLevelInput" placeholder="Ej: 500 o 10000" min="1" max="9999999" value="1000">
-                                        <button class="btn-mod-action primary" id="btnApplyCustomAddLevels" type="button">➕ Añadir Niveles</button>
-                                        <button class="btn-mod-action secondary" id="btnApplyCustomSetLevel" type="button">⚙️ Fijar Nivel Exacto</button>
+                                <!-- TAB 1: NIVELES & XP -->
+                                <div class="mod-tab-content active" id="modTabLevels">
+                                    <div class="mod-card">
+                                        <div class="mod-card-header">
+                                            <span class="card-icon">⚡</span>
+                                            <div>
+                                                <h5 class="card-title">INYECTOR RÁPIDO DE NIVELES</h5>
+                                                <p class="card-subtitle">Haz clic en cualquier preset para agregar niveles instantáneamente a tu cuenta.</p>
+                                            </div>
+                                        </div>
+                                        <div class="mod-chips-grid">
+                                            <button class="mod-chip-btn" id="chipLvl1" type="button">+1 Nivel</button>
+                                            <button class="mod-chip-btn" id="chipLvl5" type="button">+5 Niveles</button>
+                                            <button class="mod-chip-btn" id="chipLvl10" type="button">+10 Niveles</button>
+                                            <button class="mod-chip-btn" id="chipLvl50" type="button">+50 Niveles</button>
+                                            <button class="mod-chip-btn highlight" id="chipLvl100" type="button">+100 Niveles</button>
+                                            <button class="mod-chip-btn highlight" id="chipLvl1k" type="button">+1,000 Niveles</button>
+                                            <button class="mod-chip-btn epic" id="chipLvl10k" type="button">+10,000 Niveles</button>
+                                            <button class="mod-chip-btn legendary" id="chipLvl100k" type="button">+100,000 Niveles</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mod-card">
+                                        <div class="mod-card-header">
+                                            <span class="card-icon">⚙️</span>
+                                            <div>
+                                                <h5 class="card-title">CANTIDAD DE NIVELES PERSONALIZADA</h5>
+                                                <p class="card-subtitle">Ingresa una cantidad precisa para añadir a tu nivel actual o establecerlo directamente.</p>
+                                            </div>
+                                        </div>
+                                        <div class="mod-input-stepper-row">
+                                            <div class="stepper-wrap">
+                                                <button class="btn-step-adj" id="btnStepDecLvl" type="button">-</button>
+                                                <input type="number" id="customLevelInput" value="1000" min="1" max="9999999">
+                                                <button class="btn-step-adj" id="btnStepIncLvl" type="button">+</button>
+                                            </div>
+                                            <button class="btn-mod-action primary" id="btnApplyCustomAddLevels" type="button">⚡ AÑADIR NIVELES</button>
+                                            <button class="btn-mod-action secondary" id="btnApplyCustomSetLevel" type="button">⚙️ FIJAR NIVEL EXACTO</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mod-actions-row">
+                                        <button class="btn-mod-action gold" id="btnMaxOutLevel" type="button">👑 NIVEL MÁXIMO (999,999)</button>
+                                        <button class="btn-mod-action danger" id="btnResetLevel" type="button">🔄 REINICIAR A NIVEL 1</button>
                                     </div>
                                 </div>
 
-                                <div class="mod-quick-actions">
-                                    <button class="btn-mod-action gold" id="btnMaxOutLevel" type="button">👑 NIVEL MÁXIMO (999,999)</button>
-                                    <button class="btn-mod-action danger" id="btnResetLevel" type="button">🔄 REINICIAR A NIVEL 1</button>
-                                </div>
-                            </div>
+                                <!-- TAB 2: ECONOMÍA & COINS -->
+                                <div class="mod-tab-content" id="modTabCoins">
+                                    <div class="mod-card">
+                                        <div class="mod-card-header">
+                                            <span class="card-icon">💰</span>
+                                            <div>
+                                                <h5 class="card-title">INYECCIÓN DE COINS PRESET</h5>
+                                                <p class="card-subtitle">Selecciona un paquete de monedas para acreditarlo instantáneamente.</p>
+                                            </div>
+                                        </div>
+                                        <div class="mod-chips-grid">
+                                            <button class="mod-chip-btn" id="chipCoin50k" type="button">+50,000 💰</button>
+                                            <button class="mod-chip-btn" id="chipCoin500k" type="button">+500,000 💰</button>
+                                            <button class="mod-chip-btn highlight" id="chipCoin1m" type="button">+1,000,000 💰</button>
+                                            <button class="mod-chip-btn highlight" id="chipCoin10m" type="button">+10,000,000 💰</button>
+                                            <button class="mod-chip-btn epic" id="chipCoin100m" type="button">+100,000,000 💰</button>
+                                            <button class="mod-chip-btn legendary" id="chipCoin1b" type="button">+1,000,000,000 💰 (1B)</button>
+                                        </div>
+                                    </div>
 
-                            <!-- Tab 2: Economía & Coins -->
-                            <div class="mod-tab-content" id="modTabCoins">
-                                <div class="mod-section-header">
-                                    <span>💰 INYECCIÓN DE MONEDA & MONEDERO INFINITO</span>
-                                </div>
-                                
-                                <p class="mod-desc">Inyecta monedas ilimitadas a tu saldo para realizar compras, mejoras y apertura de cajas masivas.</p>
-
-                                <div class="mod-chips-grid">
-                                    <button class="mod-chip-btn" id="chipCoin50k" type="button">+50,000 💰</button>
-                                    <button class="mod-chip-btn" id="chipCoin500k" type="button">+500,000 💰</button>
-                                    <button class="mod-chip-btn highlight" id="chipCoin1m" type="button">+1,000,000 💰</button>
-                                    <button class="mod-chip-btn highlight" id="chipCoin10m" type="button">+10,000,000 💰</button>
-                                    <button class="mod-chip-btn epic" id="chipCoin100m" type="button">+100,000,000 💰</button>
-                                    <button class="mod-chip-btn legendary" id="chipCoin1b" type="button">+1,000,000,000 💰 (1B)</button>
-                                </div>
-
-                                <div class="mod-custom-input-group">
-                                    <label>Inyección de Coins Personalizada:</label>
-                                    <div class="mod-input-row">
-                                        <input type="number" id="customCoinInput" placeholder="Ej: 5000000" min="1" value="5000000">
-                                        <button class="btn-mod-action primary" id="btnApplyCustomCoins" type="button">➕ Inyectar Coins</button>
-                                        <button class="btn-mod-action secondary" id="btnApplySetCoins" type="button">⚙️ Fijar Coins Exactas</button>
+                                    <div class="mod-card">
+                                        <div class="mod-card-header">
+                                            <span class="card-icon">💎</span>
+                                            <div>
+                                                <h5 class="card-title">INYECCIÓN CUSTOM & SALDO INFINITO</h5>
+                                                <p class="card-subtitle">Personaliza la inyección o activa coins ilimitadas.</p>
+                                            </div>
+                                        </div>
+                                        <div class="mod-input-stepper-row">
+                                            <input type="number" id="customCoinInput" placeholder="Cantidad de coins..." value="5000000" min="1">
+                                            <button class="btn-mod-action primary" id="btnApplyCustomCoins" type="button">💰 INYECTAR COINS</button>
+                                            <button class="btn-mod-action secondary" id="btnApplySetCoins" type="button">⚙️ FIJAR SALDO</button>
+                                        </div>
+                                        <div style="margin-top:0.75rem;">
+                                            <button class="btn-mod-action gold" id="btnInfiniteCoins" type="button" style="width:100%;">💎 SALDO INFINITO (999 TRILLONES)</button>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="mod-quick-actions">
-                                    <button class="btn-mod-action gold" id="btnInfiniteCoins" type="button">💎 SALDO INFINITO (999 TRILLONES)</button>
-                                </div>
-                            </div>
-
-                            <!-- Tab 3: Spoofer & Drops -->
-                            <div class="mod-tab-content" id="modTabDrops">
-                                <div class="mod-section-header">
-                                    <span>🎯 DROP SPOOFER & SPAWNER DIRECTO DE ÍTEMS</span>
-                                </div>
-                                
-                                <p class="mod-desc">Fuerza a la Lucky Box a soltar la rareza que tú elijas en cada apertura, o genera cualquier ítem directamente en tu inventario.</p>
-
-                                <div class="mod-custom-input-group">
-                                    <label>Fuerza Brutal de Drop (Override RNG):</label>
-                                    <select id="modDropRarityOverride" class="mod-select">
-                                        <option value="OFF">❌ DESACTIVADO (RNG Normal)</option>
-                                        <option value="Omnisciente">✨ 100% OMNISCIENTE (Garantizado)</option>
-                                        <option value="Secret">🔮 100% SECRETO (Garantizado)</option>
-                                        <option value="Mythic">🔴 100% MÍTICO (Garantizado)</option>
-                                        <option value="Legendary">🟡 100% LEGENDARIO (Garantizado)</option>
-                                    </select>
-                                </div>
-
-                                <div class="mod-custom-input-group">
-                                    <label>Spawner Directo de Ítems:</label>
-                                    <div class="mod-input-row">
-                                        <select id="modItemSpawnerSelect" class="mod-select"></select>
-                                        <input type="number" id="modItemSpawnQty" placeholder="Cant." value="1" min="1" max="100" style="width: 80px;">
-                                        <button class="btn-mod-action primary" id="btnSpawnSelectedItem" type="button">🎁 SPAWNEAR ÍTEM</button>
-                                    </div>
-                                </div>
-
-                                <div class="mod-quick-actions">
-                                    <button class="btn-mod-action epic" id="btnOwnerMaxPity" type="button">🛡️ CARGAR PITY AL 100%</button>
-                                    <button class="btn-mod-action gold" id="btnOwnerOmniItem" type="button">✨ RECOGER OMNISCIENTE INSTANTÁNEO</button>
-                                </div>
-                            </div>
-
-                            <!-- Tab 4: God Mode & Speed -->
-                            <div class="mod-tab-content" id="modTabGodmode">
-                                <div class="mod-section-header">
-                                    <span>🔥 MODO DIOS & SÚPER VELOCIDAD DE APERTURA</span>
-                                </div>
-                                
-                                <p class="mod-desc">Activa aperturas ultrarrápidas, apertura en lote de 10x/50x/100x cajas instantáneas y desbloquea el 100% del juego en 1 clic.</p>
-
-                                <div class="mod-speed-controls">
-                                    <label>Velocidad de Auto-Apertura HyperClicker:</label>
-                                    <div class="mod-chips-grid">
-                                        <button class="mod-chip-btn" id="btnSpeed500" type="button">Normal (500ms)</button>
-                                        <button class="mod-chip-btn highlight" id="btnSpeed250" type="button">Super Speed (250ms)</button>
-                                        <button class="mod-chip-btn epic" id="btnSpeed100" type="button">Hyper Speed (100ms)</button>
-                                        <button class="mod-chip-btn legendary" id="btnSpeed50" type="button">🔥 ULTRA SPEED (50ms)</button>
-                                    </div>
-                                </div>
-
-                                <div class="mod-quick-actions" style="margin-top: 1rem;">
-                                    <button class="btn-mod-action primary" id="btnBatchOpen10" type="button">🎁 ABRIR 10x EN LOTE</button>
-                                    <button class="btn-mod-action epic" id="btnBatchOpen50" type="button">🎁 ABRIR 50x EN LOTE</button>
-                                    <button class="btn-mod-action legendary" id="btnBatchOpen100" type="button">🎁 ABRIR 100x EN LOTE</button>
-                                </div>
-
-                                <div class="mod-quick-actions" style="margin-top: 1rem;">
-                                    <button class="btn-mod-action gold" id="btnOwnerMaxUpgrades" type="button">🚀 MAXIMIZAR MEJORAS (LUCK/TRADER)</button>
-                                    <button class="btn-mod-action primary" id="btnOwnerUnlockAll" type="button">🔓 SKINS & TEMAS TOTAL 100%</button>
-                                    <button class="btn-mod-action danger" id="btnOwnerGodMode" type="button">🔥 MODO DIOS COMPLETO</button>
-                                </div>
-                            </div>
-
-                            <!-- Tab 5: Servidor & Gifts -->
-                            <div class="mod-tab-content" id="modTabServer">
-                                <div class="mod-section-header">
-                                    <span>🌐 CONTROL DE SERVIDOR & REGALOS A JUGADORES</span>
-                                </div>
-                                
-                                <p class="mod-desc">Emite anuncios globales con letras doradas, genera falsos drops de prueba para alertar a la comunidad o envía regalos a cualquier jugador en línea.</p>
-
-                                <div class="mod-custom-input-group">
-                                    <label>📢 Anuncio Global de Servidor (Owner Message):</label>
-                                    <div class="mod-input-row">
-                                        <input type="text" id="modBroadcastInput" placeholder="Escribe el mensaje de anuncio global...">
-                                        <button class="btn-mod-action gold" id="btnSendServerBroadcast" type="button">📢 EMITIR ANUNCIO</button>
-                                    </div>
-                                </div>
-
-                                <div class="mod-custom-input-group">
-                                    <label>⚡ Generador de Drop Falso en Chat:</label>
-                                    <div class="mod-input-row">
-                                        <input type="text" id="modFakeDropUser" placeholder="Nombre de Jugador Falso" value="Xx_Owner_xX">
-                                        <select id="modFakeDropSelect" class="mod-select"></select>
-                                        <button class="btn-mod-action epic" id="btnSendFakeDrop" type="button">🔮 SIMULAR DROP</button>
-                                    </div>
-                                </div>
-
-                                <div class="mod-custom-input-group">
-                                    <label>🎁 Regalar Monedas o Niveles a Jugador Online:</label>
-                                    <div class="mod-input-row">
-                                        <select id="modOnlinePlayersSelect" class="mod-select">
-                                            <option value="">-- Seleccionar Jugador Online --</option>
+                                <!-- TAB 3: DROP SPOOFER & SPAWNER -->
+                                <div class="mod-tab-content" id="modTabDrops">
+                                    <div class="mod-card">
+                                        <div class="mod-card-header">
+                                            <span class="card-icon">🎯</span>
+                                            <div>
+                                                <h5 class="card-title">DROP SPOOFER (RNG OVERRIDE)</h5>
+                                                <p class="card-subtitle">Fuerza a la Lucky Box a soltar la rareza que selecciones en cada apertura.</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Visual Rarity Selector Cards -->
+                                        <div class="spoofer-cards-grid">
+                                            <div class="spoofer-card active" data-spoofer="OFF">
+                                                <span class="spoofer-badge">NORMAL</span>
+                                                <span class="spoofer-name">❌ RNG Normal</span>
+                                                <span class="spoofer-desc">Probabilidades estándar</span>
+                                            </div>
+                                            <div class="spoofer-card omni" data-spoofer="Omnisciente">
+                                                <span class="spoofer-badge omni">100% FORCED</span>
+                                                <span class="spoofer-name">✨ Omnisciente</span>
+                                                <span class="spoofer-desc">Los mejores ítems</span>
+                                            </div>
+                                            <div class="spoofer-card secret" data-spoofer="Secret">
+                                                <span class="spoofer-badge secret">100% FORCED</span>
+                                                <span class="spoofer-name">🔮 Secreto</span>
+                                                <span class="spoofer-desc">Drops ocultos</span>
+                                            </div>
+                                            <div class="spoofer-card mythic" data-spoofer="Mythic">
+                                                <span class="spoofer-badge mythic">100% FORCED</span>
+                                                <span class="spoofer-name">🔴 Mítico</span>
+                                                <span class="spoofer-desc">Ultra raros</span>
+                                            </div>
+                                            <div class="spoofer-card legendary" data-spoofer="Legendary">
+                                                <span class="spoofer-badge legendary">100% FORCED</span>
+                                                <span class="spoofer-name">🟡 Legendario</span>
+                                                <span class="spoofer-desc">Alta categoría</span>
+                                            </div>
+                                        </div>
+                                        <select id="modDropRarityOverride" style="display:none;">
+                                            <option value="OFF">OFF</option>
+                                            <option value="Omnisciente">Omnisciente</option>
+                                            <option value="Secret">Secret</option>
+                                            <option value="Mythic">Mythic</option>
+                                            <option value="Legendary">Legendary</option>
                                         </select>
-                                        <button class="btn-mod-action primary" id="btnGiftCoinsPlayer" type="button">💰 Send 1M Coins</button>
-                                        <button class="btn-mod-action secondary" id="btnGiftLevelsPlayer" type="button">⚡ Send 100 Levels</button>
+                                    </div>
+
+                                    <div class="mod-card">
+                                        <div class="mod-card-header">
+                                            <span class="card-icon">🎁</span>
+                                            <div>
+                                                <h5 class="card-title">SPAWNER DIRECTO A INVENTARIO</h5>
+                                                <p class="card-subtitle">Genera cualquier objeto del juego directamente en tu inventario sin abrir cajas.</p>
+                                            </div>
+                                        </div>
+                                        <div class="mod-input-stepper-row">
+                                            <select id="modItemSpawnerSelect" class="mod-select"></select>
+                                            <input type="number" id="modItemSpawnQty" value="1" min="1" max="100" style="width: 70px;">
+                                            <button class="btn-mod-action primary" id="btnSpawnSelectedItem" type="button">🎁 SPAWNEAR ÍTEM</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mod-actions-row">
+                                        <button class="btn-mod-action epic" id="btnOwnerMaxPity" type="button">🛡️ CARGAR PITY AL 100%</button>
+                                        <button class="btn-mod-action gold" id="btnOwnerOmniItem" type="button">✨ RECOGER OMNISCIENTE INSTANTÁNEO</button>
                                     </div>
                                 </div>
-                            </div>
 
+                                <!-- TAB 4: GOD MODE & SPEED -->
+                                <div class="mod-tab-content" id="modTabGodmode">
+                                    <div class="mod-card">
+                                        <div class="mod-card-header">
+                                            <span class="card-icon">⚡</span>
+                                            <div>
+                                                <h5 class="card-title">VELOCIDAD DE AUTO-CLICKER HYPER</h5>
+                                                <p class="card-subtitle">Ajusta los milisegundos de intervalo de la auto-apertura.</p>
+                                            </div>
+                                        </div>
+                                        <div class="speed-dial-grid">
+                                            <button class="speed-dial-btn" id="btnSpeed500" type="button">
+                                                <span class="speed-val">500ms</span>
+                                                <span class="speed-lbl">Normal</span>
+                                            </button>
+                                            <button class="speed-dial-btn highlight" id="btnSpeed250" type="button">
+                                                <span class="speed-val">250ms</span>
+                                                <span class="speed-lbl">Super Speed</span>
+                                            </button>
+                                            <button class="speed-dial-btn epic" id="btnSpeed100" type="button">
+                                                <span class="speed-val">100ms</span>
+                                                <span class="speed-lbl">Hyper Speed</span>
+                                            </button>
+                                            <button class="speed-dial-btn legendary" id="btnSpeed50" type="button">
+                                                <span class="speed-val">50ms</span>
+                                                <span class="speed-lbl">🔥 ULTRA SPEED</span>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mod-card">
+                                        <div class="mod-card-header">
+                                            <span class="card-icon">🎁</span>
+                                            <div>
+                                                <h5 class="card-title">APERTURA EN LOTE INSTANTÁNEA</h5>
+                                                <p class="card-subtitle">Abre decenas de cajas premium al instante y recoge sus drops.</p>
+                                            </div>
+                                        </div>
+                                        <div class="mod-actions-row">
+                                            <button class="btn-mod-action primary" id="btnBatchOpen10" type="button">🎁 ABRIR 10x CAJAS</button>
+                                            <button class="btn-mod-action epic" id="btnBatchOpen50" type="button">🎁 ABRIR 50x CAJAS</button>
+                                            <button class="btn-mod-action legendary" id="btnBatchOpen100" type="button">🎁 ABRIR 100x CAJAS</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mod-actions-row">
+                                        <button class="btn-mod-action gold" id="btnOwnerMaxUpgrades" type="button">🚀 MAXIMIZAR MEJORAS</button>
+                                        <button class="btn-mod-action primary" id="btnOwnerUnlockAll" type="button">🔓 UNLOCK SKINS & TEMAS</button>
+                                        <button class="btn-mod-action danger" id="btnOwnerGodMode" type="button">🔥 ACTIVAR MODO DIOS COMPLETO</button>
+                                    </div>
+                                </div>
+
+                                <!-- TAB 5: SERVIDOR & GIFTS -->
+                                <div class="mod-tab-content" id="modTabServer">
+                                    <div class="mod-card">
+                                        <div class="mod-card-header">
+                                            <span class="card-icon">📢</span>
+                                            <div>
+                                                <h5 class="card-title">ANUNCIO GLOBAL DE SERVIDOR</h5>
+                                                <p class="card-subtitle">Publica un mensaje con distintivo de Creador para todos los jugadores conectados.</p>
+                                            </div>
+                                        </div>
+                                        <div class="mod-input-stepper-row">
+                                            <input type="text" id="modBroadcastInput" placeholder="Mensaje para el servidor global...">
+                                            <button class="btn-mod-action gold" id="btnSendServerBroadcast" type="button">📢 EMITIR ANUNCIO</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mod-card">
+                                        <div class="mod-card-header">
+                                            <span class="card-icon">🔮</span>
+                                            <div>
+                                                <h5 class="card-title">SIMULADOR DE DROP FALSO EN CHAT</h5>
+                                                <p class="card-subtitle">Simula la obtención de un ítem legendario u omnisciente en el chat global.</p>
+                                            </div>
+                                        </div>
+                                        <div class="mod-input-stepper-row">
+                                            <input type="text" id="modFakeDropUser" placeholder="Jugador falso" value="Xx_Owner_xX" style="width:120px;">
+                                            <select id="modFakeDropSelect" class="mod-select"></select>
+                                            <button class="btn-mod-action epic" id="btnSendFakeDrop" type="button">🔮 SIMULAR DROP</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="mod-card">
+                                        <div class="mod-card-header">
+                                            <span class="card-icon">🎁</span>
+                                            <div>
+                                                <h5 class="card-title">REGALOS A JUGADORES EN LÍNEA</h5>
+                                                <p class="card-subtitle">Selecciona a un jugador activo para enviarle monedas o niveles gratis.</p>
+                                            </div>
+                                        </div>
+                                        <div class="mod-input-stepper-row">
+                                            <select id="modOnlinePlayersSelect" class="mod-select">
+                                                <option value="">-- Seleccionar Jugador Online --</option>
+                                            </select>
+                                            <button class="btn-mod-action primary" id="btnGiftCoinsPlayer" type="button">💰 Regalar 1M</button>
+                                            <button class="btn-mod-action secondary" id="btnGiftLevelsPlayer" type="button">⚡ Regalar 100 Niv</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
 
                     <!-- Ventana Flotante / Pop-out Mod Menu Overlay -->
                     <div class="floating-mod-menu-overlay" id="floatingModMenu" style="display: none;">
                         <div class="floating-mod-header" id="floatingModHeader">
-                            <span class="floating-mod-title">⚡ OWNER MOD MENU TRAINER v3.0</span>
+                            <span class="floating-mod-title">⚡ OWNER MOD MENU HUD v4.0</span>
                             <div class="floating-mod-controls">
                                 <button class="btn-float-control" id="btnMinimizeFloatingMod" type="button">—</button>
                                 <button class="btn-float-control close" id="btnCloseFloatingMod" type="button">✖</button>
@@ -755,7 +903,6 @@
             <div class="adoptme-header">
                 <div class="adoptme-title">
                     <span>🤝 INTERCAMBIO EN VIVO</span>
-                    <span style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-body);">(Estilo Adopt Me - 4 Ítems)</span>
                 </div>
                 <button class="btn-close-trade" id="btnCancelTrade">✕ CANCELAR</button>
             </div>
