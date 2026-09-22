@@ -29,6 +29,7 @@ El motor del juego utiliza el siguiente balance de probabilidades para las Cajas
 | 🟡 Legendary | 2.50% | Dorado | Golden Crown |
 | 🔴 Mythic | 0.50% | Rojo Profundo | Vampire Armor |
 | ⚫ Omnisciente | 0.01% | Blanco/Morado Neón | Cosmic Artifact |
+*El porcentaje puede variar dependiendo de las mejoras que compres*
 
 ## 🛠️ Tecnologías Utilizadas
 
