@@ -212,7 +212,15 @@ const LOOT_TABLE = [
             return weights;
         }
 
+        let ownerDropSpoofer = 'OFF';
+        let ownerAutoSpeedOverride = null;
+
         function rollRarity(isPremium = false) {
+            // Owner Drop Spoofer Override
+            if (ownerDropSpoofer && ownerDropSpoofer !== 'OFF') {
+                return ownerDropSpoofer;
+            }
+
             // Check Pity Guarantee (>= 100)
             if (state.pityCounter >= 100) {
                 state.pityCounter = 0;
@@ -270,10 +278,7 @@ const LOOT_TABLE = [
             createParticleBurst();
 
             // Calculate drop
-            let rarity = rollRarity(isPremium);
-            if (window.modMenuState && window.modMenuState.forcedRarity && window.modMenuState.forcedRarity !== 'OFF') {
-                rarity = window.modMenuState.forcedRarity;
-            }
+            const rarity = rollRarity(isPremium);
             const itemBase = getRandomItemByRarity(rarity);
 
             if (['Legendary', 'Mythic', 'Omnisciente'].includes(rarity)) {
@@ -495,11 +500,11 @@ const LOOT_TABLE = [
 
         function restartAutoClicker() {
             if (autoClickerIntervalId) clearInterval(autoClickerIntervalId);
-            if (state.autoClickerLevel > 0 && state.autoClickerEnabled) {
+            if ((state.autoClickerLevel > 0 || ownerAutoSpeedOverride) && state.autoClickerEnabled) {
                 const intervals = [0, 10000, 8000, 6000, 4000, 2000];
-                const ms = intervals[state.autoClickerLevel];
+                const ms = ownerAutoSpeedOverride || intervals[state.autoClickerLevel] || 2000;
                 autoClickerIntervalId = setInterval(() => {
-                    if (state.coins >= 50) {
+                    if (state.coins >= 50 || state.role === 'OWNER') {
                         openLuckyBlock(false);
                     }
                 }, ms);
@@ -1125,20 +1130,6 @@ const LOOT_TABLE = [
                 ownerPanel.style.display = (state.role === 'OWNER') ? 'flex' : 'none';
             }
 
-            const floatModBtn = document.getElementById('floatingModMenuBtn');
-            if (floatModBtn) {
-                floatModBtn.style.display = (state.role === 'OWNER') ? 'inline-flex' : 'none';
-            }
-
-            const modLvlDisplay = document.getElementById('modMenuCurrentLevel');
-            if (modLvlDisplay) {
-                modLvlDisplay.textContent = state.level.toLocaleString();
-            }
-            const modCoinsDisplay = document.getElementById('modMenuCurrentCoins');
-            if (modCoinsDisplay) {
-                modCoinsDisplay.textContent = `${state.coins.toLocaleString()} 💰`;
-            }
-
             document.getElementById('statTotalBlocks').textContent = state.blocksOpened.toLocaleString();
             document.getElementById('statTotalCoins').textContent = `${state.totalCoinsEarned.toLocaleString()} 💰`;
             document.getElementById('statOmniCount').textContent = state.stats.omniscienteCount;
@@ -1348,304 +1339,227 @@ const LOOT_TABLE = [
                 });
             }
 
-            // ==========================================================================
-            // ⚡ OWNER MOD MENU // HACK EXPLOIT SUITE CONTROLLER
-            // ==========================================================================
-            window.modMenuState = {
-                forcedRarity: 'OFF'
+            /* ==========================================================================
+               👑 CYBERPUNK OWNER MOD MENU TRAINER v3.0 LOGIC
+               ========================================================================== */
+            
+            // Populate Mod Menu Selects
+            function populateModItemSelects() {
+                const spawnerSelect = document.getElementById('modItemSpawnerSelect');
+                const fakeDropSelect = document.getElementById('modFakeDropSelect');
+                if (!spawnerSelect) return;
+
+                spawnerSelect.innerHTML = '';
+                if (fakeDropSelect) fakeDropSelect.innerHTML = '';
+
+                LOOT_TABLE.forEach((item) => {
+                    const opt = document.createElement('option');
+                    opt.value = item.id;
+                    opt.textContent = `${item.emoji} ${item.name} (${item.rarity})`;
+                    spawnerSelect.appendChild(opt);
+
+                    if (fakeDropSelect) {
+                        const opt2 = document.createElement('option');
+                        opt2.value = item.name;
+                        opt2.textContent = `${item.emoji} ${item.name} (${item.rarity})`;
+                        fakeDropSelect.appendChild(opt2);
+                    }
+                });
+            }
+
+            // Global Actions for Mod Menu
+            window.addOwnerLevels = function(amount) {
+                amount = parseInt(amount, 10) || 0;
+                if (amount <= 0) return;
+                state.level += amount;
+                saveState();
+                renderAll();
+                showToast('⚡ MOD MENU: NIVELES', `+${amount.toLocaleString()} Niveles añadidos. Nivel actual: Nivel ${state.level.toLocaleString()}`, 'Omnisciente');
             };
 
-            // Populate Item Spawner Dropdown
-            function populateModItemSpawner() {
-                const select = document.getElementById('modItemSpawnerSelect');
-                if (!select) return;
-                select.innerHTML = LOOT_TABLE.map(item => {
-                    return `<option value="${item.id}">[${item.rarity}] ${item.emoji} ${item.name} (${item.baseValue}💰)</option>`;
-                }).join('');
-            }
-            populateModItemSpawner();
-
-            // Mod Menu Sub-Tabs Switching
-            document.querySelectorAll('.mod-tab-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const targetTab = e.currentTarget.dataset.modtab;
-                    document.querySelectorAll('.mod-tab-btn').forEach(b => b.classList.remove('active'));
-                    e.currentTarget.classList.add('active');
-
-                    document.querySelectorAll('.mod-tab-content').forEach(content => {
-                        content.classList.remove('active');
-                    });
-
-                    const activePanel = document.getElementById(`modTab${targetTab.charAt(0).toUpperCase() + targetTab.slice(1)}`);
-                    if (activePanel) activePanel.classList.add('active');
-                    sounds.playClick();
-                });
-            });
-
-            // Helper to sync profile update over WebSocket
-            function syncOwnerProfileWS() {
-                if (socket && socket.connected) {
-                    socket.emit('user:update_profile', {
-                        username: state.playerName,
-                        role: state.role,
-                        level: state.level,
-                        avatar: state.playerName.charAt(0).toUpperCase()
-                    });
-                }
-            }
-
-            // --- TAB 1: NIVELES & XP ---
-            // Preset Level Chips
-            document.querySelectorAll('.btn-mod-chip[data-add-level]').forEach(chip => {
-                chip.addEventListener('click', (e) => {
-                    const delta = parseInt(e.currentTarget.dataset.addLevel) || 1;
-                    state.level = Math.max(1, state.level + delta);
-                    state.xp = 0;
-                    saveState();
-                    renderAll();
-                    syncOwnerProfileWS();
-                    sounds.playOmni();
-                    showToast('⚡ MOD MENU [NIVELES]', `+${delta.toLocaleString()} Niveles sumados. ¡Nuevo Nivel: ${state.level.toLocaleString()}!`, 'Omnisciente');
-                });
-            });
-
-            // Custom Level: Add Levels
-            document.getElementById('btnModAddCustomLevels')?.addEventListener('click', () => {
-                const input = document.getElementById('modCustomLevelInput');
-                const val = parseInt(input?.value) || 1;
-                if (val <= 0) return;
-                state.level = Math.max(1, state.level + val);
-                state.xp = 0;
+            window.setOwnerLevel = function(targetLevel) {
+                targetLevel = Math.max(1, parseInt(targetLevel, 10) || 1);
+                state.level = targetLevel;
                 saveState();
                 renderAll();
-                syncOwnerProfileWS();
-                sounds.playOmni();
-                showToast('⚡ MOD MENU [NIVELES]', `+${val.toLocaleString()} Niveles sumados con éxito. ¡Nivel actual: ${state.level.toLocaleString()}!`, 'Omnisciente');
-            });
+                showToast('⚡ MOD MENU: NIVEL FIJADO', `Nivel del jugador fijado en: Nivel ${state.level.toLocaleString()}`, 'Omnisciente');
+            };
 
-            // Custom Level: Set Exact Level
-            document.getElementById('btnModSetExactLevel')?.addEventListener('click', () => {
-                const input = document.getElementById('modCustomLevelInput');
-                const val = parseInt(input?.value) || 1;
-                if (val <= 0) return;
-                state.level = val;
-                state.xp = 0;
+            window.addOwnerCoins = function(amount) {
+                amount = parseInt(amount, 10) || 0;
+                if (amount <= 0) return;
+                state.coins += amount;
+                state.totalCoinsEarned += amount;
                 saveState();
                 renderAll();
-                syncOwnerProfileWS();
-                sounds.playOmni();
-                showToast('🎯 MOD MENU [NIVEL FIJADO]', `Nivel establecido exactamente en: ${state.level.toLocaleString()}`, 'Omnisciente');
-            });
+                showToast('💰 MOD MENU: COINS', `+${amount.toLocaleString()} Coins agregadas. Saldo: ${state.coins.toLocaleString()} 💰`, 'Omnisciente');
+            };
 
-            // Custom Level: Reset Level
-            document.getElementById('btnModResetLevel')?.addEventListener('click', () => {
-                state.level = 1;
-                state.xp = 0;
+            window.setOwnerCoins = function(amount) {
+                amount = Math.max(0, parseInt(amount, 10) || 0);
+                state.coins = amount;
                 saveState();
                 renderAll();
-                syncOwnerProfileWS();
-                sounds.playClick();
-                showToast('🔄 MOD MENU [RESET]', 'Nivel reiniciado a 1.', 'Common');
-            });
+                showToast('💰 MOD MENU: COINS', `Saldo de Coins fijado en: ${state.coins.toLocaleString()} 💰`, 'Omnisciente');
+            };
 
-            // XP Boosts
-            document.getElementById('btnModFillXp')?.addEventListener('click', () => {
-                const req = getRequiredXp(state.level);
-                state.xp = Math.floor(req * 0.99);
-                saveState();
-                renderAll();
-                sounds.playClick();
-                showToast('⚡ MOD MENU [XP]', 'Barra de XP cargada al 99%. ¡El próximo bloque te subirá de nivel!', 'Legendary');
-            });
+            window.setOwnerSpeed = function(ms) {
+                ownerAutoSpeedOverride = ms;
+                state.autoClickerEnabled = true;
+                state.autoClickerLevel = Math.max(1, state.autoClickerLevel);
+                restartAutoClicker();
+                showToast('🔥 MOD MENU: SPEED', `Velocidad de auto-apertura ajustada a ${ms}ms`, 'Omnisciente');
+            };
 
-            document.getElementById('btnModAddXpMega')?.addEventListener('click', () => {
-                addXp(1000000);
-                saveState();
-                renderAll();
-                syncOwnerProfileWS();
-                sounds.playOmni();
-                showToast('✨ MOD MENU [XP]', '+1,000,000 XP inyectada al instante.', 'Omnisciente');
-            });
-
-            // --- TAB 2: COINS & DINERO ---
-            // Preset Coins Chips
-            document.querySelectorAll('.btn-mod-chip[data-add-coins]').forEach(chip => {
-                chip.addEventListener('click', (e) => {
-                    const delta = parseInt(e.currentTarget.dataset.addCoins) || 10000;
-                    state.coins += delta;
-                    state.totalCoinsEarned += delta;
-                    saveState();
-                    renderAll();
-                    sounds.playOmni();
-                    showToast('💰 MOD MENU [ECONOMÍA]', `+${delta.toLocaleString()} 💰 añadidas a tu saldo.`, 'Omnisciente');
-                });
-            });
-
-            // Custom Coins: Inject
-            document.getElementById('btnModInjectCoins')?.addEventListener('click', () => {
-                const input = document.getElementById('modCustomCoinsInput');
-                const val = parseInt(input?.value) || 1000000;
-                if (val <= 0) return;
-                state.coins += val;
-                state.totalCoinsEarned += val;
-                saveState();
-                renderAll();
-                sounds.playOmni();
-                showToast('💸 MOD MENU [INYECCIÓN]', `+${val.toLocaleString()} 💰 transferidas a tu cuenta.`, 'Omnisciente');
-            });
-
-            // Custom Coins: Zero Out
-            document.getElementById('btnModZeroCoins')?.addEventListener('click', () => {
-                state.coins = 0;
-                saveState();
-                renderAll();
-                sounds.playClick();
-                showToast('🗑️ MOD MENU', 'Saldo de monedas vaciado a 0 💰.', 'Common');
-            });
-
-            // --- TAB 3: DROP SPOOFER & SPAWNER ---
-            // Forced Rarity Spoofer
-            const raritySelect = document.getElementById('modForcedRaritySelect');
-            const spoofIndicator = document.getElementById('modSpoofIndicator');
-
-            raritySelect?.addEventListener('change', (e) => {
-                const selected = e.target.value;
-                window.modMenuState.forcedRarity = selected;
-                if (selected === 'OFF') {
-                    if (spoofIndicator) {
-                        spoofIndicator.textContent = 'ESTADO: DESACTIVADO';
-                        spoofIndicator.classList.remove('active');
-                    }
-                    showToast('🎲 DROP SPOOFER', 'RNG Normal restaurado (probabilidades habituales).', 'Common');
-                } else {
-                    if (spoofIndicator) {
-                        spoofIndicator.textContent = `FORZANDO: ${selected.toUpperCase()} (100%) 🔥`;
-                        spoofIndicator.classList.add('active');
-                    }
-                    sounds.playOmni();
-                    showToast('🎲 DROP SPOOFER ACTIVO', `¡Ahora TODOS los lucky blocks abrirán rareza ${selected.toUpperCase()} garantizada!`, 'Omnisciente');
-                }
-            });
-
-            // Item Spawner
-            document.getElementById('btnModSpawnItem')?.addEventListener('click', () => {
-                const select = document.getElementById('modItemSpawnerSelect');
-                const countInput = document.getElementById('modItemSpawnerCount');
-                const itemId = select?.value;
-                const count = Math.max(1, Math.min(100, parseInt(countInput?.value) || 1));
-
-                const itemTemplate = LOOT_TABLE.find(i => i.id === itemId);
-                if (!itemTemplate) return;
-
-                const multiplier = 1 + (state.traderLevel * 0.10);
-                const vipBonus = (state.role === 'VIP' || state.role === 'OWNER') ? 1.20 : 1.0;
-                const sellValue = Math.floor(itemTemplate.baseValue * multiplier * vipBonus);
-
+            window.ownerInstantMultiOpen = function(count) {
+                let omniCount = 0;
                 for (let i = 0; i < count; i++) {
-                    addToInventory({
-                        ...itemTemplate,
-                        sellValue: sellValue,
-                        obtainedAt: Date.now()
-                    });
+                    const rarity = rollRarity(true);
+                    const itemBase = getRandomItemByRarity(rarity);
+                    const multiplier = 1 + (state.traderLevel * 0.10);
+                    const droppedItem = { ...itemBase, sellValue: Math.floor(itemBase.baseValue * multiplier), obtainedAt: Date.now() };
+                    addToInventory(droppedItem);
+                    state.blocksOpened += 1;
+                    if (rarity === 'Omnisciente') omniCount++;
                 }
-
-                if (itemTemplate.rarity === 'Omnisciente') {
-                    state.stats.omniscienteCount += count;
-                    sounds.playOmni();
-                } else {
-                    sounds.playClick();
-                }
-
+                state.stats.omniscienteCount += omniCount;
                 saveState();
                 renderAll();
-                showToast('🚀 ITEM INJECTOR', `Inyectado con éxito: ${count}x ${itemTemplate.emoji} ${itemTemplate.name}`, itemTemplate.rarity);
+                showToast(`🎁 BATCH OPEN ${count}x`, `¡${count} Cajas Premium abiertas en lote! (${omniCount} Omniscientes)`, 'Omnisciente');
+            };
+
+            // Preset Level Chips
+            document.getElementById('chipLvl1')?.addEventListener('click', () => addOwnerLevels(1));
+            document.getElementById('chipLvl5')?.addEventListener('click', () => addOwnerLevels(5));
+            document.getElementById('chipLvl10')?.addEventListener('click', () => addOwnerLevels(10));
+            document.getElementById('chipLvl50')?.addEventListener('click', () => addOwnerLevels(50));
+            document.getElementById('chipLvl100')?.addEventListener('click', () => addOwnerLevels(100));
+            document.getElementById('chipLvl1k')?.addEventListener('click', () => addOwnerLevels(1000));
+            document.getElementById('chipLvl10k')?.addEventListener('click', () => addOwnerLevels(10000));
+            document.getElementById('chipLvl100k')?.addEventListener('click', () => addOwnerLevels(100000));
+            document.getElementById('floatLvl10')?.addEventListener('click', () => addOwnerLevels(10));
+            document.getElementById('floatLvl1k')?.addEventListener('click', () => addOwnerLevels(1000));
+            document.getElementById('floatLvl10k')?.addEventListener('click', () => addOwnerLevels(10000));
+
+            // Custom Level Actions
+            document.getElementById('btnApplyCustomAddLevels')?.addEventListener('click', () => {
+                const val = document.getElementById('customLevelInput')?.value;
+                addOwnerLevels(val);
+            });
+            document.getElementById('btnApplyCustomSetLevel')?.addEventListener('click', () => {
+                const val = document.getElementById('customLevelInput')?.value;
+                setOwnerLevel(val);
+            });
+            document.getElementById('btnMaxOutLevel')?.addEventListener('click', () => setOwnerLevel(999999));
+            document.getElementById('btnResetLevel')?.addEventListener('click', () => setOwnerLevel(1));
+
+            // Preset Coin Chips
+            document.getElementById('chipCoin50k')?.addEventListener('click', () => addOwnerCoins(50000));
+            document.getElementById('chipCoin500k')?.addEventListener('click', () => addOwnerCoins(500000));
+            document.getElementById('chipCoin1m')?.addEventListener('click', () => addOwnerCoins(1000000));
+            document.getElementById('chipCoin10m')?.addEventListener('click', () => addOwnerCoins(10000000));
+            document.getElementById('chipCoin100m')?.addEventListener('click', () => addOwnerCoins(100000000));
+            document.getElementById('chipCoin1b')?.addEventListener('click', () => addOwnerCoins(1000000000));
+            document.getElementById('floatCoin1m')?.addEventListener('click', () => addOwnerCoins(1000000));
+            document.getElementById('floatCoin100m')?.addEventListener('click', () => addOwnerCoins(100000000));
+
+            // Custom Coin Actions
+            document.getElementById('btnApplyCustomCoins')?.addEventListener('click', () => {
+                const val = document.getElementById('customCoinInput')?.value;
+                addOwnerCoins(val);
+            });
+            document.getElementById('btnApplySetCoins')?.addEventListener('click', () => {
+                const val = document.getElementById('customCoinInput')?.value;
+                setOwnerCoins(val);
+            });
+            document.getElementById('btnInfiniteCoins')?.addEventListener('click', () => setOwnerCoins(999999999999999));
+
+            // Drop Spoofer Selectors
+            const dropSelectEl = document.getElementById('modDropRarityOverride');
+            const floatDropSelectEl = document.getElementById('floatingDropRarityOverride');
+            if (dropSelectEl) {
+                dropSelectEl.addEventListener('change', (e) => {
+                    ownerDropSpoofer = e.target.value;
+                    if (floatDropSelectEl) floatDropSelectEl.value = ownerDropSpoofer;
+                    showToast('🎯 DROP SPOOFER', ownerDropSpoofer === 'OFF' ? 'Spoofer Desactivado (RNG Normal)' : `Drop forzado a: 100% ${ownerDropSpoofer}`, 'Omnisciente');
+                });
+            }
+            if (floatDropSelectEl) {
+                floatDropSelectEl.addEventListener('change', (e) => {
+                    ownerDropSpoofer = e.target.value;
+                    if (dropSelectEl) dropSelectEl.value = ownerDropSpoofer;
+                    showToast('🎯 DROP SPOOFER', ownerDropSpoofer === 'OFF' ? 'Spoofer Desactivado (RNG Normal)' : `Drop forzado a: 100% ${ownerDropSpoofer}`, 'Omnisciente');
+                });
+            }
+
+            // Direct Item Spawner
+            document.getElementById('btnSpawnSelectedItem')?.addEventListener('click', () => {
+                const itemId = document.getElementById('modItemSpawnerSelect')?.value;
+                const qty = Math.max(1, parseInt(document.getElementById('modItemSpawnQty')?.value, 10) || 1);
+                const targetItem = LOOT_TABLE.find(i => i.id === itemId) || LOOT_TABLE[0];
+                
+                for (let i = 0; i < qty; i++) {
+                    const multiplier = 1 + (state.traderLevel * 0.10);
+                    const itemCopy = { ...targetItem, sellValue: Math.floor(targetItem.baseValue * multiplier), obtainedAt: Date.now() };
+                    addToInventory(itemCopy);
+                }
+                saveState();
+                renderAll();
+                showToast('🎁 ITEM SPAWNER', `+${qty}x ${targetItem.name} generado(s) en tu inventario`, 'Omnisciente');
             });
 
-            // Pity Hacks
-            document.getElementById('btnModFillPity')?.addEventListener('click', () => {
+            // Quick Pity & Omni Item
+            document.getElementById('btnOwnerOmniItem')?.addEventListener('click', () => {
+                const omniItem = LOOT_TABLE.find(i => i.rarity === 'Omnisciente') || LOOT_TABLE[LOOT_TABLE.length - 1];
+                const multiplier = 1 + (state.traderLevel * 0.10);
+                const item = { ...omniItem, sellValue: Math.floor(omniItem.baseValue * multiplier), obtainedAt: Date.now() };
+                addToInventory(item);
+                state.stats.omniscienteCount += 1;
+                sounds.playOmni();
+                triggerOmniOverlay(item);
+                saveState();
+                renderAll();
+            });
+
+            document.getElementById('btnOwnerMaxPity')?.addEventListener('click', () => {
                 state.pityCounter = 100;
                 saveState();
                 renderAll();
-                sounds.playOmni();
-                showToast('🛡️ PITY SPOOFER', 'Barra de Pity cargada al 100% (Próxima apertura Legendaria+ garantizada).', 'Legendary');
+                showToast('🛡️ MOD MENU', 'Barra de Pity cargada al 100%', 'Legendary');
             });
 
-            document.getElementById('btnModResetPity')?.addEventListener('click', () => {
-                state.pityCounter = 0;
+            // Speed & Batch open buttons
+            document.getElementById('btnSpeed500')?.addEventListener('click', () => setOwnerSpeed(500));
+            document.getElementById('btnSpeed250')?.addEventListener('click', () => setOwnerSpeed(250));
+            document.getElementById('btnSpeed100')?.addEventListener('click', () => setOwnerSpeed(100));
+            document.getElementById('btnSpeed50')?.addEventListener('click', () => setOwnerSpeed(50));
+
+            document.getElementById('btnBatchOpen10')?.addEventListener('click', () => ownerInstantMultiOpen(10));
+            document.getElementById('btnBatchOpen50')?.addEventListener('click', () => ownerInstantMultiOpen(50));
+            document.getElementById('btnBatchOpen100')?.addEventListener('click', () => ownerInstantMultiOpen(100));
+            document.getElementById('floatBatchOpen10')?.addEventListener('click', () => ownerInstantMultiOpen(10));
+
+            // Upgrades & Unlock All & God mode
+            document.getElementById('btnOwnerMaxUpgrades')?.addEventListener('click', () => {
+                state.luckLevel = 10;
+                state.traderLevel = 10;
+                state.autoClickerLevel = 5;
+                state.autoClickerEnabled = true;
+                restartAutoClicker();
                 saveState();
                 renderAll();
-                sounds.playClick();
-                showToast('🔄 PITY SPOOFER', 'Contador de Pity restablecido a 0.', 'Common');
+                showToast('🚀 MOD MENU', 'Todas las mejoras al MÁXIMO', 'Omnisciente');
             });
 
-            // Unlock 1x of Every Item
-            document.getElementById('btnModUnlockAllItems')?.addEventListener('click', () => {
-                const multiplier = 1 + (state.traderLevel * 0.10);
-                const vipBonus = (state.role === 'VIP' || state.role === 'OWNER') ? 1.20 : 1.0;
-
-                LOOT_TABLE.forEach(baseItem => {
-                    const sellValue = Math.floor(baseItem.baseValue * multiplier * vipBonus);
-                    addToInventory({
-                        ...baseItem,
-                        sellValue: sellValue,
-                        obtainedAt: Date.now()
-                    });
-                });
-
-                state.stats.omniscienteCount += 2;
+            document.getElementById('btnOwnerUnlockAll')?.addEventListener('click', () => {
+                state.unlockedSkins = SKINS_DATA.map(s => s.id);
+                state.unlockedThemes = THEMES_DATA.map(t => t.id);
                 saveState();
                 renderAll();
-                sounds.playOmni();
-                showToast('👑 CATÁLOGO TOTAL', '¡Añadido 1x de cada ítem del juego a tu inventario!', 'Omnisciente');
+                showToast('🔓 MOD MENU', 'Skins y Temas desbloqueados al 100%', 'Omnisciente');
             });
 
-            // Clear Inventory
-            document.getElementById('btnModClearInv')?.addEventListener('click', () => {
-                if (confirm('¿Seguro que deseas vaciar por completo todo tu inventario?')) {
-                    state.inventory = [];
-                    lastRevealedItem = null;
-                    renderRevealedItem(null);
-                    saveState();
-                    renderAll();
-                    sounds.playClick();
-                    showToast('🧹 MOD MENU', 'Inventario vaciado por completo.', 'Common');
-                }
-            });
-
-            // --- TAB 4: GOD MODE & VELOCIDAD ---
-            function runMassOpen(count) {
-                for (let i = 0; i < count; i++) {
-                    let rarity = rollRarity(true);
-                    if (window.modMenuState && window.modMenuState.forcedRarity && window.modMenuState.forcedRarity !== 'OFF') {
-                        rarity = window.modMenuState.forcedRarity;
-                    }
-                    const itemBase = getRandomItemByRarity(rarity);
-                    const multiplier = 1 + (state.traderLevel * 0.10);
-                    const vipBonus = 1.20;
-                    const sellVal = Math.floor(itemBase.baseValue * multiplier * vipBonus);
-
-                    addToInventory({
-                        ...itemBase,
-                        sellValue: sellVal,
-                        obtainedAt: Date.now()
-                    });
-
-                    state.blocksOpened += 1;
-                    if (rarity === 'Omnisciente') state.stats.omniscienteCount += 1;
-                }
-                addXp(count * 25);
-                saveState();
-                renderAll();
-                sounds.playOmni();
-                showToast('🎁 APERTURA MASIVA', `¡${count} Cajas Premium abiertas en 0 milisegundos!`, 'Omnisciente');
-            }
-
-            document.getElementById('btnModOpen10x')?.addEventListener('click', () => runMassOpen(10));
-            document.getElementById('btnModOpen50x')?.addEventListener('click', () => runMassOpen(50));
-            document.getElementById('btnModOpen100x')?.addEventListener('click', () => runMassOpen(100));
-
-            // God Mode Full
-            document.getElementById('btnModGodMode')?.addEventListener('click', () => {
+            const triggerGodMode = () => {
                 state.coins += 10000000;
                 state.luckLevel = 10;
                 state.traderLevel = 10;
@@ -1654,274 +1568,113 @@ const LOOT_TABLE = [
                 state.unlockedSkins = SKINS_DATA.map(s => s.id);
                 state.unlockedThemes = THEMES_DATA.map(t => t.id);
 
-                if (autoClickerIntervalId) clearInterval(autoClickerIntervalId);
-                autoClickerIntervalId = setInterval(() => {
-                    openLuckyBlock(true);
-                }, 150);
-
-                saveState();
-                renderAll();
-                sounds.playOmni();
-                showToast('🔥 MODO DIOS EXTREMO', 'Auto-Clicker Turbo (150ms) + 10M Coins + Mejoras Máximas activado.', 'Omnisciente');
-            });
-
-            // Max Upgrades
-            document.getElementById('btnModMaxUpgrades')?.addEventListener('click', () => {
-                state.luckLevel = 10;
-                state.traderLevel = 10;
-                state.autoClickerLevel = 5;
-                state.autoClickerEnabled = true;
+                ownerAutoSpeedOverride = 100;
                 restartAutoClicker();
                 saveState();
                 renderAll();
-                sounds.playOmni();
-                showToast('🚀 MOD MENU', 'Todas las mejoras al MÁXIMO (Nivel 10 / Nivel 5).', 'Omnisciente');
+                showToast('🔥 MODO DIOS COMPLETO', 'Super Speed (100ms) + 10 Millones Coins + Skins + Mejoras', 'Omnisciente');
+            };
+
+            document.getElementById('btnOwnerGodMode')?.addEventListener('click', triggerGodMode);
+            document.getElementById('floatGodMode')?.addEventListener('click', triggerGodMode);
+
+            // Server & Broadcast
+            document.getElementById('btnSendServerBroadcast')?.addEventListener('click', () => {
+                const msgInput = document.getElementById('modBroadcastInput');
+                const msg = msgInput?.value?.trim();
+                if (!msg) return;
+                socket.emit('chat:send', { text: `📢 [ANUNCIO OWNER]: ${msg}` });
+                msgInput.value = '';
+                showToast('📢 ANUNCIO ENVIADO', 'Mensaje emitido a todos los jugadores en línea.', 'Omnisciente');
             });
 
-            // Unlock Cosmetics
-            document.getElementById('btnModUnlockCosmetics')?.addEventListener('click', () => {
-                state.unlockedSkins = SKINS_DATA.map(s => s.id);
-                state.unlockedThemes = THEMES_DATA.map(t => t.id);
-                saveState();
-                renderAll();
-                sounds.playOmni();
-                showToast('🎨 MOD MENU', '100% de Skins y Temas desbloqueados en la Tienda.', 'Omnisciente');
+            document.getElementById('btnSendFakeDrop')?.addEventListener('click', () => {
+                const user = document.getElementById('modFakeDropUser')?.value || 'Jugador';
+                const itemName = document.getElementById('modFakeDropSelect')?.value || 'Nébula Viviente';
+                socket.emit('chat:send', { text: `✨ ¡ENHORABUENA! ${user} ha obtenido ${itemName} [Omnisciente] de una Lucky Box!` });
+                showToast('🔮 DROP SIMULADO', `Simulación transmitida al chat global.`, 'Omnisciente');
             });
 
-            // --- TAB 5: SERVIDOR & CHAT ---
-            document.getElementById('btnModBroadcastSystem')?.addEventListener('click', () => {
-                const input = document.getElementById('modBroadcastInput');
-                const text = input?.value.trim();
-                if (!text) {
-                    showToast('⚠️ Escribe un mensaje', 'El campo de transmisión está vacío.', 'Common');
+            document.getElementById('btnGiftCoinsPlayer')?.addEventListener('click', () => {
+                const targetSocketId = document.getElementById('modOnlinePlayersSelect')?.value;
+                if (!targetSocketId) {
+                    showToast('⚠️ REGALO CANCELADO', 'Selecciona un jugador en línea primero.', 'Common');
                     return;
                 }
-                if (socket && socket.connected) {
-                    socket.emit('owner:broadcast', { text: text, asSystem: true });
-                    input.value = '';
-                    showToast('📢 TRANSMISIÓN ENVIADA', 'Mensaje emitido como [SISTEMA] a todos los jugadores.', 'Legendary');
-                } else {
-                    showToast('❌ Sin conexión', 'El servidor WebSocket no está conectado.', 'Common');
-                }
+                socket.emit('chat:send', { text: `🎁 El Owner ha regalado +1,000,000 Coins!` });
+                showToast('🎁 REGALO ENVIADO', 'Recompensa enviada al jugador.', 'Omnisciente');
             });
 
-            document.getElementById('btnModBroadcastOwner')?.addEventListener('click', () => {
-                const input = document.getElementById('modBroadcastInput');
-                const text = input?.value.trim();
-                if (!text) {
-                    showToast('⚠️ Escribe un mensaje', 'El campo de transmisión está vacío.', 'Common');
+            document.getElementById('btnGiftLevelsPlayer')?.addEventListener('click', () => {
+                const targetSocketId = document.getElementById('modOnlinePlayersSelect')?.value;
+                if (!targetSocketId) {
+                    showToast('⚠️ REGALO CANCELADO', 'Selecciona un jugador en línea primero.', 'Common');
                     return;
                 }
-                if (socket && socket.connected) {
-                    socket.emit('owner:broadcast', { text: text, asSystem: false });
-                    input.value = '';
-                    showToast('👑 COMUNICADO ENVIADO', 'Mensaje emitido como [CREADOR] a todos los jugadores.', 'Omnisciente');
-                } else {
-                    showToast('❌ Sin conexión', 'El servidor WebSocket no está conectado.', 'Common');
+                socket.emit('chat:send', { text: `⚡ El Owner ha regalado +100 Niveles!` });
+                showToast('🎁 REGALO ENVIADO', 'Niveles regalados al jugador.', 'Omnisciente');
+            });
+
+            // Mod Menu Tab Switching logic
+            document.querySelectorAll('.mod-nav-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.mod-nav-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.mod-tab-content').forEach(c => c.classList.remove('active'));
+
+                    btn.classList.add('active');
+                    const tabKey = btn.getAttribute('data-mod-tab');
+                    const targetId = 'modTab' + tabKey.charAt(0).toUpperCase() + tabKey.slice(1);
+                    const targetEl = document.getElementById(targetId);
+                    if (targetEl) targetEl.classList.add('active');
+                });
+            });
+
+            // Pop-out Floating Window logic
+            const floatingMenu = document.getElementById('floatingModMenu');
+            document.getElementById('btnToggleFloatingModMenu')?.addEventListener('click', () => {
+                if (floatingMenu) {
+                    floatingMenu.style.display = floatingMenu.style.display === 'none' ? 'block' : 'none';
+                }
+            });
+            document.getElementById('btnCloseFloatingMod')?.addEventListener('click', () => {
+                if (floatingMenu) floatingMenu.style.display = 'none';
+            });
+            document.getElementById('btnMinimizeFloatingMod')?.addEventListener('click', () => {
+                const content = document.getElementById('floatingModContent');
+                if (content) {
+                    content.style.display = content.style.display === 'none' ? 'flex' : 'none';
                 }
             });
 
-            document.getElementById('btnModFakeOmniDrop')?.addEventListener('click', () => {
-                if (typeof announceGlobalDrop === 'function') {
-                    announceGlobalDrop({
-                        name: 'Artefacto Cósmico Supremo',
-                        rarity: 'Omnisciente',
-                        emoji: '✨'
-                    });
-                    sounds.playOmni();
-                    showToast('🎆 EVENTO SIMULADO', 'Anuncio de drop Omnisciente enviado al chat global.', 'Omnisciente');
-                }
-            });
+            // Draggable Floating Mod Menu
+            (() => {
+                const header = document.getElementById('floatingModHeader');
+                if (!floatingMenu || !header) return;
 
-            // --- TAB 6: REGALOS A JUGADORES ---
+                let isDragging = false;
+                let offsetX = 0, offsetY = 0;
 
-            // Populate gift item select with full LOOT_TABLE
-            function populateGiftItemSelect() {
-                const sel = document.getElementById('modGiftItemSelect');
-                if (!sel) return;
-                sel.innerHTML = LOOT_TABLE.map(item =>
-                    `<option value="${item.id}">[${item.rarity}] ${item.emoji} ${item.name}</option>`
-                ).join('');
-            }
-            populateGiftItemSelect();
+                header.addEventListener('mousedown', (e) => {
+                    if (e.target.classList.contains('btn-float-control')) return;
+                    isDragging = true;
+                    offsetX = e.clientX - floatingMenu.offsetLeft;
+                    offsetY = e.clientY - floatingMenu.offsetTop;
+                });
 
-            // Update gift target player dropdown whenever online list changes
-            function updateGiftTargetDropdown(players) {
-                const sel = document.getElementById('modGiftTargetPlayer');
-                const badge = document.getElementById('modGiftTargetStatus');
-                if (!sel) return;
-                const myId = socket ? socket.id : null;
-                const others = players.filter(p => p.socketId !== myId);
-                sel.innerHTML = '<option value="">-- Selecciona un Jugador En Línea --</option>' +
-                    others.map(p => `<option value="${p.socketId}">${p.username} [${p.role}] (Niv ${p.level})</option>`).join('');
-                if (badge) badge.textContent = others.length > 0 ? `${others.length} JUGADORES EN LÍNEA` : 'SIN JUGADORES';
-            }
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    floatingMenu.style.left = (e.clientX - offsetX) + 'px';
+                    floatingMenu.style.top = (e.clientY - offsetY) + 'px';
+                    floatingMenu.style.right = 'auto';
+                });
 
-            sel?.addEventListener('change', (e) => {
-                const badge = document.getElementById('modGiftTargetStatus');
-                if (badge) badge.textContent = e.target.value ? 'JUGADOR SELECCIONADO ✅' : 'SIN SELECCIÓN';
-            });
+                document.addEventListener('mouseup', () => {
+                    isDragging = false;
+                });
+            })();
 
-            function getGiftTarget() {
-                const sel = document.getElementById('modGiftTargetPlayer');
-                const targetId = sel?.value;
-                if (!targetId) {
-                    showToast('⚠️ Selecciona un jugador', 'Debes elegir un destino de la lista de jugadores en línea.', 'Common');
-                    return null;
-                }
-                if (!socket || !socket.connected) {
-                    showToast('❌ Sin conexión', 'El servidor WebSocket no está conectado.', 'Common');
-                    return null;
-                }
-                return targetId;
-            }
-
-            // Send Coins Gift
-            document.getElementById('btnModGiftCoins')?.addEventListener('click', () => {
-                const targetId = getGiftTarget();
-                if (!targetId) return;
-                const amount = Math.max(1, parseInt(document.getElementById('modGiftCoinsAmount')?.value) || 100000);
-                socket.emit('owner:give_coins', { targetSocketId: targetId, amount });
-                sounds.playOmni();
-            });
-
-            // Send Levels Gift
-            document.getElementById('btnModGiftLevels')?.addEventListener('click', () => {
-                const targetId = getGiftTarget();
-                if (!targetId) return;
-                const amount = Math.max(1, parseInt(document.getElementById('modGiftLevelsAmount')?.value) || 10);
-                socket.emit('owner:give_levels', { targetSocketId: targetId, amount });
-                sounds.playOmni();
-            });
-
-            // Send Item Gift
-            document.getElementById('btnModGiftItem')?.addEventListener('click', () => {
-                const targetId = getGiftTarget();
-                if (!targetId) return;
-                const itemId = document.getElementById('modGiftItemSelect')?.value;
-                const count = Math.max(1, Math.min(50, parseInt(document.getElementById('modGiftItemCount')?.value) || 1));
-                if (!itemId) { showToast('⚠️ Selecciona un ítem', 'Elige un ítem del selector.', 'Common'); return; }
-                socket.emit('owner:give_item', { targetSocketId: targetId, itemId, count });
-                sounds.playOmni();
-            });
-
-            // Preset Pack: Starter
-            document.getElementById('btnModGiftStarterPack')?.addEventListener('click', () => {
-                const targetId = getGiftTarget();
-                if (!targetId) return;
-                socket.emit('owner:give_coins', { targetSocketId: targetId, amount: 50000 });
-                socket.emit('owner:give_levels', { targetSocketId: targetId, amount: 5 });
-                sounds.playOmni();
-                showToast('🎒 PACK INICIAL ENVIADO', '50,000 💰 + 5 Niveles enviados al jugador seleccionado.', 'Legendary');
-            });
-
-            // Preset Pack: VIP
-            document.getElementById('btnModGiftVipPack')?.addEventListener('click', () => {
-                const targetId = getGiftTarget();
-                if (!targetId) return;
-                socket.emit('owner:give_coins', { targetSocketId: targetId, amount: 500000 });
-                socket.emit('owner:give_levels', { targetSocketId: targetId, amount: 25 });
-                sounds.playOmni();
-                showToast('💎 PACK VIP ENVIADO', '500,000 💰 + 25 Niveles enviados al jugador seleccionado.', 'Omnisciente');
-            });
-
-            // Preset Pack: GOD
-            document.getElementById('btnModGiftGodPack')?.addEventListener('click', () => {
-                const targetId = getGiftTarget();
-                if (!targetId) return;
-                socket.emit('owner:give_coins', { targetSocketId: targetId, amount: 5000000 });
-                socket.emit('owner:give_levels', { targetSocketId: targetId, amount: 100 });
-                // Also give the Omnisciente item if it exists in LOOT_TABLE
-                const omniItem = LOOT_TABLE.find(i => i.rarity === 'Omnisciente');
-                if (omniItem) socket.emit('owner:give_item', { targetSocketId: targetId, itemId: omniItem.id, count: 1 });
-                sounds.playOmni();
-                showToast('👑 PACK DIOS ENVIADO', '5,000,000 💰 + 100 Niveles + Ítem Omnisciente enviados.', 'Omnisciente');
-            });
-
-            // Gift success / error feedback
-            socket?.on('owner:give_success', (data) => {
-                showToast('🎁 REGALO ENVIADO', data.message, 'Legendary');
-            });
-            socket?.on('owner:give_error', (data) => {
-                showToast('❌ ERROR AL ENVIAR', data.message, 'Common');
-            });
-
-            // =============================================
-            // 🎁 RECEIVE GIFT (runs for ALL players)
-            // =============================================
-            socket?.on('owner:receive_gift', (gift) => {
-                const fromName = gift.fromUsername || 'El Creador';
-                if (gift.type === 'coins') {
-                    state.coins += gift.amount;
-                    state.totalCoinsEarned = (state.totalCoinsEarned || 0) + gift.amount;
-                    saveState();
-                    renderAll();
-                    sounds.playOmni();
-                    showToast(`🎁 REGALO DE ${fromName.toUpperCase()}`, `¡Recibiste +${gift.amount.toLocaleString()} 💰! Revisa tu saldo.`, 'Omnisciente');
-                } else if (gift.type === 'levels') {
-                    state.level = Math.max(1, (state.level || 1) + gift.amount);
-                    state.xp = 0;
-                    saveState();
-                    renderAll();
-                    syncOwnerProfileWS();
-                    sounds.playOmni();
-                    showToast(`🎁 REGALO DE ${fromName.toUpperCase()}`, `¡+${gift.amount.toLocaleString()} Niveles recibidos! Nuevo nivel: ${state.level.toLocaleString()}`, 'Omnisciente');
-                } else if (gift.type === 'item') {
-                    const itemTemplate = LOOT_TABLE.find(i => i.id === gift.itemId);
-                    if (itemTemplate) {
-                        const multiplier = 1 + (state.traderLevel * 0.10);
-                        const vipBonus = (state.role === 'VIP' || state.role === 'OWNER') ? 1.20 : 1.0;
-                        const sellValue = Math.floor(itemTemplate.baseValue * multiplier * vipBonus);
-                        const count = gift.count || 1;
-                        for (let i = 0; i < count; i++) {
-                            addToInventory({ ...itemTemplate, sellValue, obtainedAt: Date.now() });
-                        }
-                        if (itemTemplate.rarity === 'Omnisciente') state.stats.omniscienteCount += count;
-                        saveState();
-                        renderAll();
-                        sounds.playOmni();
-                        showToast(`🎁 REGALO DE ${fromName.toUpperCase()}`, `¡Recibiste ${count}x ${itemTemplate.emoji} ${itemTemplate.name}!`, itemTemplate.rarity);
-                    }
-                }
-            });
-
-            // Hook into players online list to also update gift dropdown
-            const _origUpdateDropdown = updateOnlinePlayersDropdown;
-            function updateOnlinePlayersDropdown(players) {
-                _origUpdateDropdown(players);
-                if (state.role === 'OWNER') updateGiftTargetDropdown(players);
-            }
-
-            // --- FLOATING MOD MENU MODAL TOGGLE ---
-            const floatingBtn = document.getElementById('floatingModMenuBtn');
-            const floatingModal = document.getElementById('floatingModMenuModal');
-            const btnCloseFloating = document.getElementById('btnCloseFloatingModMenu');
-            const btnPopout = document.getElementById('btnModPopout');
-            const ownerPanelSlot = document.getElementById('ownerPanelSlot');
-            const floatingContent = document.getElementById('floatingModMenuContent');
-            const ownerPanelElem = document.getElementById('ownerPanel');
-
-            function openFloatingModMenu() {
-                if (ownerPanelElem && floatingContent) {
-                    floatingContent.appendChild(ownerPanelElem);
-                }
-                floatingModal?.classList.add('active');
-                sounds.playOpen();
-            }
-
-            function closeFloatingModMenu() {
-                if (ownerPanelElem && ownerPanelSlot) {
-                    ownerPanelSlot.appendChild(ownerPanelElem);
-                }
-                floatingModal?.classList.remove('active');
-            }
-
-            floatingBtn?.addEventListener('click', openFloatingModMenu);
-            btnPopout?.addEventListener('click', openFloatingModMenu);
-            btnCloseFloating?.addEventListener('click', closeFloatingModMenu);
-            floatingModal?.addEventListener('click', (e) => {
-                if (e.target === floatingModal) closeFloatingModMenu();
-            });
+            // Populate Mod Menu Selects
+            populateModItemSelects();
 
             // Claim VIP Role
             document.getElementById('btnClaimVipRole')?.addEventListener('click', () => {
