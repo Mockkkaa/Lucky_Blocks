@@ -46,13 +46,13 @@ Como el proyecto utiliza tecnologías web nativas, no requiere de un entorno de 
 
 ## 🛜 Sistema de multijugador en tiempo real
 
-Esta es la arquitectura estandar que utilizando "Juegos" como Slither.io o Agar.io.
+Esta es la arquitectura estandar que utilizan "Juegos" como Slither.io o Agar.io.
 
 **Como funciona** Se crea un servidor Node.js ligero que gestiona las redes en tiempo real.
 **Mecánicas posibles:**
-💬 Chat Global y Lista de Jugadores Conectados: Ver quién está en línea y chatear en directo.
-👑 Tag de jugador: Todos los jugadores verán el tag o rol del jugador en el chat global.
-🤝 Sistema de Intercambio (Trade System): Puedes pedirle a otro jugador intercambiar un ítem Omnisciente por 10 Leyendas en tiempo real.
+* 💬 Chat Global y Lista de Jugadores Conectados: Ver quién está en línea y chatear en directo.
+* 👑 Tag de jugador: Todos los jugadores verán el tag o rol del jugador en el chat global.
+* 🤝 Sistema de Intercambio (Trade System): Puedes pedirle a otro jugador intercambiar un ítem Omnisciente por 10 Leyendas en tiempo real.
 
 ## 🚧🚧 Próximamente
 ⚔️ Carreras / Duelos de Lucky Blocks: Entrar a una sala con un amigo, presionar "EMPEZAR" y ver en pantalla dividida quién saca los mejores drops en 30 segundos.
