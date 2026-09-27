@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lucky Block Simulator — Cyberpunk Edition</title>
-    <meta name="description" content="Simulador de Lucky Blocks Cyberpunk con economía, skins, mejoras y drops Omniscientes.">
-    
+    <meta name="description"
+        content="Simulador de Lucky Blocks Cyberpunk con economía, skins, mejoras y drops Omniscientes.">
+
     <!-- Google Fonts & Libraries -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="./css/style.css" rel="stylesheet">
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="./js/script.js" defer></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Orbitron:wght@400;600;800;900&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Orbitron:wght@400;600;800;900&display=swap"
+        rel="stylesheet">
+
 </head>
+
 <body data-theme="void">
 
     <div class="app-container">
@@ -99,7 +104,8 @@
                         <div class="reveal-box" id="revealBox">
                             <div id="revealEmpty">
                                 <span style="font-size: 3rem; opacity: 0.3;">📦</span>
-                                <p style="color: var(--text-dim); margin-top: 0.5rem; font-size: 0.85rem;">¡Abre un bloque para ver tu premio!</p>
+                                <p style="color: var(--text-dim); margin-top: 0.5rem; font-size: 0.85rem;">¡Abre un
+                                    bloque para ver tu premio!</p>
                             </div>
                             <div id="revealContent" style="display: none;" class="item-card-inner">
                                 <div class="item-emoji-large" id="revealEmoji">🗡️</div>
@@ -136,7 +142,8 @@
                                     <option value="weekly">📆 Misiones Semanales</option>
                                     <option value="special">👑 Especiales (Roles)</option>
                                 </select>
-                                <button class="btn-toggle-missions" id="btnToggleMissionsCollapse" title="Plegar / Desplegar Misiones">▼</button>
+                                <button class="btn-toggle-missions" id="btnToggleMissionsCollapse"
+                                    title="Plegar / Desplegar Misiones">▼</button>
                             </div>
                         </div>
 
@@ -152,26 +159,39 @@
                     <div class="side-panel-card trade-card">
                         <div class="panel-header-title">
                             <span>🔀 INTERCAMBIO EN VIVO</span>
-                            <span style="font-size: 0.75rem; color: #f1c40f; font-family: var(--font-heading);">⭐ 4 SLOTS</span>
+                            <span style="font-size: 0.75rem; color: #f1c40f; font-family: var(--font-heading);">⭐ 4
+                                SLOTS</span>
                         </div>
-                        
+
                         <div class="trade-target-selector">
-                            <label style="font-size: 0.75rem; color: var(--text-muted);">SELECCIONA JUGADOR EN LÍNEA:</label>
+                            <label style="font-size: 0.75rem; color: var(--text-muted);">SELECCIONA JUGADOR EN
+                                LÍNEA:</label>
                             <select id="tradeTargetPlayer" class="trade-select-player">
                                 <option value="">-- Selecciona Jugador En Línea --</option>
                             </select>
                         </div>
 
                         <!-- 4 Mini Preview Slots (Adopt Me Style) -->
-                        <div style="display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1rem; background: rgba(0,0,0,0.3); padding: 0.8rem; border-radius: var(--radius-sm); border: 1px dashed rgba(241,196,15,0.3);">
-                            <div style="width: 50px; height: 50px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">📦</div>
-                            <div style="width: 50px; height: 50px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">📦</div>
-                            <div style="width: 50px; height: 50px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">📦</div>
-                            <div style="width: 50px; height: 50px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">📦</div>
+                        <div
+                            style="display: flex; gap: 0.5rem; justify-content: center; margin-bottom: 1rem; background: rgba(0,0,0,0.3); padding: 0.8rem; border-radius: var(--radius-sm); border: 1px dashed rgba(241,196,15,0.3);">
+                            <div
+                                style="width: 50px; height: 50px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                                📦</div>
+                            <div
+                                style="width: 50px; height: 50px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                                📦</div>
+                            <div
+                                style="width: 50px; height: 50px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                                📦</div>
+                            <div
+                                style="width: 50px; height: 50px; border: 1px dashed rgba(255,255,255,0.2); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">
+                                📦</div>
                         </div>
 
-                        <p style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.8rem; text-align: center;">
-                            Al iniciar, se abrirá la <strong>sala en vivo</strong> para ambos jugadores donde podrán colocar hasta <strong>4 ítems</strong> y confirmar.
+                        <p
+                            style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 0.8rem; text-align: center;">
+                            Al iniciar, se abrirá la <strong>sala en vivo</strong> para ambos jugadores donde podrán
+                            colocar hasta <strong>4 ítems</strong> y confirmar.
                         </p>
 
                         <button class="btn-start-trade" id="btnStartTrade">🤝 INICIAR INTERCAMBIO EN VIVO</button>
@@ -179,17 +199,20 @@
 
                     <!-- 💬 CHAT GLOBAL MULTIJUGADOR -->
                     <div class="side-panel-card chat-card">
-                        <div class="panel-header-title" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="panel-header-title"
+                            style="display: flex; justify-content: space-between; align-items: center;">
                             <span>💬 CHAT GLOBAL</span>
                             <span class="socket-status-badge" id="socketStatusBadge">🔴 Conectando...</span>
                         </div>
 
                         <div class="chat-messages-container" id="chatMessages">
-                            <div class="chat-system-msg">¡Bienvenido al Chat Global Cyberpunk! Chatea e intercambia ítems con otros jugadores en vivo.</div>
+                            <div class="chat-system-msg">¡Bienvenido al Chat Global Cyberpunk! Chatea e intercambia
+                                ítems con otros jugadores en vivo.</div>
                         </div>
 
                         <div class="chat-input-wrapper">
-                            <input type="text" id="chatInput" class="chat-input" placeholder="Escribe un mensaje..." maxlength="150">
+                            <input type="text" id="chatInput" class="chat-input" placeholder="Escribe un mensaje..."
+                                maxlength="150">
                             <button class="btn-send-chat" id="btnSendChat">ENVIAR</button>
                         </div>
                     </div>
@@ -314,23 +337,31 @@
                     <div class="profile-header-edit">
                         <div class="profile-avatar-large" id="profileAvatar">J</div>
                         <div class="name-input-container">
-                            <label style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Nombre de Jugador</label>
+                            <label
+                                style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Nombre
+                                de Jugador</label>
                             <div class="name-input-wrapper">
-                                <input type="text" class="input-player-name" id="inputPlayerName" value="Jugador #1337" maxlength="20">
+                                <input type="text" class="input-player-name" id="inputPlayerName" value="Jugador #1337"
+                                    maxlength="20">
                                 <button class="btn-save-name" id="btnSaveName">Guardar</button>
                             </div>
                         </div>
                     </div>
 
                     <!-- Role Selector & Secret Key -->
-                    <div style="margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                    <div
+                        style="margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
                         <div style="display: flex; align-items: center; gap: 1rem;">
-                            <span style="font-size: 0.85rem; font-family: var(--font-heading); color: var(--text-muted);">ROL EQUIPADO:</span>
-                            <select id="selectRole" style="background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--border-color); padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); font-family: var(--font-heading); font-weight: 700; cursor: pointer;">
+                            <span
+                                style="font-size: 0.85rem; font-family: var(--font-heading); color: var(--text-muted);">ROL
+                                EQUIPADO:</span>
+                            <select id="selectRole"
+                                style="background: rgba(0,0,0,0.5); color: #fff; border: 1px solid var(--border-color); padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); font-family: var(--font-heading); font-weight: 700; cursor: pointer;">
                                 <!-- Populated dynamically by unlocked roles -->
                             </select>
                         </div>
-                        <button class="btn-inv-action" id="btnOpenSecretModal" style="border-color: #f1c40f; color: #f1c40f; background: rgba(241,196,15,0.1);">
+                        <button class="btn-inv-action" id="btnOpenSecretModal"
+                            style="border-color: #f1c40f; color: #f1c40f; background: rgba(241,196,15,0.1);">
                             🔑 ACCESO CREADOR (OWNER)
                         </button>
                     </div>
@@ -345,7 +376,8 @@
                         <div class="mission-card" id="cardMissionVip">
                             <div class="mission-card-header">
                                 <span class="role-badge role-vip">💎 RANGO VIP</span>
-                                <span style="font-size: 0.75rem; color: #00f0ff; font-weight: 700;">+20% Valor Venta</span>
+                                <span style="font-size: 0.75rem; color: #00f0ff; font-weight: 700;">+20% Valor
+                                    Venta</span>
                             </div>
                             <div class="mission-list">
                                 <div class="mission-item">
@@ -353,21 +385,27 @@
                                         <span>Abrir 50 Lucky Blocks</span>
                                         <span id="vipProgBlocksText">0/50</span>
                                     </div>
-                                    <div class="mission-progress-bg"><div class="mission-progress-fill" id="vipProgBlocksFill"></div></div>
+                                    <div class="mission-progress-bg">
+                                        <div class="mission-progress-fill" id="vipProgBlocksFill"></div>
+                                    </div>
                                 </div>
                                 <div class="mission-item">
                                     <div class="mission-label">
                                         <span>Acumular 5,000 Coins totales</span>
                                         <span id="vipProgCoinsText">0/5,000</span>
                                     </div>
-                                    <div class="mission-progress-bg"><div class="mission-progress-fill" id="vipProgCoinsFill"></div></div>
+                                    <div class="mission-progress-bg">
+                                        <div class="mission-progress-fill" id="vipProgCoinsFill"></div>
+                                    </div>
                                 </div>
                                 <div class="mission-item">
                                     <div class="mission-label">
                                         <span>Alcanzar el Nivel 5</span>
                                         <span id="vipProgLevelText">Niv 1/5</span>
                                     </div>
-                                    <div class="mission-progress-bg"><div class="mission-progress-fill" id="vipProgLevelFill"></div></div>
+                                    <div class="mission-progress-bg">
+                                        <div class="mission-progress-fill" id="vipProgLevelFill"></div>
+                                    </div>
                                 </div>
                             </div>
                             <button class="btn-claim-role" id="btnClaimVipRole" disabled>RECLAMAR RANGO VIP</button>
@@ -377,7 +415,8 @@
                         <div class="mission-card" id="cardMissionAdmin">
                             <div class="mission-card-header">
                                 <span class="role-badge role-admin">⚡ RANGO ADMIN</span>
-                                <span style="font-size: 0.75rem; color: #ff0055; font-weight: 700;">Multiplicador XP x2</span>
+                                <span style="font-size: 0.75rem; color: #ff0055; font-weight: 700;">Multiplicador XP
+                                    x2</span>
                             </div>
                             <div class="mission-list">
                                 <div class="mission-item">
@@ -385,21 +424,27 @@
                                         <span>Abrir 250 Lucky Blocks</span>
                                         <span id="adminProgBlocksText">0/250</span>
                                     </div>
-                                    <div class="mission-progress-bg"><div class="mission-progress-fill" id="adminProgBlocksFill"></div></div>
+                                    <div class="mission-progress-bg">
+                                        <div class="mission-progress-fill" id="adminProgBlocksFill"></div>
+                                    </div>
                                 </div>
                                 <div class="mission-item">
                                     <div class="mission-label">
                                         <span>Obtener 1 ítem Legendario o Superior</span>
                                         <span id="adminProgLegText">0/1</span>
                                     </div>
-                                    <div class="mission-progress-bg"><div class="mission-progress-fill" id="adminProgLegFill"></div></div>
+                                    <div class="mission-progress-bg">
+                                        <div class="mission-progress-fill" id="adminProgLegFill"></div>
+                                    </div>
                                 </div>
                                 <div class="mission-item">
                                     <div class="mission-label">
                                         <span>Alcanzar el Nivel 15</span>
                                         <span id="adminProgLevelText">Niv 1/15</span>
                                     </div>
-                                    <div class="mission-progress-bg"><div class="mission-progress-fill" id="adminProgLevelFill"></div></div>
+                                    <div class="mission-progress-bg">
+                                        <div class="mission-progress-fill" id="adminProgLevelFill"></div>
+                                    </div>
                                 </div>
                             </div>
                             <button class="btn-claim-role" id="btnClaimAdminRole" disabled>RECLAMAR RANGO ADMIN</button>
@@ -421,8 +466,10 @@
                                 </div>
                             </div>
                             <div class="mod-hud-header-actions">
-                                <button class="btn-hud-action cyan" id="btnToggleFloatingModMenu" type="button">📌 DOCK FLOTANTE</button>
-                                <button class="btn-hud-action gold" id="btnOwnerGodModeHeader" type="button">🔥 MODO DIOS</button>
+                                <button class="btn-hud-action cyan" id="btnToggleFloatingModMenu" type="button">📌 DOCK
+                                    FLOTANTE</button>
+                                <button class="btn-hud-action gold" id="btnOwnerGodModeHeader" type="button">🔥 MODO
+                                    DIOS</button>
                             </div>
                         </div>
 
@@ -448,7 +495,7 @@
 
                         <!-- 2-Column Workstation Layout: Sidebar Rail + Main Workspace -->
                         <div class="mod-hud-workstation">
-                            
+
                             <!-- Left Sidebar Rail Navigation -->
                             <nav class="mod-sidebar-rail">
                                 <button class="mod-rail-btn active" data-mod-tab="levels" type="button">
@@ -498,18 +545,25 @@
                                             <span class="card-icon">⚡</span>
                                             <div>
                                                 <h5 class="card-title">INYECTOR RÁPIDO DE NIVELES</h5>
-                                                <p class="card-subtitle">Haz clic en cualquier preset para agregar niveles instantáneamente a tu cuenta.</p>
+                                                <p class="card-subtitle">Haz clic en cualquier preset para agregar
+                                                    niveles instantáneamente a tu cuenta.</p>
                                             </div>
                                         </div>
                                         <div class="mod-chips-grid">
                                             <button class="mod-chip-btn" id="chipLvl1" type="button">+1 Nivel</button>
                                             <button class="mod-chip-btn" id="chipLvl5" type="button">+5 Niveles</button>
-                                            <button class="mod-chip-btn" id="chipLvl10" type="button">+10 Niveles</button>
-                                            <button class="mod-chip-btn" id="chipLvl50" type="button">+50 Niveles</button>
-                                            <button class="mod-chip-btn highlight" id="chipLvl100" type="button">+100 Niveles</button>
-                                            <button class="mod-chip-btn highlight" id="chipLvl1k" type="button">+1,000 Niveles</button>
-                                            <button class="mod-chip-btn epic" id="chipLvl10k" type="button">+10,000 Niveles</button>
-                                            <button class="mod-chip-btn legendary" id="chipLvl100k" type="button">+100,000 Niveles</button>
+                                            <button class="mod-chip-btn" id="chipLvl10" type="button">+10
+                                                Niveles</button>
+                                            <button class="mod-chip-btn" id="chipLvl50" type="button">+50
+                                                Niveles</button>
+                                            <button class="mod-chip-btn highlight" id="chipLvl100" type="button">+100
+                                                Niveles</button>
+                                            <button class="mod-chip-btn highlight" id="chipLvl1k" type="button">+1,000
+                                                Niveles</button>
+                                            <button class="mod-chip-btn epic" id="chipLvl10k" type="button">+10,000
+                                                Niveles</button>
+                                            <button class="mod-chip-btn legendary" id="chipLvl100k"
+                                                type="button">+100,000 Niveles</button>
                                         </div>
                                     </div>
 
@@ -518,23 +572,29 @@
                                             <span class="card-icon">⚙️</span>
                                             <div>
                                                 <h5 class="card-title">CANTIDAD DE NIVELES PERSONALIZADA</h5>
-                                                <p class="card-subtitle">Ingresa una cantidad precisa para añadir a tu nivel actual o establecerlo directamente.</p>
+                                                <p class="card-subtitle">Ingresa una cantidad precisa para añadir a tu
+                                                    nivel actual o establecerlo directamente.</p>
                                             </div>
                                         </div>
                                         <div class="mod-input-stepper-row">
                                             <div class="stepper-wrap">
                                                 <button class="btn-step-adj" id="btnStepDecLvl" type="button">-</button>
-                                                <input type="number" id="customLevelInput" value="1000" min="1" max="9999999">
+                                                <input type="number" id="customLevelInput" value="1000" min="1"
+                                                    max="9999999">
                                                 <button class="btn-step-adj" id="btnStepIncLvl" type="button">+</button>
                                             </div>
-                                            <button class="btn-mod-action primary" id="btnApplyCustomAddLevels" type="button">⚡ AÑADIR NIVELES</button>
-                                            <button class="btn-mod-action secondary" id="btnApplyCustomSetLevel" type="button">⚙️ FIJAR NIVEL EXACTO</button>
+                                            <button class="btn-mod-action primary" id="btnApplyCustomAddLevels"
+                                                type="button">⚡ AÑADIR NIVELES</button>
+                                            <button class="btn-mod-action secondary" id="btnApplyCustomSetLevel"
+                                                type="button">⚙️ FIJAR NIVEL EXACTO</button>
                                         </div>
                                     </div>
 
                                     <div class="mod-actions-row">
-                                        <button class="btn-mod-action gold" id="btnMaxOutLevel" type="button">👑 NIVEL MÁXIMO (999,999)</button>
-                                        <button class="btn-mod-action danger" id="btnResetLevel" type="button">🔄 REINICIAR A NIVEL 1</button>
+                                        <button class="btn-mod-action gold" id="btnMaxOutLevel" type="button">👑 NIVEL
+                                            MÁXIMO (999,999)</button>
+                                        <button class="btn-mod-action danger" id="btnResetLevel" type="button">🔄
+                                            REINICIAR A NIVEL 1</button>
                                     </div>
                                 </div>
 
@@ -545,16 +605,23 @@
                                             <span class="card-icon">💰</span>
                                             <div>
                                                 <h5 class="card-title">INYECCIÓN DE COINS PRESET</h5>
-                                                <p class="card-subtitle">Selecciona un paquete de monedas para acreditarlo instantáneamente.</p>
+                                                <p class="card-subtitle">Selecciona un paquete de monedas para
+                                                    acreditarlo instantáneamente.</p>
                                             </div>
                                         </div>
                                         <div class="mod-chips-grid">
-                                            <button class="mod-chip-btn" id="chipCoin50k" type="button">+50,000 💰</button>
-                                            <button class="mod-chip-btn" id="chipCoin500k" type="button">+500,000 💰</button>
-                                            <button class="mod-chip-btn highlight" id="chipCoin1m" type="button">+1,000,000 💰</button>
-                                            <button class="mod-chip-btn highlight" id="chipCoin10m" type="button">+10,000,000 💰</button>
-                                            <button class="mod-chip-btn epic" id="chipCoin100m" type="button">+100,000,000 💰</button>
-                                            <button class="mod-chip-btn legendary" id="chipCoin1b" type="button">+1,000,000,000 💰 (1B)</button>
+                                            <button class="mod-chip-btn" id="chipCoin50k" type="button">+50,000
+                                                💰</button>
+                                            <button class="mod-chip-btn" id="chipCoin500k" type="button">+500,000
+                                                💰</button>
+                                            <button class="mod-chip-btn highlight" id="chipCoin1m"
+                                                type="button">+1,000,000 💰</button>
+                                            <button class="mod-chip-btn highlight" id="chipCoin10m"
+                                                type="button">+10,000,000 💰</button>
+                                            <button class="mod-chip-btn epic" id="chipCoin100m"
+                                                type="button">+100,000,000 💰</button>
+                                            <button class="mod-chip-btn legendary" id="chipCoin1b"
+                                                type="button">+1,000,000,000 💰 (1B)</button>
                                         </div>
                                     </div>
 
@@ -563,16 +630,21 @@
                                             <span class="card-icon">💎</span>
                                             <div>
                                                 <h5 class="card-title">INYECCIÓN CUSTOM & SALDO INFINITO</h5>
-                                                <p class="card-subtitle">Personaliza la inyección o activa coins ilimitadas.</p>
+                                                <p class="card-subtitle">Personaliza la inyección o activa coins
+                                                    ilimitadas.</p>
                                             </div>
                                         </div>
                                         <div class="mod-input-stepper-row">
-                                            <input type="number" id="customCoinInput" placeholder="Cantidad de coins..." value="5000000" min="1">
-                                            <button class="btn-mod-action primary" id="btnApplyCustomCoins" type="button">💰 INYECTAR COINS</button>
-                                            <button class="btn-mod-action secondary" id="btnApplySetCoins" type="button">⚙️ FIJAR SALDO</button>
+                                            <input type="number" id="customCoinInput" placeholder="Cantidad de coins..."
+                                                value="5000000" min="1">
+                                            <button class="btn-mod-action primary" id="btnApplyCustomCoins"
+                                                type="button">💰 INYECTAR COINS</button>
+                                            <button class="btn-mod-action secondary" id="btnApplySetCoins"
+                                                type="button">⚙️ FIJAR SALDO</button>
                                         </div>
                                         <div style="margin-top:0.75rem;">
-                                            <button class="btn-mod-action gold" id="btnInfiniteCoins" type="button" style="width:100%;">💎 SALDO INFINITO (999 TRILLONES)</button>
+                                            <button class="btn-mod-action gold" id="btnInfiniteCoins" type="button"
+                                                style="width:100%;">💎 SALDO INFINITO (999 TRILLONES)</button>
                                         </div>
                                     </div>
                                 </div>
@@ -584,10 +656,11 @@
                                             <span class="card-icon">🎯</span>
                                             <div>
                                                 <h5 class="card-title">DROP SPOOFER (RNG OVERRIDE)</h5>
-                                                <p class="card-subtitle">Fuerza a la Lucky Box a soltar la rareza que selecciones en cada apertura.</p>
+                                                <p class="card-subtitle">Fuerza a la Lucky Box a soltar la rareza que
+                                                    selecciones en cada apertura.</p>
                                             </div>
                                         </div>
-                                        
+
                                         <!-- Visual Rarity Selector Cards -->
                                         <div class="spoofer-cards-grid">
                                             <div class="spoofer-card active" data-spoofer="OFF">
@@ -630,19 +703,24 @@
                                             <span class="card-icon">🎁</span>
                                             <div>
                                                 <h5 class="card-title">SPAWNER DIRECTO A INVENTARIO</h5>
-                                                <p class="card-subtitle">Genera cualquier objeto del juego directamente en tu inventario sin abrir cajas.</p>
+                                                <p class="card-subtitle">Genera cualquier objeto del juego directamente
+                                                    en tu inventario sin abrir cajas.</p>
                                             </div>
                                         </div>
                                         <div class="mod-input-stepper-row">
                                             <select id="modItemSpawnerSelect" class="mod-select"></select>
-                                            <input type="number" id="modItemSpawnQty" value="1" min="1" max="100" style="width: 70px;">
-                                            <button class="btn-mod-action primary" id="btnSpawnSelectedItem" type="button">🎁 SPAWNEAR ÍTEM</button>
+                                            <input type="number" id="modItemSpawnQty" value="1" min="1" max="100"
+                                                style="width: 70px;">
+                                            <button class="btn-mod-action primary" id="btnSpawnSelectedItem"
+                                                type="button">🎁 SPAWNEAR ÍTEM</button>
                                         </div>
                                     </div>
 
                                     <div class="mod-actions-row">
-                                        <button class="btn-mod-action epic" id="btnOwnerMaxPity" type="button">🛡️ CARGAR PITY AL 100%</button>
-                                        <button class="btn-mod-action gold" id="btnOwnerOmniItem" type="button">✨ RECOGER OMNISCIENTE INSTANTÁNEO</button>
+                                        <button class="btn-mod-action epic" id="btnOwnerMaxPity" type="button">🛡️
+                                            CARGAR PITY AL 100%</button>
+                                        <button class="btn-mod-action gold" id="btnOwnerOmniItem" type="button">✨
+                                            RECOGER OMNISCIENTE INSTANTÁNEO</button>
                                     </div>
                                 </div>
 
@@ -653,7 +731,8 @@
                                             <span class="card-icon">⚡</span>
                                             <div>
                                                 <h5 class="card-title">VELOCIDAD DE AUTO-CLICKER HYPER</h5>
-                                                <p class="card-subtitle">Ajusta los milisegundos de intervalo de la auto-apertura.</p>
+                                                <p class="card-subtitle">Ajusta los milisegundos de intervalo de la
+                                                    auto-apertura.</p>
                                             </div>
                                         </div>
                                         <div class="speed-dial-grid">
@@ -681,20 +760,27 @@
                                             <span class="card-icon">🎁</span>
                                             <div>
                                                 <h5 class="card-title">APERTURA EN LOTE INSTANTÁNEA</h5>
-                                                <p class="card-subtitle">Abre decenas de cajas premium al instante y recoge sus drops.</p>
+                                                <p class="card-subtitle">Abre decenas de cajas premium al instante y
+                                                    recoge sus drops.</p>
                                             </div>
                                         </div>
                                         <div class="mod-actions-row">
-                                            <button class="btn-mod-action primary" id="btnBatchOpen10" type="button">🎁 ABRIR 10x CAJAS</button>
-                                            <button class="btn-mod-action epic" id="btnBatchOpen50" type="button">🎁 ABRIR 50x CAJAS</button>
-                                            <button class="btn-mod-action legendary" id="btnBatchOpen100" type="button">🎁 ABRIR 100x CAJAS</button>
+                                            <button class="btn-mod-action primary" id="btnBatchOpen10" type="button">🎁
+                                                ABRIR 10x CAJAS</button>
+                                            <button class="btn-mod-action epic" id="btnBatchOpen50" type="button">🎁
+                                                ABRIR 50x CAJAS</button>
+                                            <button class="btn-mod-action legendary" id="btnBatchOpen100"
+                                                type="button">🎁 ABRIR 100x CAJAS</button>
                                         </div>
                                     </div>
 
                                     <div class="mod-actions-row">
-                                        <button class="btn-mod-action gold" id="btnOwnerMaxUpgrades" type="button">🚀 MAXIMIZAR MEJORAS</button>
-                                        <button class="btn-mod-action primary" id="btnOwnerUnlockAll" type="button">🔓 UNLOCK SKINS & TEMAS</button>
-                                        <button class="btn-mod-action danger" id="btnOwnerGodMode" type="button">🔥 ACTIVAR MODO DIOS COMPLETO</button>
+                                        <button class="btn-mod-action gold" id="btnOwnerMaxUpgrades" type="button">🚀
+                                            MAXIMIZAR MEJORAS</button>
+                                        <button class="btn-mod-action primary" id="btnOwnerUnlockAll" type="button">🔓
+                                            UNLOCK SKINS & TEMAS</button>
+                                        <button class="btn-mod-action danger" id="btnOwnerGodMode" type="button">🔥
+                                            ACTIVAR MODO DIOS COMPLETO</button>
                                     </div>
                                 </div>
 
@@ -705,12 +791,15 @@
                                             <span class="card-icon">📢</span>
                                             <div>
                                                 <h5 class="card-title">ANUNCIO GLOBAL DE SERVIDOR</h5>
-                                                <p class="card-subtitle">Publica un mensaje con distintivo de Creador para todos los jugadores conectados.</p>
+                                                <p class="card-subtitle">Publica un mensaje con distintivo de Creador
+                                                    para todos los jugadores conectados.</p>
                                             </div>
                                         </div>
                                         <div class="mod-input-stepper-row">
-                                            <input type="text" id="modBroadcastInput" placeholder="Mensaje para el servidor global...">
-                                            <button class="btn-mod-action gold" id="btnSendServerBroadcast" type="button">📢 EMITIR ANUNCIO</button>
+                                            <input type="text" id="modBroadcastInput"
+                                                placeholder="Mensaje para el servidor global...">
+                                            <button class="btn-mod-action gold" id="btnSendServerBroadcast"
+                                                type="button">📢 EMITIR ANUNCIO</button>
                                         </div>
                                     </div>
 
@@ -719,13 +808,16 @@
                                             <span class="card-icon">🔮</span>
                                             <div>
                                                 <h5 class="card-title">SIMULADOR DE DROP FALSO EN CHAT</h5>
-                                                <p class="card-subtitle">Simula la obtención de un ítem legendario u omnisciente en el chat global.</p>
+                                                <p class="card-subtitle">Simula la obtención de un ítem legendario u
+                                                    omnisciente en el chat global.</p>
                                             </div>
                                         </div>
                                         <div class="mod-input-stepper-row">
-                                            <input type="text" id="modFakeDropUser" placeholder="Jugador falso" value="Xx_Owner_xX" style="width:120px;">
+                                            <input type="text" id="modFakeDropUser" placeholder="Jugador falso"
+                                                value="Xx_Owner_xX" style="width:120px;">
                                             <select id="modFakeDropSelect" class="mod-select"></select>
-                                            <button class="btn-mod-action epic" id="btnSendFakeDrop" type="button">🔮 SIMULAR DROP</button>
+                                            <button class="btn-mod-action epic" id="btnSendFakeDrop" type="button">🔮
+                                                SIMULAR DROP</button>
                                         </div>
                                     </div>
 
@@ -734,15 +826,18 @@
                                             <span class="card-icon">🎁</span>
                                             <div>
                                                 <h5 class="card-title">REGALOS A JUGADORES EN LÍNEA</h5>
-                                                <p class="card-subtitle">Selecciona a un jugador activo para enviarle monedas o niveles gratis.</p>
+                                                <p class="card-subtitle">Selecciona a un jugador activo para enviarle
+                                                    monedas o niveles gratis.</p>
                                             </div>
                                         </div>
                                         <div class="mod-input-stepper-row">
                                             <select id="modOnlinePlayersSelect" class="mod-select">
                                                 <option value="">-- Seleccionar Jugador Online --</option>
                                             </select>
-                                            <button class="btn-mod-action primary" id="btnGiftCoinsPlayer" type="button">💰 Regalar 1M</button>
-                                            <button class="btn-mod-action secondary" id="btnGiftLevelsPlayer" type="button">⚡ Regalar 100 Niv</button>
+                                            <button class="btn-mod-action primary" id="btnGiftCoinsPlayer"
+                                                type="button">💰 Regalar 1M</button>
+                                            <button class="btn-mod-action secondary" id="btnGiftLevelsPlayer"
+                                                type="button">⚡ Regalar 100 Niv</button>
                                         </div>
                                     </div>
                                 </div>
@@ -757,7 +852,8 @@
                             <span class="floating-mod-title">⚡ OWNER MOD MENU HUD v4.0</span>
                             <div class="floating-mod-controls">
                                 <button class="btn-float-control" id="btnMinimizeFloatingMod" type="button">—</button>
-                                <button class="btn-float-control close" id="btnCloseFloatingMod" type="button">✖</button>
+                                <button class="btn-float-control close" id="btnCloseFloatingMod"
+                                    type="button">✖</button>
                             </div>
                         </div>
                         <div class="floating-mod-content" id="floatingModContent">
@@ -771,7 +867,8 @@
                                 <button class="mod-chip-btn epic" id="floatCoin100m" type="button">+100M Coins</button>
                             </div>
                             <div class="floating-quick-row" style="margin-top:0.4rem;">
-                                <select id="floatingDropRarityOverride" class="mod-select" style="font-size:0.75rem; padding:0.25rem;">
+                                <select id="floatingDropRarityOverride" class="mod-select"
+                                    style="font-size:0.75rem; padding:0.25rem;">
                                     <option value="OFF">Drop: Normal</option>
                                     <option value="Omnisciente">Drop: 100% Omnisciente</option>
                                     <option value="Secret">Drop: 100% Secret</option>
@@ -779,8 +876,10 @@
                                 </select>
                             </div>
                             <div class="floating-quick-row" style="margin-top:0.4rem;">
-                                <button class="btn-mod-action gold" id="floatBatchOpen10" type="button" style="font-size:0.75rem; padding:0.3rem;">🎁 10x Open</button>
-                                <button class="btn-mod-action danger" id="floatGodMode" type="button" style="font-size:0.75rem; padding:0.3rem;">🔥 God Mode</button>
+                                <button class="btn-mod-action gold" id="floatBatchOpen10" type="button"
+                                    style="font-size:0.75rem; padding:0.3rem;">🎁 10x Open</button>
+                                <button class="btn-mod-action danger" id="floatGodMode" type="button"
+                                    style="font-size:0.75rem; padding:0.3rem;">🔥 God Mode</button>
                             </div>
                         </div>
                     </div>
@@ -800,7 +899,8 @@
                         </div>
                         <div class="stat-box">
                             <span class="stat-label">Ítem Más Valioso</span>
-                            <span class="stat-value-big" id="statBestItem" style="font-size: 1.1rem; color: #f1c40f;">Ninguno</span>
+                            <span class="stat-value-big" id="statBestItem"
+                                style="font-size: 1.1rem; color: #f1c40f;">Ninguno</span>
                         </div>
                         <div class="stat-box">
                             <span class="stat-label">Drops Omniscientes</span>
@@ -819,7 +919,8 @@
                     <div class="danger-zone">
                         <div>
                             <h4 style="font-family: var(--font-heading); color: #ff0055;">ZONA DE PELIGRO</h4>
-                            <p style="font-size: 0.8rem; color: var(--text-muted);">Reiniciar todo el progreso del juego y borrar los datos de localStorage.</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted);">Reiniciar todo el progreso del juego
+                                y borrar los datos de localStorage.</p>
                         </div>
                         <button class="btn-reset-data" id="btnResetData">REINICIAR DATOS</button>
                     </div>
@@ -864,11 +965,14 @@
     <div class="modal-backdrop" id="secretModal">
         <div class="modal-box">
             <h3 style="font-family: var(--font-heading); color: #f1c40f;">🔑 CLAVE DE CREADOR</h3>
-            <p style="font-size: 0.85rem; color: var(--text-muted);">Ingresa la clave secreta de Owner para desbloquear el Rango Creador y la consola de comandos.</p>
-            <input type="password" id="inputSecretKey" placeholder="Ingresa la clave..." style="background: rgba(0,0,0,0.4); border: 1px solid var(--primary); color: #fff; padding: 0.8rem; border-radius: var(--radius-sm); font-family: var(--font-heading); font-size: 1rem; text-align: center;">
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Ingresa la clave secreta de Owner para desbloquear
+                el Rango Creador y la consola de comandos.</p>
+            <input type="password" id="inputSecretKey" placeholder="Ingresa la clave..."
+                style="background: rgba(0,0,0,0.4); border: 1px solid var(--primary); color: #fff; padding: 0.8rem; border-radius: var(--radius-sm); font-family: var(--font-heading); font-size: 1rem; text-align: center;">
             <div style="display: flex; gap: 0.8rem;">
                 <button class="btn-inv-action" id="btnCloseSecretModal" style="flex: 1;">CANCELAR</button>
-                <button class="btn-save-name" id="btnSubmitSecretKey" style="flex: 1; background: #f1c40f; color: #000;">VERIFICAR</button>
+                <button class="btn-save-name" id="btnSubmitSecretKey"
+                    style="flex: 1; background: #f1c40f; color: #000;">VERIFICAR</button>
             </div>
             <span style="font-size: 0.7rem; color: var(--text-dim);">PISTA CREADOR: 12 16 y el Año presente</span>
         </div>
@@ -878,20 +982,30 @@
     <div class="modal-backdrop" id="tradeInviteModal">
         <div class="modal-box" style="border: 2px solid #f1c40f; box-shadow: 0 0 35px rgba(241, 196, 15, 0.4);">
             <div style="display: flex; align-items: center; gap: 1rem;">
-                <div id="tradeInviteAvatar" style="width: 55px; height: 55px; border-radius: 50%; background: linear-gradient(135deg, #f1c40f, #ff0055); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 900; font-family: var(--font-heading);">⚡</div>
+                <div id="tradeInviteAvatar"
+                    style="width: 55px; height: 55px; border-radius: 50%; background: linear-gradient(135deg, #f1c40f, #ff0055); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: 900; font-family: var(--font-heading);">
+                    ⚡</div>
                 <div>
-                    <h3 style="font-family: var(--font-heading); color: #f1c40f; font-size: 1.1rem; margin-bottom: 0.2rem;">🤝 SOLICITUD DE INTERCAMBIO</h3>
-                    <p style="font-size: 0.85rem; color: #fff;" id="tradeInviteText"><strong>Jugador</strong> te invita a comerciar estilo Adopt Me.</p>
+                    <h3
+                        style="font-family: var(--font-heading); color: #f1c40f; font-size: 1.1rem; margin-bottom: 0.2rem;">
+                        🤝 SOLICITUD DE INTERCAMBIO</h3>
+                    <p style="font-size: 0.85rem; color: #fff;" id="tradeInviteText"><strong>Jugador</strong> te invita
+                        a comerciar estilo Adopt Me.</p>
                 </div>
             </div>
-            
-            <p style="font-size: 0.8rem; color: var(--text-muted); background: rgba(0,0,0,0.3); padding: 0.6rem; border-radius: var(--radius-sm);">
-                Podrán añadir hasta <strong>4 ítems</strong> simultáneos y verlos en vivo en pantalla antes de confirmar.
+
+            <p
+                style="font-size: 0.8rem; color: var(--text-muted); background: rgba(0,0,0,0.3); padding: 0.6rem; border-radius: var(--radius-sm);">
+                Podrán añadir hasta <strong>4 ítems</strong> simultáneos y verlos en vivo en pantalla antes de
+                confirmar.
             </p>
 
             <div style="display: flex; gap: 0.8rem; margin-top: 0.5rem;">
-                <button class="btn-inv-action" id="btnRejectInvite" style="flex: 1; background: rgba(255, 0, 85, 0.2); border-color: #ff0055; color: #ff0055; padding: 0.8rem;">RECHAZAR</button>
-                <button class="btn-save-name" id="btnAcceptInvite" style="flex: 1; background: #2ecc71; color: #000; font-weight: 900; font-size: 0.95rem; padding: 0.8rem;">¡ACEPTAR TRADE!</button>
+                <button class="btn-inv-action" id="btnRejectInvite"
+                    style="flex: 1; background: rgba(255, 0, 85, 0.2); border-color: #ff0055; color: #ff0055; padding: 0.8rem;">RECHAZAR</button>
+                <button class="btn-save-name" id="btnAcceptInvite"
+                    style="flex: 1; background: #2ecc71; color: #000; font-weight: 900; font-size: 0.95rem; padding: 0.8rem;">¡ACEPTAR
+                    TRADE!</button>
             </div>
         </div>
     </div>
@@ -950,7 +1064,8 @@
                 <button class="btn-adoptme-accept" id="btnAdoptMeAccept">ACEPTAR OFERTA</button>
 
                 <div class="adoptme-countdown-box" id="adoptMeCountdownBox">
-                    <span style="font-family: var(--font-heading); font-size: 0.95rem; color: #f1c40f;" id="adoptMeTimerText">🔒 TIEMPO DE SEGURIDAD: 5s...</span>
+                    <span style="font-family: var(--font-heading); font-size: 0.95rem; color: #f1c40f;"
+                        id="adoptMeTimerText">🔒 TIEMPO DE SEGURIDAD: 5s...</span>
                     <div class="adoptme-timer-bar" id="adoptMeTimerBar"></div>
                 </div>
 
@@ -959,5 +1074,5 @@
         </div>
     </div>
 </body>
-</html>
 
+</html>

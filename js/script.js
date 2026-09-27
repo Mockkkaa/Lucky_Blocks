@@ -1,28 +1,28 @@
 const LOOT_TABLE = [
             // Common (49.99%)
-            { id: 'c1', name: 'Espada de Madera', rarity: 'Common', emoji: '🗡️', baseValue: 10 },
-            { id: 'c2', name: 'Armadura de Cuero', rarity: 'Common', emoji: '👘', baseValue: 8 },
-            { id: 'c3', name: 'Pico de Piedra', rarity: 'Common', emoji: '⛏️', baseValue: 12 },
-            { id: 'c4', name: 'Pan de Centeno', rarity: 'Common', emoji: '🍞', baseValue: 5 },
-            { id: 'c5', name: 'Cuerda Resistente', rarity: 'Common', emoji: '🪢', baseValue: 7 },
+            { id: 'c1', name: 'Espada de Madera', rarity: 'Common', image: 'images/Comun/Espada_Madera.jpg', emoji: '🗡️', baseValue: 10 },
+            { id: 'c2', name: 'Armadura de Cuero', rarity: 'Common', image: 'images/Comun/Armadura_Cuero.jpg', emoji: '👘', baseValue: 8 },
+            { id: 'c3', name: 'Pico de Piedra', rarity: 'Common', image: 'images/Comun/Pico_Madera.jpg', emoji: '⛏️', baseValue: 12 },
+            { id: 'c4', name: 'Pan de Centeno', rarity: 'Common', image: 'images/Comun/Pan_Centeno.jpg', emoji: '🍞', baseValue: 5 },
+            { id: 'c5', name: 'Cuerda Resistente', rarity: 'Common', image: 'images/Comun/Cuerda_Resistente.jpg', emoji: '🪢', baseValue: 7 },
 
             // Uncommon (25.00%)
-            { id: 'u1', name: 'Poción Slime', rarity: 'Uncommon', emoji: '🧪', baseValue: 50 },
-            { id: 'u2', name: 'Escudo de Hierro', rarity: 'Uncommon', emoji: '🛡️', baseValue: 45 },
-            { id: 'u3', name: 'Flecha de Plata', rarity: 'Uncommon', emoji: '🏹', baseValue: 40 },
-            { id: 'u4', name: 'Botas de Velocidad', rarity: 'Uncommon', emoji: '👟', baseValue: 60 },
+            { id: 'u1', name: 'Poción Slime', rarity: 'Uncommon', image: 'images/Poco comun/Pocion_Slime.jpg', emoji: '🧪', baseValue: 50 },
+            { id: 'u2', name: 'Escudo de Hierro', rarity: 'Uncommon', image: 'images/Poco comun/Escudo_Hierro.jpg', emoji: '🛡️', baseValue: 45 },
+            { id: 'u3', name: 'Flecha de Plata', rarity: 'Uncommon', image: 'images/Poco comun/Flecha_Plata.jpg', emoji: '🏹', baseValue: 40 },
+            { id: 'u4', name: 'Botas de Velocidad', rarity: 'Uncommon', image: 'images/Poco comun/Botas_Velocidad.jpg', emoji: '👟', baseValue: 60 },
 
             // Rare (15.00%)
-            { id: 'r1', name: 'Anillo Mágico', rarity: 'Rare', emoji: '💍', baseValue: 200 },
-            { id: 'r2', name: 'Arco Encantado', rarity: 'Rare', emoji: '🏹', baseValue: 180 },
-            { id: 'r3', name: 'Varita de Cristal', rarity: 'Rare', emoji: '🪄', baseValue: 220 },
-            { id: 'r4', name: 'Manto de Sombras', rarity: 'Rare', emoji: '🧥', baseValue: 250 },
+            { id: 'r1', name: 'Anillo Mágico', rarity: 'Rare', image: 'images/Raro/Anillo_Magico.jpg', emoji: '💍', baseValue: 200 },
+            { id: 'r2', name: 'Arco Encantado', rarity: 'Rare', image: 'images/Raro/Arco_Encantado.jpg', emoji: '🏹', baseValue: 180 },
+            { id: 'r3', name: 'Varita de Cristal', rarity: 'Rare', image: 'images/Raro/Varita_Cristal.jpg', emoji: '🪄', baseValue: 220 },
+            { id: 'r4', name: 'Manto de Sombras', rarity: 'Rare', image: 'images/Raro/Manto_Sombra.jpg', emoji: '🧥', baseValue: 250 },
 
             // Epic (7.00%)
-            { id: 'e1', name: 'Hoja de Plasma', rarity: 'Epic', emoji: '⚔️', baseValue: 1000 },
-            { id: 'e2', name: 'Escama de Dragón', rarity: 'Epic', emoji: '🐉', baseValue: 900 },
-            { id: 'e3', name: 'Martillo de Tormenta', rarity: 'Epic', emoji: '🔨', baseValue: 1100 },
-            { id: 'e4', name: 'Orbe del Vacío', rarity: 'Epic', emoji: '🔮', baseValue: 1200 },
+            { id: 'e1', name: 'Hoja de Plasma', rarity: 'Epic', image: 'images/Epico/Hoja_Plasma.jpg', emoji: '⚔️', baseValue: 1000 },
+            { id: 'e2', name: 'Escama de Dragón', rarity: 'Epic', image: 'images/Epico/Escama_Dragon.jpg', emoji: '🐉', baseValue: 900 },
+            { id: 'e3', name: 'Martillo de Tormenta', rarity: 'Epic', image: 'images/Epico/Martillo_Tormenta.jpg', emoji: '🔨', baseValue: 1100 },
+            { id: 'e4', name: 'Orbe del Vacío', rarity: 'Epic', image: 'images/Epico/Orbe_Vacio.jpg', emoji: '🔮', baseValue: 1200 },
 
             // Legendary (2.50%)
             { id: 'l1', name: 'Corona Dorada', rarity: 'Legendary', emoji: '👑', baseValue: 5000 },
@@ -35,9 +35,22 @@ const LOOT_TABLE = [
             { id: 'm3', name: 'Reliquia Ancestral', rarity: 'Mythic', emoji: '⚱️', baseValue: 28000 },
 
             // Omnisciente (0.01%)
-            { id: 'o1', name: 'Artefacto Cósmico', rarity: 'Omnisciente', emoji: '✨', baseValue: 100000 },
-            { id: 'o2', name: 'Cristal del Universo', rarity: 'Omnisciente', emoji: '🌌', baseValue: 150000 }
+            { id: 'o1', name: 'Artefacto Cósmico', rarity: 'Omnisciente', image: 'images/Omnisciente/Artefacto_Cosmico.jpg', emoji: '✨', baseValue: 100000 },
+            { id: 'o2', name: 'Cristal del Universo', rarity: 'Omnisciente', image: 'images/Omnisciente/Cristal_Universo.jpg', emoji: '🌌', baseValue: 150000 }
         ];
+
+        function getItemIcon(item, extraClass = '') {
+            if (!item) return '📦';
+            const lootDef = LOOT_TABLE.find(i => i.id === item.id || i.name === item.name);
+            const imagePath = item.image || (lootDef && lootDef.image);
+            const emojiIcon = item.emoji || (lootDef && lootDef.emoji) || '📦';
+
+            if (imagePath) {
+                if (imagePath.startsWith('<img')) return imagePath;
+                return `<img src="${imagePath}" alt="" class="item-icon-img ${extraClass}" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='inline';"><span class="fallback-emoji" style="display:none;">${emojiIcon}</span>`;
+            }
+            return emojiIcon;
+        }
 
         const SKINS_DATA = [
             { id: 'classic', name: 'Clásico', icon: '⭐', cost: 0, reqLevel: 1 },
@@ -97,6 +110,14 @@ const LOOT_TABLE = [
                 if (saved) {
                     const parsed = JSON.parse(saved);
                     state = { ...DEFAULT_STATE, ...parsed };
+                    if (state.inventory && Array.isArray(state.inventory)) {
+                        state.inventory.forEach(item => {
+                            const lootDef = LOOT_TABLE.find(i => i.id === item.id || i.name === item.name);
+                            if (lootDef && lootDef.image) {
+                                item.image = lootDef.image;
+                            }
+                        });
+                    }
                 }
                 ensureMissionsInitialized();
             } catch (e) {
@@ -969,7 +990,7 @@ const LOOT_TABLE = [
             empty.style.display = 'none';
             content.style.display = 'block';
 
-            document.getElementById('revealEmoji').textContent = item.emoji;
+            document.getElementById('revealEmoji').innerHTML = getItemIcon(item);
             document.getElementById('revealName').textContent = item.name;
             document.getElementById('revealRarity').textContent = item.rarity;
             document.getElementById('revealValue').textContent = `+${item.sellValue} 💰`;
@@ -1014,7 +1035,7 @@ const LOOT_TABLE = [
             grid.innerHTML = filtered.map(item => `
                 <div class="item-card rarity-${item.rarity}">
                     <span class="item-stack-badge">x${item.count}</span>
-                    <div class="item-card-emoji">${item.emoji}</div>
+                    <div class="item-card-emoji">${getItemIcon(item)}</div>
                     <div class="item-card-name">${item.name}</div>
                     <div class="item-card-rarity">${item.rarity}</div>
                     <div class="item-card-value">${item.sellValue} 💰</div>
@@ -1195,7 +1216,7 @@ const LOOT_TABLE = [
 
         function triggerOmniOverlay(item) {
             const overlay = document.getElementById('omniOverlay');
-            document.getElementById('omniOverlayEmoji').textContent = item.emoji;
+            document.getElementById('omniOverlayEmoji').innerHTML = getItemIcon(item);
             document.getElementById('omniOverlayName').textContent = item.name;
             overlay.classList.add('active');
         }
@@ -2371,4 +2392,4 @@ const LOOT_TABLE = [
                 });
             }
         }
-
+
