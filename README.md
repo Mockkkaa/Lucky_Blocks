@@ -111,3 +111,14 @@ Esta es la arquitectura estandar que utilizan "Juegos" como Slither.io o Agar.io
 ### 📢 9. Feed Global de Hallazgos y Notificaciones
 * **Transmisión en Vivo:** Anuncios automáticos en el chat y feed global cuando un jugador obtiene ítems de rareza *Mythic*, *Omnisciente* o realiza un Prestigio.
 * **Indicador de Estado de Servidor:** Badge visual interactivo (`🟢 Online` / `🔴 Offline`) con contador de usuarios conectados en tiempo real.
+
+### 👁️ Ítems Secretos y Void Drops
+Se han introducido nuevos ítems más allá de la rareza Omnisciente: **Los Secretos**.
+Estos ítems no caen mediante probabilidad normal (RNG), sino que requieren condiciones ocultas para ser descubiertos (ej: tener una mala racha absurda, o haber hecho Prestigio múltiples veces). 
+- `NULL` ⬛
+- `VOID` 🌑
+- `COSMIC GOD` 👁️
+
+### ⚡ Owner Menu & Floating Dock Mejorado
+El Panel de Administrador ha sido reestructurado con una nueva pestaña de "Mecánicas" para forzar y testear todas las funciones nuevas en tiempo real. 
+El **Dock Flotante (Pop-out)** ahora es global, lo que significa que puedes tener tus atajos de Owner siempre visibles en tu pantalla, sin importar en qué pestaña del juego (Jugar, Inventario, Perfil, etc) te encuentres.
