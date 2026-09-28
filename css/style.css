@@ -3868,3 +3868,290 @@
        font-size: 0.85rem;
        cursor: pointer;
    }
+
+/* ==========================================================================
+   LUCK STREAK & PITY BAR STYLING
+   ========================================================================== */
+.luck-streak-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    background: rgba(231, 76, 60, 0.15) !important;
+    border: 1px solid rgba(231, 76, 60, 0.6) !important;
+    padding: 0.6rem 1rem !important;
+    border-radius: var(--radius-sm);
+    margin-bottom: 0.8rem;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.15);
+}
+
+.streak-info-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.streak-text {
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.streak-text strong {
+    color: #ff4d4d;
+    font-size: 1.05rem;
+    margin-left: 0.2rem;
+}
+
+.streak-multiplier-group {
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    color: #f1c40f;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* Pity Counter Bar */
+.pity-wrapper {
+    width: 100%;
+    max-width: 480px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: 0.8rem 1rem;
+    margin-bottom: 1.2rem;
+}
+
+.pity-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-family: var(--font-heading);
+    margin-bottom: 0.5rem;
+    flex-wrap: nowrap;
+}
+
+.pity-title {
+    color: var(--text-main);
+    font-size: 0.78rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+}
+
+.pity-sub {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    font-weight: 400;
+}
+
+.pity-val {
+    color: #f1c40f;
+    font-weight: 800;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    text-shadow: 0 0 8px rgba(241, 196, 15, 0.4);
+    flex-shrink: 0;
+}
+
+.pity-progress-bg {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pity-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f1c40f, #e74c3c);
+    width: 0%;
+    border-radius: var(--radius-full);
+    transition: width var(--transition-normal);
+    box-shadow: 0 0 10px rgba(241, 196, 15, 0.6);
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN OVERHAUL
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    .social-layout {
+        flex-direction: column !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding-bottom: 85px;
+    }
+
+    .main-header {
+        flex-direction: column;
+        gap: 0.8rem;
+        padding: 0.8rem 1rem;
+        margin: 0.5rem 0 1rem 0;
+    }
+    
+    .user-summary {
+        width: 100%;
+        gap: 0.8rem;
+    }
+
+    .player-name-display {
+        flex-wrap: wrap;
+        gap: 0.3rem 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .role-badge, .level-badge {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.5rem;
+    }
+    
+    .currency-bar {
+        width: 100%;
+        justify-content: space-between;
+        padding-top: 0.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    
+    .collection-stats {
+        flex-direction: column !important;
+        gap: 0.8rem;
+        align-items: center;
+    }
+    
+    .inventory-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    
+    .inv-actions {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .btn-inv-action {
+        flex: 1;
+        text-align: center;
+    }
+    
+    .open-controls {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.6rem;
+    }
+    
+    .open-controls button {
+        width: 100%;
+    }
+    
+    .game-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-header-edit {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    /* Fixed App-like Mobile Navbar */
+    .navbar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        transform: none;
+        width: 100%;
+        border-radius: 0;
+        border-top: 1px solid rgba(0, 240, 255, 0.2);
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        padding: 0.4rem 0.2rem;
+        background: rgba(10, 13, 20, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        justify-content: space-around;
+        box-shadow: 0 -5px 25px rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+    }
+
+    .nav-btn {
+        flex-direction: column;
+        gap: 0.15rem;
+        padding: 0.35rem 0.1rem;
+        font-size: 0.6rem;
+        border-radius: var(--radius-sm);
+        flex: 1;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .nav-icon {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .multiplayer-row-grid,
+    .missions-grid,
+    .upgrades-grid,
+    .customization-grid,
+    .inventory-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .app-container {
+        padding: 0 0.5rem;
+    }
+    
+    .lucky-stage-card, .side-panel-card, .mod-card {
+        padding: 1rem 0.8rem;
+    }
+    
+    .mod-chips-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .modal-box {
+        padding: 1rem;
+    }
+
+    .luck-streak-banner {
+        font-size: 0.78rem;
+        padding: 0.5rem 0.8rem !important;
+    }
+
+    .pity-title {
+        font-size: 0.72rem;
+    }
+
+    .pity-sub {
+        display: block;
+        width: 100%;
+    }
+
+    .cube-wrapper {
+        width: 150px;
+        height: 150px;
+    }
+
+    .lucky-block-img {
+        width: 130px;
+        height: 130px;
+    }
+}

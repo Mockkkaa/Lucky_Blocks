@@ -52,20 +52,20 @@ const CONFIG = {
     },
     RISK_IT: {
         levels: [
-            { id: 'safe',   name: 'SAFE',   emoji: '🛡️', multiplier: 1.5, winChance: 0.75, loseAll: false, losePercent: 0.50, color: '#2ecc71'  },
-            { id: 'risky',  name: 'RISKY',  emoji: '⚔️', multiplier: 2.5, winChance: 0.55, loseAll: false, losePercent: 1.00, color: '#f39c12'  },
-            { id: 'insane', name: 'INSANE', emoji: '💀', multiplier: 5.0, winChance: 0.35, loseAll: true,  losePercent: 1.00, color: '#e74c3c'  },
-            { id: 'gamble', name: 'GAMBLE', emoji: '🎰', multiplier: 10,  winChance: 0.15, loseAll: true,  losePercent: 1.00, color: '#9b59b6'  }
+            { id: 'safe', name: 'SAFE', emoji: '🛡️', multiplier: 1.5, winChance: 0.75, loseAll: false, losePercent: 0.50, color: '#2ecc71' },
+            { id: 'risky', name: 'RISKY', emoji: '⚔️', multiplier: 2.5, winChance: 0.55, loseAll: false, losePercent: 1.00, color: '#f39c12' },
+            { id: 'insane', name: 'INSANE', emoji: '💀', multiplier: 5.0, winChance: 0.35, loseAll: true, losePercent: 1.00, color: '#e74c3c' },
+            { id: 'gamble', name: 'GAMBLE', emoji: '🎰', multiplier: 10, winChance: 0.15, loseAll: true, losePercent: 1.00, color: '#9b59b6' }
         ]
     },
     COLLECTION_BONUSES: {
-        Common:      { type: 'luck',      value: 0.05,  label: '+5% de Suerte'          },
-        Uncommon:    { type: 'sellValue', value: 0.05,  label: '+5% Valor de Venta'      },
-        Rare:        { type: 'xp',        value: 0.05,  label: '+5% de XP'              },
-        Epic:        { type: 'luck',      value: 0.10,  label: '+10% de Suerte'          },
-        Legendary:   { type: 'coins',     value: 10000, label: '+10,000 Coins de Regalo' },
-        Mythic:      { type: 'sellValue', value: 0.15,  label: '+15% Valor de Venta'     },
-        Omnisciente: { type: 'luck',      value: 0.25,  label: '+25% de Suerte Total'    }
+        Common: { type: 'luck', value: 0.05, label: '+5% de Suerte' },
+        Uncommon: { type: 'sellValue', value: 0.05, label: '+5% Valor de Venta' },
+        Rare: { type: 'xp', value: 0.05, label: '+5% de XP' },
+        Epic: { type: 'luck', value: 0.10, label: '+10% de Suerte' },
+        Legendary: { type: 'coins', value: 10000, label: '+10,000 Coins de Regalo' },
+        Mythic: { type: 'sellValue', value: 0.15, label: '+15% Valor de Venta' },
+        Omnisciente: { type: 'luck', value: 0.25, label: '+25% de Suerte Total' }
     },
     PRESTIGE: {
         requiredLevel: 50,
@@ -74,16 +74,16 @@ const CONFIG = {
         maxPrestige: 10
     },
     EVENTS: [
-        { id: 'lucky_hour',  name: '🍀 LUCKY HOUR',      duration: 60,  probability: 0.004, effect: { type: 'luckBonus',   value: 0.50 }, cooldown: 600,  desc: '+50% de Suerte durante 60s' },
-        { id: 'golden_rain', name: '💰 LLUVIA DORADA',   duration: 1,   probability: 0.003, effect: { type: 'coinsAll',    value: 500  }, cooldown: 900,  desc: '¡500 Coins gratis para todos!' },
-        { id: 'cursed_hour', name: '☠️ HORA MALDITA',    duration: 30,  probability: 0.003, effect: { type: 'luckPenalty', value: 0.25 }, cooldown: 600,  desc: '-25% de Suerte durante 30s' },
-        { id: 'block_rain',  name: '🎁 LLUVIA DE CAJAS', duration: 30,  probability: 0.002, effect: { type: 'freeBlocks',  value: 3    }, cooldown: 1200, desc: '¡3 cajas gratis durante 30s!' }
+        { id: 'lucky_hour', name: '🍀 LUCKY HOUR', duration: 60, probability: 0.004, effect: { type: 'luckBonus', value: 0.50 }, cooldown: 600, desc: '+50% de Suerte durante 60s' },
+        { id: 'golden_rain', name: '💰 LLUVIA DORADA', duration: 1, probability: 0.003, effect: { type: 'coinsAll', value: 500 }, cooldown: 900, desc: '¡500 Coins gratis para todos!' },
+        { id: 'cursed_hour', name: '☠️ HORA MALDITA', duration: 30, probability: 0.003, effect: { type: 'luckPenalty', value: 0.25 }, cooldown: 600, desc: '-25% de Suerte durante 30s' },
+        { id: 'block_rain', name: '🎁 LLUVIA DE CAJAS', duration: 30, probability: 0.002, effect: { type: 'freeBlocks', value: 3 }, cooldown: 1200, desc: '¡3 cajas gratis durante 30s!' }
     ],
     BATTLE: {
         duration: 30,
         points: { Common: 1, Uncommon: 3, Rare: 7, Epic: 15, Legendary: 35, Mythic: 100, Omnisciente: 500, Secret: 1000 },
         winnerReward: { coins: 5000, xp: 500 },
-        loserReward:  { coins: 1000, xp: 150 },
+        loserReward: { coins: 1000, xp: 150 },
         cooldownMs: 60000
     }
 };
@@ -92,9 +92,9 @@ const CONFIG = {
    SECRET ITEMS — Conditions hidden until discovered
    ========================================================================== */
 const SECRET_ITEMS = [
-    { id: 's1', name: 'NULL',       rarity: 'Secret', image: "",emoji: '⬛', baseValue: 500000,  condition: 'streak_500',            hint: '???',                                         description: 'Un ítem que no debería existir.' },
-    { id: 's2', name: 'VOID',       rarity: 'Secret', image: 'images/Secreto/Vacio.jpg', emoji: '🌑', baseValue: 750000,  condition: 'open_1000_no_legendary', hint: 'La oscuridad recompensa la perseverancia...',  description: 'Encontrado tras 1000 aperturas sin gloria.' },
-    { id: 's3', name: 'COSMIC GOD', rarity: 'Secret', image: 'images/Secreto/Cosmico.jpg', emoji: '👁️', baseValue: 2000000, condition: 'prestige_3',             hint: '???',                                         description: 'Solo los renacidos 3 veces pueden verlo.' }
+    { id: 's1', name: 'NULL', rarity: 'Secret', image: "", emoji: '⬛', baseValue: 500000, condition: 'streak_500', hint: '???', description: 'Un ítem que no debería existir.' },
+    { id: 's2', name: 'VOID', rarity: 'Secret', image: 'images/Secreto/Vacio.jpg', emoji: '🌑', baseValue: 750000, condition: 'open_1000_no_legendary', hint: 'La oscuridad recompensa la perseverancia...', description: 'Encontrado tras 1000 aperturas sin gloria.' },
+    { id: 's3', name: 'COSMIC GOD', rarity: 'Secret', image: 'images/Secreto/Cosmico.jpg', emoji: '👁️', baseValue: 2000000, condition: 'prestige_3', hint: '???', description: 'Solo los renacidos 3 veces pueden verlo.' }
 ];
 
 function getItemIcon(item, extraClass = '') {
@@ -488,7 +488,7 @@ function updateCollection(item) {
     } else {
         state.collection[item.id].totalCount += 1;
     }
-    
+
     // Give direct rewards if it's new
     if (isNewDiscovery) {
         const b = CONFIG.COLLECTION_BONUSES[item.rarity];
@@ -518,7 +518,7 @@ function checkSecretConditions() {
                 const multiplier = 1 + (state.traderLevel * 0.10);
                 const secretItem = { ...secret, sellValue: Math.floor(secret.baseValue * multiplier), obtainedAt: Date.now() };
                 addToInventory(secretItem);
-                
+
                 showToast('👁️ ¡SECRETO DESCUBIERTO!', `Has desbloqueado y obtenido: ${secret.name}`, 'Omnisciente');
                 sounds.playOmni();
                 triggerOmniOverlay(secretItem);
@@ -544,7 +544,7 @@ function doPrestige() {
     // Save things we want to keep
     const savedState = {};
     CONFIG.PRESTIGE.keep.forEach(k => savedState[k] = state[k]);
-    
+
     // Calculate new bonuses
     const newPrestige = state.prestige + 1;
     const newBonus = {
@@ -567,7 +567,7 @@ function doPrestige() {
 
     showToast('🌌 RENACIMIENTO CÓSMICO', `Has alcanzado el Prestigio ${newPrestige}. Tus multiplicadores han aumentado.`, 'Omnisciente');
     sounds.playOmni();
-    
+
     if (socket) {
         socket.emit('drop:announce', {
             itemName: `PRESTIGIO ${newPrestige}`,
@@ -582,7 +582,7 @@ function doPrestige() {
 
 function doRiskIt() {
     if (!lastRevealedItem) return;
-    
+
     const invIndex = state.inventory.findIndex(i => i.id === lastRevealedItem.id);
     if (invIndex === -1) {
         showToast('❌ Error', 'Ya no tienes este ítem en tu inventario.', 'Common');
@@ -593,7 +593,7 @@ function doRiskIt() {
     const level = levels[Math.floor(Math.random() * levels.length)];
     const roll = Math.random();
     const invItem = state.inventory[invIndex];
-    
+
     // Handle unstacking if user has multiple copies of the item
     let targetItem;
     if (invItem.count > 1) {
@@ -603,14 +603,14 @@ function doRiskIt() {
     } else {
         targetItem = invItem;
     }
-    
+
     if (roll < level.winChance) {
         const newVal = Math.floor(lastRevealedItem.sellValue * level.multiplier);
         targetItem.sellValue = newVal;
         targetItem.name = `${lastRevealedItem.name} [+${level.multiplier}x]`;
         sounds.playOmni();
         showToast(`🎲 ¡RIESGO EXITOSO! (${level.name})`, `Ganaste x${level.multiplier} de valor (${newVal} 💰)`, 'Legendary');
-        
+
         if (typeof announceGlobalFeed === 'function') {
             announceGlobalFeed({ name: `Risk It x${level.multiplier} en ${lastRevealedItem.name}`, rarity: 'Legendary', emoji: '🎰' });
         }
@@ -628,7 +628,7 @@ function doRiskIt() {
             showToast(`⚠️ FALLO (${level.name})`, `Perdiste ${Math.floor(level.losePercent * 100)}% del valor.`, 'Common');
         }
     }
-    
+
     saveState();
     renderAll();
     renderRevealedItem(null);
@@ -1367,7 +1367,7 @@ function renderAll() {
     renderSkinsAndThemes();
     renderProfile();
     renderMissions();
-    
+
     // New mechanics
     if (typeof renderCollection === 'function') renderCollection();
     if (typeof renderLuckStreak === 'function') renderLuckStreak();
@@ -1579,10 +1579,10 @@ function renderProfile() {
 function renderCollection() {
     const grid = document.getElementById('collectionGrid');
     if (!grid) return;
-    
+
     let html = '';
     let discovered = 0;
-    
+
     // Sort logic to match inventory: rarity -> value
     const sortedTable = [...LOOT_TABLE, ...SECRET_ITEMS].sort((a, b) => {
         const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic', 'Omnisciente', 'Secret'];
@@ -1592,10 +1592,10 @@ function renderCollection() {
     sortedTable.forEach(item => {
         const disc = state.collection[item.id];
         if (disc) discovered++;
-        
+
         const isSecret = item.rarity === 'Secret' || SECRET_ITEMS.some(s => s.id === item.id);
         if (isSecret && !disc) return; // Hide undiscovered secrets entirely
-        
+
         if (disc) {
             html += `
                 <div class="item-card rarity-${item.rarity.toLowerCase()}">
@@ -1618,19 +1618,19 @@ function renderCollection() {
     });
 
     grid.innerHTML = html;
-    
+
     const maxItems = LOOT_TABLE.length + SECRET_ITEMS.length;
     const progressEl = document.getElementById('collectionProgress');
-    if(progressEl) progressEl.textContent = `${discovered} / ${maxItems}`;
-    
+    if (progressEl) progressEl.textContent = `${discovered} / ${maxItems}`;
+
     const luckEl = document.getElementById('collectionBonusLuck');
-    if(luckEl) luckEl.textContent = `+${Math.floor(getCollectionLuckBonus() * 100)}%`;
-    
+    if (luckEl) luckEl.textContent = `+${Math.floor(getCollectionLuckBonus() * 100)}%`;
+
     const sellEl = document.getElementById('collectionBonusSell');
-    if(sellEl) sellEl.textContent = `+${Math.floor(getCollectionSellBonus() * 100)}%`;
-    
+    if (sellEl) sellEl.textContent = `+${Math.floor(getCollectionSellBonus() * 100)}%`;
+
     const xpBonusEl = document.getElementById('collectionBonusXp');
-    if(xpBonusEl) xpBonusEl.textContent = `+${Math.floor(getCollectionXpBonus() * 100)}%`;
+    if (xpBonusEl) xpBonusEl.textContent = `+${Math.floor(getCollectionXpBonus() * 100)}%`;
 }
 
 function renderLuckStreak() {
@@ -1643,7 +1643,7 @@ function renderLuckStreak() {
 function renderEventBanner() {
     const banner = document.getElementById('eventBanner');
     if (!banner) return;
-    
+
     if (state.activeEventId && Date.now() < state.activeEventExpiry) {
         const evt = CONFIG.EVENTS.find(e => e.id === state.activeEventId);
         if (evt) {
@@ -1660,7 +1660,7 @@ function renderPrestige() {
     const pLvlEl = document.getElementById('prestigeLevelLabel');
     const pBonusEl = document.getElementById('prestigeBonusesLabel');
     const btn = document.getElementById('btnPrestige');
-    
+
     if (pLvlEl) pLvlEl.textContent = state.prestige;
     if (pBonusEl) {
         const bonus = (state.prestigeBonus?.luck || 0) * 100;
@@ -1683,11 +1683,11 @@ function renderPrestige() {
 function announceGlobalFeed(data) {
     const feed = document.getElementById('globalFeed');
     if (!feed) return;
-    
+
     const item = document.createElement('div');
     const r = (data.rarity || 'Common').toLowerCase();
     item.style = `display: flex; gap: 0.5rem; align-items: center; padding: 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--rarity-${r}); background: rgba(0,0,0,0.4);`;
-    
+
     item.innerHTML = `
         <span style="font-size: 1.2rem;">${data.emoji || '🎁'}</span>
         <div>
@@ -1695,9 +1695,9 @@ function announceGlobalFeed(data) {
             <div style="font-size: 0.75rem; color: var(--text-muted);">${data.username ? `Por ${data.username}` : 'Sistema'}</div>
         </div>
     `;
-    
+
     feed.prepend(item);
-    
+
     while (feed.children.length > 20) {
         feed.removeChild(feed.lastChild);
     }
@@ -1836,7 +1836,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnRiskIt) {
         btnRiskIt.addEventListener('click', doRiskIt);
     }
-    
+
     // Prestige
     const btnPrestige = document.getElementById('btnPrestige');
     if (btnPrestige) {
@@ -2151,7 +2151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // NUEVAS MECÁNICAS — OWNER CONTROLS
     // ==========================================
-    
+
     // Risk It Admin
     document.getElementById('btnApplyRiskItForce')?.addEventListener('click', () => {
         const val = document.getElementById('modRiskItForceResult')?.value;
@@ -2160,7 +2160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast('🎲 RISK IT OVERRIDE', `Resultado forzado a: ${val}`, 'Legendary');
         }
     });
-    
+
     document.getElementById('btnOwnerForcedRiskIt')?.addEventListener('click', () => {
         if (!lastRevealedItem) return showToast('⚠️ Error', 'Abre un bloque primero', 'Common');
         // Simple instant sim
@@ -2185,7 +2185,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     document.getElementById('btnOwnerForcePrestige')?.addEventListener('click', forcePrestige);
     document.getElementById('floatForcePrestige')?.addEventListener('click', forcePrestige);
-    
+
     document.getElementById('btnOwnerResetPrestige')?.addEventListener('click', () => {
         state.prestige = 0;
         state.prestigeBonus = null;
@@ -2200,14 +2200,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!evt) return;
         state.activeEventId = evt.id;
         state.activeEventExpiry = Date.now() + (evt.duration * 1000);
-        
+
         if (evt.effect.type === 'coinsAll') {
             state.coins += evt.effect.value;
             state.totalCoinsEarned += evt.effect.value;
         } else if (evt.effect.type === 'freeBlocks') {
-            for(let i=0; i<evt.effect.value; i++) openLuckyBlock(false);
+            for (let i = 0; i < evt.effect.value; i++) openLuckyBlock(false);
         }
-        
+
         saveState();
         renderAll();
         showToast('⭐ EVENTO FORZADO', evt.name, 'Legendary');
@@ -2215,12 +2215,12 @@ document.addEventListener('DOMContentLoaded', () => {
             socket.emit('chat:send', { text: `📢 ¡EL OWNER HA INICIADO EL EVENTO: ${evt.name}!` });
         }
     };
-    
+
     document.getElementById('ownerEvtLuckyHour')?.addEventListener('click', () => forceEvent('lucky_hour'));
     document.getElementById('ownerEvtGoldenRain')?.addEventListener('click', () => forceEvent('golden_rain'));
     document.getElementById('ownerEvtCursedHour')?.addEventListener('click', () => forceEvent('cursed_hour'));
     document.getElementById('ownerEvtBlockRain')?.addEventListener('click', () => forceEvent('block_rain'));
-    
+
     document.getElementById('floatEvtLucky')?.addEventListener('click', () => forceEvent('lucky_hour'));
     document.getElementById('floatEvtGolden')?.addEventListener('click', () => forceEvent('golden_rain'));
     document.getElementById('floatEvtCursed')?.addEventListener('click', () => forceEvent('cursed_hour'));
@@ -2239,7 +2239,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Secretos Admin
     const unlockSecret = (secretId) => {
         const s = SECRET_ITEMS.find(i => i.id === secretId);
-        if(!s) return;
+        if (!s) return;
         const droppedItem = { ...s, sellValue: s.baseValue, obtainedAt: Date.now() };
         addToInventory(droppedItem);
         state.collection[secretId] = { firstObtained: Date.now(), totalCount: 1 };
@@ -2247,11 +2247,11 @@ document.addEventListener('DOMContentLoaded', () => {
         renderAll();
         showToast(`👁️ SECRETO FORZADO`, `Has añadido ${s.name} al inventario`, 'Secret');
     };
-    
+
     document.getElementById('ownerUnlockNull')?.addEventListener('click', () => unlockSecret('s1'));
     document.getElementById('ownerUnlockVoid')?.addEventListener('click', () => unlockSecret('s2'));
     document.getElementById('ownerUnlockCosmicGod')?.addEventListener('click', () => unlockSecret('s3'));
-    
+
     const unlockAllSecrets = () => {
         SECRET_ITEMS.forEach(s => {
             const droppedItem = { ...s, sellValue: s.baseValue, obtainedAt: Date.now() };
@@ -2273,7 +2273,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     document.getElementById('btnOwnerBattleWin')?.addEventListener('click', forceBattleWin);
     document.getElementById('floatBattleWin')?.addEventListener('click', forceBattleWin);
-    
+
     document.getElementById('btnOwnerResetBattleCooldown')?.addEventListener('click', () => {
         // Implement if we added client-side cooldowns
         showToast('🔄 BATALLA', 'Cooldown reiniciado', 'Common');
@@ -2286,16 +2286,16 @@ document.addEventListener('DOMContentLoaded', () => {
         renderAll();
         showToast('🔥 RACHA MODIFICADA', `Racha actual: ${state.luckStreak}`, 'Rare');
     };
-    
+
     document.getElementById('btnOwnerSetStreak')?.addEventListener('click', () => {
         setStreak(document.getElementById('ownerStreakSetVal')?.value);
     });
     document.getElementById('floatSetStreak')?.addEventListener('click', () => {
         setStreak(document.getElementById('floatStreakVal')?.value);
     });
-    
+
     document.getElementById('btnOwnerResetStreak')?.addEventListener('click', () => setStreak(0));
-    
+
     // ==========================================
     // FLOATING MOD MENU TABS
     // ==========================================
@@ -2832,7 +2832,7 @@ function initSocketConnection() {
             const accept = confirm(`⚔️ ${data.senderName} te ha desafiado a una Luck Battle por ${data.bet} Coins! ¿Aceptas?`);
             socket.emit('battle:respond', { accept, senderSocketId: data.senderSocketId });
         });
-        
+
         socket.on('battle:start', (data) => {
             state.activeBattleId = data.battleId;
             document.getElementById('activeBattlePanel').style.display = 'block';
@@ -2843,20 +2843,20 @@ function initSocketConnection() {
             sounds.playOmni();
             showToast('⚔️ BATALLA INICIADA', `Te enfrentas a ${data.rivalName}. ¡Abre bloques GRATIS rápido!`, 'Legendary');
         });
-        
+
         socket.on('battle:score_update', (data) => {
             document.getElementById('battleMyScore').textContent = `${data.p1Score} pts`;
             document.getElementById('battleRivalScore').textContent = `${data.p2Score} pts`;
         });
-        
+
         socket.on('battle:end', (data) => {
             state.activeBattleId = null;
             document.getElementById('activeBattlePanel').style.display = 'none';
             document.getElementById('btnInviteBattle').disabled = false;
-            
+
             const amIWinner = data.winnerId === socket.id;
             const isTie = data.winnerId === null;
-            
+
             if (isTie) {
                 showToast('⚔️ EMPATE', 'La batalla ha terminado en empate.', 'Common');
             } else if (amIWinner) {
@@ -2870,7 +2870,7 @@ function initSocketConnection() {
                 showToast('💀 HAS PERDIDO LA BATALLA', 'El rival fue más rápido y afortunado.', 'Common');
             }
         });
-        
+
         socket.on('battle:error', (data) => {
             showToast('⚠️ Error de Batalla', data.message, 'Common');
         });
@@ -3393,27 +3393,27 @@ function initAuthSystem() {
             const targetId = document.getElementById('battleTargetPlayer').value;
             if (!targetId) return showToast('Error', 'Selecciona un jugador', 'Common');
             if (state.coins < 10000) return showToast('Error', 'No tienes suficientes coins (Requiere 10,000)', 'Common');
-            
+
             socket.emit('battle:invite', { targetSocketId: targetId });
         });
     }
-    
+
     const btnBattleOpen = document.getElementById('btnBattleOpen');
     if (btnBattleOpen) {
         btnBattleOpen.addEventListener('click', () => {
             if (!state.activeBattleId) return;
-            
+
             // Similar to normal open logic but free and just sends points to server
             triggerBlockAnimation();
             const weights = getBaseWeights(false);
             const { rarity } = rollRarity(weights);
-            
+
             // Random item of that rarity
             const possibleItems = LOOT_TABLE.filter(i => i.rarity === rarity);
             const item = possibleItems[Math.floor(Math.random() * possibleItems.length)];
-            
+
             const points = item.sellValue;
-            
+
             socket.emit('battle:update_score', { battleId: state.activeBattleId, points });
             renderRevealedItem({ ...item, sellValue: points }); // show it
             sounds.playOpen();

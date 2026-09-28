@@ -72,18 +72,18 @@
                         </div>
                         
                         <!-- Luck Streak -->
-                        <div class="luck-streak-banner" style="display: flex; justify-content: space-between; align-items: center; background: rgba(231, 76, 60, 0.15); border: 1px solid #e74c3c; padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); margin-bottom: 0.8rem;">
-                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <div class="luck-streak-banner">
+                            <div class="streak-info-group">
                                 <span class="streak-icon">🔥</span>
-                                <span class="streak-text" style="color: #fff; font-size: 0.85rem; font-weight: 600;">Racha de Suerte: <strong id="streakCount" style="color: #e74c3c; font-size: 1rem;">0</strong></span>
+                                <span class="streak-text">Racha de Suerte: <strong id="streakCount">0</strong></span>
                             </div>
-                            <div style="font-family: var(--font-heading); font-size: 0.9rem; color: #f1c40f;">Multiplicador: x<span id="streakMultiplier">1.00</span></div>
+                            <div class="streak-multiplier-group">Multiplicador: x<span id="streakMultiplier">1.00</span></div>
                         </div>
 
                         <!-- Pity Counter Bar -->
                         <div class="pity-wrapper">
                             <div class="pity-info">
-                                <span class="pity-title">🛡️ BARRA DE PITY (Garantizado Legendary+)</span>
+                                <span class="pity-title">🛡️ BARRA DE PITY <span class="pity-sub">(Garantizado Legendary+)</span></span>
                                 <span class="pity-val" id="pityText">0 / 100</span>
                             </div>
                             <div class="pity-progress-bg">

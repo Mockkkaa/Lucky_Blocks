@@ -12,11 +12,11 @@
         "ADMIN",
         "VIP"
       ],
-      "coins": 2007232700,
+      "coins": 2007232150,
       "totalCoinsEarned": 7009508350,
-      "xp": 2062,
+      "xp": 2458,
       "level": 13,
-      "blocksOpened": 756,
+      "blocksOpened": 767,
       "pityCounter": 0,
       "luckLevel": 1,
       "traderLevel": 1,
@@ -65,7 +65,7 @@
           "baseValue": 25000,
           "sellValue": 81675,
           "obtainedAt": 1790580900206,
-          "count": 13
+          "count": 14
         },
         {
           "id": "r3",
@@ -98,7 +98,7 @@
           "baseValue": 45,
           "sellValue": 147,
           "obtainedAt": 1790580900838,
-          "count": 31
+          "count": 32
         },
         {
           "id": "r2",
@@ -153,7 +153,7 @@
           "baseValue": 28000,
           "sellValue": 91476,
           "obtainedAt": 1790580909085,
-          "count": 25
+          "count": 26
         },
         {
           "id": "u1",
@@ -164,7 +164,7 @@
           "baseValue": 50,
           "sellValue": 163,
           "obtainedAt": 1790580909237,
-          "count": 26
+          "count": 28
         },
         {
           "id": "l2",
@@ -230,7 +230,7 @@
           "baseValue": 900,
           "sellValue": 2940,
           "obtainedAt": 1790580956103,
-          "count": 12
+          "count": 13
         },
         {
           "id": "e4",
@@ -241,7 +241,7 @@
           "baseValue": 1200,
           "sellValue": 3920,
           "obtainedAt": 1790580956404,
-          "count": 25
+          "count": 26
         },
         {
           "id": "r1",
@@ -263,7 +263,7 @@
           "baseValue": 1000,
           "sellValue": 3267,
           "obtainedAt": 1790580957551,
-          "count": 11
+          "count": 12
         },
         {
           "id": "o1",
@@ -285,7 +285,7 @@
           "baseValue": 150000,
           "sellValue": 490050,
           "obtainedAt": 1790580957903,
-          "count": 5
+          "count": 4
         },
         {
           "id": "m2",
@@ -296,7 +296,7 @@
           "baseValue": 30000,
           "sellValue": 98010,
           "obtainedAt": 1790580958153,
-          "count": 12
+          "count": 13
         },
         {
           "id": "r4",
@@ -307,7 +307,7 @@
           "baseValue": 250,
           "sellValue": 816,
           "obtainedAt": 1790580959603,
-          "count": 11
+          "count": 12
         },
         {
           "id": "l3",
@@ -319,9 +319,31 @@
           "sellValue": 98010,
           "obtainedAt": 1790580907710,
           "count": 1
+        },
+        {
+          "id": "l2",
+          "name": "Pluma de Fénix [+2.5x]",
+          "rarity": "Legendary",
+          "image": "images/Legendario/Pluma_Fenix.jpg",
+          "emoji": "🪶",
+          "baseValue": 4500,
+          "sellValue": 36752,
+          "obtainedAt": 1790580955609,
+          "count": 1
+        },
+        {
+          "id": "o2",
+          "name": "Cristal del Universo [+1.5x]",
+          "rarity": "Omnisciente",
+          "image": "images/Omnisciente/Cristal_Universo.jpg",
+          "emoji": "🌌",
+          "baseValue": 150000,
+          "sellValue": 735075,
+          "obtainedAt": 1790580957903,
+          "count": 1
         }
       ],
-      "selectedSkin": "pumpkin",
+      "selectedSkin": "safe",
       "unlockedSkins": [
         "classic",
         "pumpkin",
@@ -348,28 +370,28 @@
           "sellValue": 2970000,
           "obtainedAt": 1790580638817
         },
-        "omniscienteCount": 83,
-        "legendariesObtained": 373
+        "omniscienteCount": 84,
+        "legendariesObtained": 378
       },
       "startDate": "22/9/2026",
-      "luckStreak": 16,
+      "luckStreak": 132,
       "streakBest": 679,
       "collection": {
         "u1": {
           "firstObtained": 1790574350596,
-          "totalCount": 46
+          "totalCount": 48
         },
         "r4": {
           "firstObtained": 1790574352485,
-          "totalCount": 40
+          "totalCount": 41
         },
         "u2": {
           "firstObtained": 1790574353906,
-          "totalCount": 62
+          "totalCount": 63
         },
         "m2": {
           "firstObtained": 1790574354050,
-          "totalCount": 30
+          "totalCount": 31
         },
         "r2": {
           "firstObtained": 1790574355866,
@@ -377,7 +399,7 @@
         },
         "m1": {
           "firstObtained": 1790574356435,
-          "totalCount": 31
+          "totalCount": 32
         },
         "r3": {
           "firstObtained": 1790574357050,
@@ -417,11 +439,11 @@
         },
         "m3": {
           "firstObtained": 1790574383931,
-          "totalCount": 34
+          "totalCount": 35
         },
         "e1": {
           "firstObtained": 1790574384098,
-          "totalCount": 32
+          "totalCount": 33
         },
         "c3": {
           "firstObtained": 1790574416308,
@@ -433,7 +455,7 @@
         },
         "l2": {
           "firstObtained": 1790574416763,
-          "totalCount": 53
+          "totalCount": 54
         },
         "c1": {
           "firstObtained": 1790574417012,
@@ -445,7 +467,7 @@
         },
         "e2": {
           "firstObtained": 1790574419355,
-          "totalCount": 25
+          "totalCount": 26
         },
         "o1": {
           "firstObtained": 1790574439724,
@@ -453,7 +475,7 @@
         },
         "o2": {
           "firstObtained": 1790574441260,
-          "totalCount": 11
+          "totalCount": 12
         },
         "o3": {
           "firstObtained": 1790574442684,
@@ -484,8 +506,8 @@
       },
       "blocksSinceLastLegendary": 0,
       "freeBlocks": 0,
-      "activeEventId": null,
-      "activeEventExpiry": 0,
+      "activeEventId": "lucky_hour",
+      "activeEventExpiry": 1790636454492,
       "battleCooldownExpiry": 0,
       "battleHistory": [],
       "missions": {
@@ -567,11 +589,11 @@
             "claimed": true
           }
         ],
-        "activeCategory": "daily",
+        "activeCategory": "weekly",
         "isCollapsed": false
       }
     },
     "createdAt": 1790576857965,
-    "updatedAt": 1790581036198
+    "updatedAt": 1790636516191
   }
 }
