@@ -43,6 +43,10 @@
                     <span class="coin-icon">💰</span>
                     <span class="coin-amount" id="headerCoins">100</span>
                 </div>
+                <button class="btn-account-cloud" id="btnOpenAuthModal" title="Cuenta y Guardado en la Nube">
+                    <span class="cloud-icon">☁️</span>
+                    <span id="accountBtnText">Cuenta</span>
+                </button>
             </div>
         </header>
 
@@ -55,6 +59,27 @@
                 <div class="game-layout">
                     <!-- Lucky Block Stage -->
                     <div class="lucky-stage-card">
+                        <!-- Event Banner (Hidden by default) -->
+                        <div class="event-banner" id="eventBanner" style="display: none; background: rgba(241, 196, 15, 0.2); border: 1px solid #f1c40f; padding: 0.5rem; border-radius: var(--radius-sm); margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <span class="event-icon" id="eventIcon" style="font-size: 1.5rem;">⭐</span>
+                                <div class="event-info">
+                                    <div class="event-title" id="eventTitle" style="font-weight: 800; color: #f1c40f; font-family: var(--font-heading);">EVENTO ACTIVO</div>
+                                    <div class="event-desc" id="eventDesc" style="font-size: 0.75rem; color: #fff;">Descripción del evento</div>
+                                </div>
+                            </div>
+                            <span class="event-timer" id="eventTimer" style="font-family: var(--font-heading); font-weight: 900; color: #fff; font-size: 1.2rem;">00:00</span>
+                        </div>
+                        
+                        <!-- Luck Streak -->
+                        <div class="luck-streak-banner" style="display: flex; justify-content: space-between; align-items: center; background: rgba(231, 76, 60, 0.15); border: 1px solid #e74c3c; padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); margin-bottom: 0.8rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span class="streak-icon">🔥</span>
+                                <span class="streak-text" style="color: #fff; font-size: 0.85rem; font-weight: 600;">Racha de Suerte: <strong id="streakCount" style="color: #e74c3c; font-size: 1rem;">0</strong></span>
+                            </div>
+                            <div style="font-family: var(--font-heading); font-size: 0.9rem; color: #f1c40f;">Multiplicador: x<span id="streakMultiplier">1.00</span></div>
+                        </div>
+
                         <!-- Pity Counter Bar -->
                         <div class="pity-wrapper">
                             <div class="pity-info">
@@ -112,7 +137,10 @@
                                 <div class="item-name-revealed" id="revealName">Espada de Madera</div>
                                 <div class="item-rarity-tag" id="revealRarity">Común</div>
                                 <div class="item-sell-value" id="revealValue">+10 💰</div>
-                                <button class="btn-quick-sell" id="btnQuickSell">VENDER AL INSTANTE</button>
+                                <div style="display: flex; gap: 0.5rem; width: 100%; margin-top: 0.5rem;">
+                                    <button class="btn-quick-sell" id="btnQuickSell" style="flex: 1.8;">VENDER</button>
+                                    <button class="btn-risk-it" id="btnRiskIt" style="flex: 2; background: #e67e22; color: #fff; font-weight: 800; border: none; cursor: pointer; border-radius: var(--radius-sm); font-family: var(--font-heading);">🎲 ARRIESGAR</button>
+                                </div>
                             </div>
                         </div>
 
@@ -328,6 +356,71 @@
                 </div>
                 <div class="customization-grid" id="themesContainer">
                     <!-- Populated dynamically -->
+                </div>
+            </section>
+
+            <!-- 📖 TAB: COLECCIÓN -->
+            <section id="tab-collection" class="tab-content">
+                <div class="upgrades-section-title">
+                    <span>📖 ENCICLOPEDIA & COLECCIÓN</span>
+                </div>
+                <div class="collection-stats" style="display: flex; justify-content: space-around; background: rgba(0, 0, 0, 0.4); padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1rem; border: 1px solid var(--border);">
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Progreso</div>
+                        <div id="collectionProgress" style="font-family: var(--font-heading); font-weight: 700; color: #fff; font-size: 1.2rem;">0 / 41</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Bono Suerte</div>
+                        <div id="collectionBonusLuck" style="font-family: var(--font-heading); font-weight: 700; color: #2ecc71; font-size: 1.2rem;">+0%</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Bono Venta</div>
+                        <div id="collectionBonusSell" style="font-family: var(--font-heading); font-weight: 700; color: #f1c40f; font-size: 1.2rem;">+0%</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Bono XP</div>
+                        <div id="collectionBonusXp" style="font-family: var(--font-heading); font-weight: 700; color: #9b59b6; font-size: 1.2rem;">+0%</div>
+                    </div>
+                </div>
+                <div class="inventory-grid" id="collectionGrid">
+                    <!-- Populated dynamically -->
+                </div>
+            </section>
+
+            <!-- 🌐 TAB: SOCIAL Y BATALLAS -->
+            <section id="tab-social" class="tab-content">
+                <div class="upgrades-section-title">
+                    <span>🌐 SOCIAL & MULTIJUGADOR</span>
+                </div>
+                <div class="social-layout" style="display: flex; gap: 1rem;">
+                    <!-- Global Feed -->
+                    <div class="side-panel-card" style="flex: 1; height: 500px; display: flex; flex-direction: column;">
+                        <div class="panel-header-title"><span>📡 FEED GLOBAL</span></div>
+                        <div class="global-feed" id="globalFeed" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; padding-right: 0.5rem;"></div>
+                    </div>
+                    <!-- Luck Battles -->
+                    <div class="side-panel-card" style="flex: 1; height: 500px;">
+                        <div class="panel-header-title"><span>⚔️ LUCK BATTLES</span></div>
+                        <div id="battleControls" style="display: flex; flex-direction: column; height: 100%;">
+                            <p style="font-size: 0.85rem; color: var(--text-dim); text-align: center; margin-bottom: 1rem;">Desafía a otros jugadores a abrir bloques durante 30s. ¡El de mayor valor gana el bote!</p>
+                            
+                            <select id="battleTargetPlayer" class="select-mission-category" style="width: 100%; margin-bottom: 1rem;">
+                                <option value="">-- Selecciona Jugador --</option>
+                            </select>
+                            
+                            <button class="btn-inv-action" id="btnInviteBattle" style="width: 100%; background: #ff0055; color: #fff; border-color: #ff0055; font-weight: 800;">DESAFIAR (10,000 💰)</button>
+                            
+                            <div id="activeBattlePanel" style="display: none; margin-top: 1rem; padding: 1rem; border: 1px solid #ff0055; border-radius: var(--radius-sm); background: rgba(255,0,85,0.1); text-align: center;">
+                                <div style="font-family: var(--font-heading); color: #ff0055; font-size: 1.2rem; margin-bottom: 0.5rem;">⚔️ BATALLA EN CURSO ⚔️</div>
+                                <div id="battleTimer" style="font-size: 2rem; font-weight: 900; color: #fff; margin-bottom: 1rem;">30s</div>
+                                <div style="display: flex; justify-content: space-between; font-weight: 600;">
+                                    <div>TÚ: <br><span id="battleMyScore" style="color: #00f0ff;">0 pts</span></div>
+                                    <div>RIVAL: <br><span id="battleRivalScore" style="color: #ff0055;">0 pts</span></div>
+                                </div>
+                                <button class="btn-open btn-premium" id="btnBattleOpen" style="width: 100%; margin-top: 1rem;">ABRIR (GRATIS)</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -884,6 +977,31 @@
                         </div>
                     </div>
 
+                    <!-- 🌀 SISTEMA DE PRESTIGIO -->
+                    <div class="upgrades-section-title" style="margin: 1.5rem 0 1rem 0;">
+                        <span>🌀 SISTEMA DE PRESTIGIO</span>
+                    </div>
+                    <div class="prestige-card" style="background: rgba(155, 89, 182, 0.1); border: 1px solid #9b59b6; border-radius: var(--radius-md); padding: 1.5rem; text-align: center; margin-bottom: 2rem; position: relative; overflow: hidden;">
+                        <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(155,89,182,0.1) 0%, transparent 70%); animation: spin 20s linear infinite; pointer-events: none;"></div>
+                        <div style="font-family: var(--font-heading); font-size: 1.5rem; color: #9b59b6; margin-bottom: 0.5rem; font-weight: 900;">RENACIMIENTO CÓSMICO (PRESTIGIO)</div>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+                            Alcanza el Nivel 50 para renacer. Perderás tus Coins, XP, Mejoras e Inventario (excepto secretos), pero ganarás multiplicadores permanentes.
+                        </p>
+                        <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 1.5rem;">
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Nivel de Prestigio</div>
+                                <div id="prestigeLevelLabel" style="font-family: var(--font-heading); font-weight: 700; color: #fff; font-size: 1.5rem;">0</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">Bonos Actuales</div>
+                                <div id="prestigeBonusesLabel" style="font-family: var(--font-heading); font-weight: 700; color: #f1c40f; font-size: 1.2rem;">+0% Multiplicador</div>
+                            </div>
+                        </div>
+                        <button class="btn-inv-action" id="btnPrestige" style="background: #9b59b6; color: #fff; font-weight: 800; font-size: 1.1rem; padding: 1rem 2rem; border: none;">
+                            HACER PRESTIGIO (Requiere Niv 50)
+                        </button>
+                    </div>
+
                     <div class="upgrades-section-title" style="margin: 1.5rem 0 1rem 0;">
                         <span>📊 ESTADÍSTICAS DEL JUGADOR</span>
                     </div>
@@ -938,9 +1056,17 @@
                 <span class="nav-icon">🎒</span>
                 <span>INVENTARIO</span>
             </button>
+            <button class="nav-btn" data-tab="collection">
+                <span class="nav-icon">📖</span>
+                <span>COLECCIÓN</span>
+            </button>
             <button class="nav-btn" data-tab="upgrades">
                 <span class="nav-icon">⚡</span>
                 <span>MEJORAS</span>
+            </button>
+            <button class="nav-btn" data-tab="social">
+                <span class="nav-icon">🌐</span>
+                <span>SOCIAL</span>
             </button>
             <button class="nav-btn" data-tab="profile">
                 <span class="nav-icon">👤</span>
@@ -1070,6 +1196,59 @@
                 </div>
 
                 <button class="btn-adoptme-confirm" id="btnAdoptMeConfirm">🔒 CONFIRMAR INTERCAMBIO DEFINITIVO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ☁️ MODAL DE GESTIÓN DE CUENTA Y GUARDADO EN LA NUBE -->
+    <div class="modal-backdrop" id="authModal">
+        <div class="modal-box auth-modal-box">
+            <div class="auth-header">
+                <div class="auth-title">
+                    <span>☁️ GUARDADO EN LA NUBE Y CUENTAS</span>
+                </div>
+                <button class="btn-close-auth" id="btnCloseAuthModal">✕</button>
+            </div>
+
+            <!-- View when Logged In -->
+            <div id="authLoggedInView" style="display: none;">
+                <div class="account-card">
+                    <div class="account-avatar" id="accountAvatar">👤</div>
+                    <div class="account-info">
+                        <h3 id="accountUsername">NombreDeUsuario</h3>
+                        <span class="account-status-badge">🟢 Sesión Activa — Sincronización en la Nube</span>
+                    </div>
+                </div>
+                <p class="auth-desc">Tu progreso se guarda automáticamente en el servidor. Puedes abrir el juego en cualquier navegador o ventana incóngita e iniciar sesión para recuperar todo tu nivel, monedas e inventario.</p>
+                
+                <div class="auth-actions">
+                    <button class="btn-auth-save" id="btnManualCloudSave">☁️ Guardar Ahora</button>
+                    <button class="btn-auth-logout" id="btnLogoutAccount">🚪 Cerrar Sesión</button>
+                </div>
+            </div>
+
+            <!-- View when Logged Out (Login & Register Form) -->
+            <div id="authLoggedOutView">
+                <div class="auth-tabs">
+                    <button class="auth-tab-btn active" id="tabAuthLogin">Iniciar Sesión</button>
+                    <button class="auth-tab-btn" id="tabAuthRegister">Crear Cuenta</button>
+                </div>
+
+                <form id="authForm" onsubmit="return false;">
+                    <div class="auth-input-group">
+                        <label for="authInputUser">Nombre de Usuario</label>
+                        <input type="text" id="authInputUser" placeholder="Ej. CyberGamer" required minlength="3" autocomplete="username">
+                    </div>
+
+                    <div class="auth-input-group">
+                        <label for="authInputPass">Contraseña</label>
+                        <input type="password" id="authInputPass" placeholder="Mínimo 4 caracteres" required minlength="4" autocomplete="current-password">
+                    </div>
+
+                    <div class="auth-message-box" id="authMsgBox" style="display: none;"></div>
+
+                    <button class="btn-auth-submit" id="btnAuthSubmit">INICIAR SESIÓN</button>
+                </form>
             </div>
         </div>
     </div>

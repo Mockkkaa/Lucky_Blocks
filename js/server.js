@@ -2,9 +2,136 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
+const crypto = require('crypto');
 
 const app = express();
 app.use(cors());
+app.use(express.json({ limit: '10mb' }));
+
+// Database Persistence (users_db.json)
+const DB_FILE = path.join(__dirname, 'users_db.json');
+
+function loadUsersDB() {
+    try {
+        if (fs.existsSync(DB_FILE)) {
+            const data = fs.readFileSync(DB_FILE, 'utf8');
+            return JSON.parse(data);
+        }
+    } catch (e) {
+        console.error("Error al cargar la base de datos de usuarios:", e);
+    }
+    return {};
+}
+
+function saveUsersDB(db) {
+    try {
+        fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf8');
+    } catch (e) {
+        console.error("Error al guardar la base de datos de usuarios:", e);
+    }
+}
+
+let usersDB = loadUsersDB();
+
+function hashPassword(password) {
+    return crypto.createHash('sha256').update(password + '_lucky_salt').digest('hex');
+}
+
+// REST API Endpoints for Account Management & Cloud Saves
+app.post('/api/register', (req, res) => {
+    const { username, password, initialState } = req.body;
+
+    if (!username || !password || username.trim().length < 3 || password.length < 4) {
+        return res.status(400).json({
+            success: false,
+            message: 'El usuario debe tener al menos 3 caracteres y la contraseña al menos 4.'
+        });
+    }
+
+    const cleanUsername = username.trim();
+    const key = cleanUsername.toLowerCase();
+
+    if (usersDB[key]) {
+        return res.status(400).json({
+            success: false,
+            message: 'El nombre de usuario ya está registrado.'
+        });
+    }
+
+    const token = 'tok_' + Date.now() + '_' + crypto.randomBytes(8).toString('hex');
+    const userRecord = {
+        username: cleanUsername,
+        passwordHash: hashPassword(password),
+        token: token,
+        gameState: initialState || null,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+    };
+
+    usersDB[key] = userRecord;
+    saveUsersDB(usersDB);
+
+    console.log(`[AUTH] Cuenta registrada: ${cleanUsername}`);
+    return res.json({
+        success: true,
+        username: cleanUsername,
+        token: token,
+        gameState: userRecord.gameState,
+        message: '¡Cuenta registrada e iniciada correctamente!'
+    });
+});
+
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).json({ success: false, message: 'Ingresa usuario y contraseña.' });
+    }
+
+    const key = username.trim().toLowerCase();
+    const user = usersDB[key];
+
+    if (!user || user.passwordHash !== hashPassword(password)) {
+        return res.status(401).json({ success: false, message: 'Usuario o contraseña incorrectos.' });
+    }
+
+    // Refresh token
+    user.token = 'tok_' + Date.now() + '_' + crypto.randomBytes(8).toString('hex');
+    user.lastLogin = Date.now();
+    saveUsersDB(usersDB);
+
+    console.log(`[AUTH] Inicio de sesión exitoso: ${user.username}`);
+    return res.json({
+        success: true,
+        username: user.username,
+        token: user.token,
+        gameState: user.gameState,
+        message: '¡Bienvenido de nuevo!'
+    });
+});
+
+app.post('/api/save', (req, res) => {
+    const { username, token, gameState } = req.body;
+
+    if (!username || !token) {
+        return res.status(400).json({ success: false, message: 'Datos incompletos.' });
+    }
+
+    const key = username.trim().toLowerCase();
+    const user = usersDB[key];
+
+    if (!user || user.token !== token) {
+        return res.status(401).json({ success: false, message: 'Sesión no válida o expirada.' });
+    }
+
+    user.gameState = gameState;
+    user.updatedAt = Date.now();
+    saveUsersDB(usersDB);
+
+    return res.json({ success: true, message: 'Progreso guardado en la nube.' });
+});
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -18,6 +145,40 @@ const io = new Server(server, {
 const onlinePlayers = new Map();
 // Map of active trade sessions: tradeId -> Session Object
 const activeTrades = new Map();
+// Active Battles
+const activeBattles = new Map();
+
+// Random Event System
+let activeEvent = null;
+const EVENTS = [
+    { id: 'lucky_hour',  name: '🍀 LUCKY HOUR',      duration: 60,  effect: { type: 'luckBonus',   value: 0.50 }, desc: '+50% de Suerte durante 60s' },
+    { id: 'golden_rain', name: '💰 LLUVIA DORADA',   duration: 1,   effect: { type: 'coinsAll',    value: 500  }, desc: '¡500 Coins gratis para todos!' },
+    { id: 'cursed_hour', name: '☠️ HORA MALDITA',    duration: 30,  effect: { type: 'luckPenalty', value: 0.25 }, desc: '-25% de Suerte durante 30s' },
+    { id: 'block_rain',  name: '🎁 LLUVIA DE CAJAS', duration: 30,  effect: { type: 'freeBlocks',  value: 3    }, desc: '¡3 cajas gratis durante 30s!' }
+];
+
+setInterval(() => {
+    // 5% chance every minute to spawn an event
+    if (Math.random() < 0.05 && !activeEvent) {
+        const evt = EVENTS[Math.floor(Math.random() * EVENTS.length)];
+        activeEvent = {
+            ...evt,
+            expiry: Date.now() + evt.duration * 1000
+        };
+        
+        io.emit('event:start', activeEvent);
+        io.emit('chat:message', {
+            id: 'sys_' + Date.now(),
+            system: true,
+            text: `⭐ EVENTO GLOBAL: ${evt.name} - ${evt.desc}`,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+        
+        setTimeout(() => {
+            activeEvent = null;
+        }, evt.duration * 1000);
+    }
+}, 60000);
 
 io.on('connection', (socket) => {
     console.log(`[SOCKET] Jugador conectado: ${socket.id}`);
@@ -94,11 +255,7 @@ io.on('connection', (socket) => {
         });
     });
 
-    // ==========================================
-    // 🤝 ADOPT ME STYLE TRADE SYSTEM (4 SLOTS)
-    // ==========================================
-
-    // 1. Send Trade Invitation
+    // Trade System
     socket.on('trade:invite', (data) => {
         const sender = onlinePlayers.get(socket.id);
         const target = onlinePlayers.get(data.targetSocketId);
@@ -113,9 +270,6 @@ io.on('connection', (socket) => {
             return;
         }
 
-        console.log(`[TRADE] Invitación de ${sender.username} para ${target.username}`);
-
-        // Notify target player with incoming trade banner/modal
         io.to(target.socketId).emit('trade:incoming_invite', {
             senderSocketId: sender.socketId,
             senderName: sender.username,
@@ -127,7 +281,6 @@ io.on('connection', (socket) => {
         socket.emit('trade:status', { message: `Solicitud enviada a ${target.username}. Esperando que acepte...` });
     });
 
-    // 2. Target Player Responds to Invite
     socket.on('trade:respond_invite', (data) => {
         const responder = onlinePlayers.get(socket.id);
         const sender = onlinePlayers.get(data.senderSocketId);
@@ -145,7 +298,6 @@ io.on('connection', (socket) => {
             return;
         }
 
-        // Create new active Adopt Me Trade Session!
         const tradeId = 'trade_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
         const session = {
             id: tradeId,
@@ -155,7 +307,7 @@ io.on('connection', (socket) => {
                 role: sender.role,
                 avatar: sender.avatar,
                 level: sender.level,
-                slots: [], // up to 4 items
+                slots: [],
                 accepted: false,
                 confirmed: false
             },
@@ -165,7 +317,7 @@ io.on('connection', (socket) => {
                 role: responder.role,
                 avatar: responder.avatar,
                 level: responder.level,
-                slots: [], // up to 4 items
+                slots: [],
                 accepted: false,
                 confirmed: false
             },
@@ -174,7 +326,6 @@ io.on('connection', (socket) => {
 
         activeTrades.set(tradeId, session);
 
-        // Open live trade window for both players!
         io.to(sender.socketId).emit('trade:session_start', {
             tradeId: tradeId,
             myRole: 'p1',
@@ -198,7 +349,6 @@ io.on('connection', (socket) => {
         });
     });
 
-    // 3. Update Trade Slots (Add/Remove items - Up to 4)
     socket.on('trade:update_slots', (data) => {
         const session = activeTrades.get(data.tradeId);
         if (!session) return;
@@ -206,16 +356,12 @@ io.on('connection', (socket) => {
         const isP1 = session.p1.socketId === socket.id;
         const playerObj = isP1 ? session.p1 : session.p2;
 
-        // Ensure max 4 items
         playerObj.slots = (data.slots || []).slice(0, 4);
-
-        // Security rule: Any slot change cancels previous acceptances!
         session.p1.accepted = false;
         session.p2.accepted = false;
         session.p1.confirmed = false;
         session.p2.confirmed = false;
 
-        // Broadcast updated trade room state to both
         io.to(session.p1.socketId).emit('trade:session_update', {
             mySlots: session.p1.slots,
             partnerSlots: session.p2.slots,
@@ -233,7 +379,6 @@ io.on('connection', (socket) => {
         });
     });
 
-    // 4. Accept Offer (Stage 1)
     socket.on('trade:accept_stage1', (data) => {
         const session = activeTrades.get(data.tradeId);
         if (!session) return;
@@ -260,14 +405,12 @@ io.on('connection', (socket) => {
             bothAccepted: bothAccepted
         });
 
-        // If both accepted, trigger countdown sequence!
         if (bothAccepted) {
             io.to(session.p1.socketId).emit('trade:countdown_start', { seconds: 5 });
             io.to(session.p2.socketId).emit('trade:countdown_start', { seconds: 5 });
         }
     });
 
-    // 5. Final Confirmation (Stage 2 after countdown)
     socket.on('trade:confirm_final', (data) => {
         const session = activeTrades.get(data.tradeId);
         if (!session) return;
@@ -277,7 +420,6 @@ io.on('connection', (socket) => {
         else session.p2.confirmed = true;
 
         if (session.p1.confirmed && session.p2.confirmed) {
-            // TRADE COMPLETE! Swap up to 4 items
             io.to(session.p1.socketId).emit('trade:completed', {
                 givenItems: session.p1.slots,
                 receivedItems: session.p2.slots,
@@ -301,7 +443,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    // 6. Cancel Trade
     socket.on('trade:cancel', (data) => {
         const session = activeTrades.get(data.tradeId);
         if (session) {
@@ -311,7 +452,63 @@ io.on('connection', (socket) => {
         }
     });
 
-    // Disconnect Handler
+    // ==========================================
+    // LUCK BATTLES
+    // ==========================================
+    socket.on('battle:invite', (data) => {
+        const sender = onlinePlayers.get(socket.id);
+        const target = onlinePlayers.get(data.targetSocketId);
+        
+        if (!sender || !target) return socket.emit('battle:error', { message: 'Jugador no disponible.' });
+        if (sender.socketId === target.socketId) return socket.emit('battle:error', { message: 'No puedes pelear contigo mismo.' });
+        
+        io.to(target.socketId).emit('battle:incoming_invite', {
+            senderSocketId: sender.socketId,
+            senderName: sender.username,
+            bet: 10000
+        });
+    });
+
+    socket.on('battle:respond', (data) => {
+        if (data.accept) {
+            const battleId = 'btl_' + Date.now();
+            activeBattles.set(battleId, {
+                p1: { socketId: data.senderSocketId, score: 0 },
+                p2: { socketId: socket.id, score: 0 },
+                startTime: Date.now()
+            });
+            
+            io.to(data.senderSocketId).emit('battle:start', { battleId, rivalName: onlinePlayers.get(socket.id).username });
+            io.to(socket.id).emit('battle:start', { battleId, rivalName: onlinePlayers.get(data.senderSocketId).username });
+            
+            setTimeout(() => {
+                const battle = activeBattles.get(battleId);
+                if (battle) {
+                    let winnerId = null;
+                    if (battle.p1.score > battle.p2.score) winnerId = battle.p1.socketId;
+                    else if (battle.p2.score > battle.p1.score) winnerId = battle.p2.socketId;
+                    
+                    io.to(battle.p1.socketId).emit('battle:end', { winnerId, p1Score: battle.p1.score, p2Score: battle.p2.score });
+                    io.to(battle.p2.socketId).emit('battle:end', { winnerId, p1Score: battle.p1.score, p2Score: battle.p2.score });
+                    activeBattles.delete(battleId);
+                }
+            }, 30000);
+        } else {
+            io.to(data.senderSocketId).emit('battle:error', { message: 'El jugador rechazó la batalla.' });
+        }
+    });
+    
+    socket.on('battle:update_score', (data) => {
+        const battle = activeBattles.get(data.battleId);
+        if (battle) {
+            if (battle.p1.socketId === socket.id) battle.p1.score += data.points;
+            if (battle.p2.socketId === socket.id) battle.p2.score += data.points;
+            
+            io.to(battle.p1.socketId).emit('battle:score_update', { p1Score: battle.p1.score, p2Score: battle.p2.score });
+            io.to(battle.p2.socketId).emit('battle:score_update', { p1Score: battle.p1.score, p2Score: battle.p2.score });
+        }
+    });
+
     socket.on('disconnect', () => {
         const player = onlinePlayers.get(socket.id);
         if (player) {
@@ -324,7 +521,6 @@ io.on('connection', (socket) => {
                 time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             });
 
-            // Cancel any trade session this player was part of
             for (const [tradeId, session] of activeTrades.entries()) {
                 if (session.p1.socketId === socket.id || session.p2.socketId === socket.id) {
                     const otherSocketId = session.p1.socketId === socket.id ? session.p2.socketId : session.p1.socketId;
@@ -332,12 +528,11 @@ io.on('connection', (socket) => {
                     activeTrades.delete(tradeId);
                 }
             }
-            console.log(`[SOCKET] Jugador desconectado: ${player.username}`);
         }
     });
 });
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`🚀 [WEBSOCKET SERVER] Servidor multijugador iniciado en http://localhost:${PORT}`);
+    console.log(`🚀 [WEBSOCKET & AUTH SERVER] Servidor iniciado en http://localhost:${PORT}`);
 });
