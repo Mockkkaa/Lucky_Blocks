@@ -69,7 +69,7 @@ const CONFIG = {
     },
     PRESTIGE: {
         requiredLevel: 50,
-        keep: ['collection', 'discoveredSecrets', 'unlockedSkins', 'unlockedThemes', 'unlockedRoles', 'stats', 'startDate', 'prestige', 'prestigeBonus', 'streakBest'],
+        keep: ['playerName', 'role', 'selectedSkin', 'selectedTheme', 'missions', 'collection', 'discoveredSecrets', 'unlockedSkins', 'unlockedThemes', 'unlockedRoles', 'stats', 'startDate', 'prestige', 'prestigeBonus', 'streakBest'],
         bonusPerPrestige: { luck: 0.05, sellValue: 0.05, xp: 0.05 },
         maxPrestige: 10
     },
@@ -111,12 +111,17 @@ function getItemIcon(item, extraClass = '') {
 }
 
 const SKINS_DATA = [
-    { id: 'classic', name: 'Clásico', icon: '⭐', cost: 0, reqLevel: 1 },
-    { id: 'pumpkin', name: 'Calabaza', icon: '🎃', cost: 2000, reqLevel: 1 },
-    { id: 'safe', name: 'Caja Fuerte', icon: '🔒', cost: 5000, reqLevel: 1 },
-    { id: 'plasma', name: 'Cubo Plasma', icon: '💠', cost: 0, reqLevel: 10 },
-    { id: 'shadow', name: 'Sombra Oscura', icon: '⬛', cost: 0, reqLevel: 20 }
+    { id: 'classic', name: 'Clásico', icon: '⭐', cost: 0, reqLevel: 1, image: 'images/Luckys/Lucky_normal.png' },
+    { id: 'pumpkin', name: 'Calabaza', icon: '🎃', cost: 2000, reqLevel: 1, image: 'images/Luckys/lucky_calabaza.png' },
+    { id: 'safe', name: 'Caja Fuerte', icon: '🔒', cost: 5000, reqLevel: 1, image: 'images/Luckys/lucky_fuerte.png' },
+    { id: 'plasma', name: 'Cubo Plasma', icon: '💠', cost: 0, reqLevel: 10, image: 'images/Luckys/lucky_plasma.png' },
+    { id: 'shadow', name: 'Sombra Oscura', icon: '⬛', cost: 0, reqLevel: 20, image: 'images/Luckys/lucky_sombra.png' }
 ];
+
+function getSkinImage(skinId) {
+    const skin = SKINS_DATA.find(s => s.id === skinId);
+    return skin ? skin.image : 'images/Luckys/Lucky_normal.png';
+}
 
 const THEMES_DATA = [
     { id: 'void', name: 'Void Black', previewBg: '#1a0a2e', cost: 0, reqLevel: 1 },
@@ -552,7 +557,12 @@ function doPrestige() {
 
     // Reset state to default but merge saved
     state = { ...DEFAULT_STATE, ...savedState, prestige: newPrestige, prestigeBonus: newBonus };
+    if (currentAuthUser && currentAuthUser.username) {
+        state.playerName = currentAuthUser.username;
+    }
     state.inventory = secretItems;
+    lastRevealedItem = null;
+    renderRevealedItem(null);
 
     showToast('🌌 RENACIMIENTO CÓSMICO', `Has alcanzado el Prestigio ${newPrestige}. Tus multiplicadores han aumentado.`, 'Omnisciente');
     sounds.playOmni();
@@ -925,6 +935,12 @@ function selectSkin(skinId) {
     }
 
     state.selectedSkin = skinId;
+
+    const blockImg = document.getElementById('luckyBlockImg');
+    if (blockImg) {
+        blockImg.src = getSkinImage(skinId);
+    }
+
     sounds.playClick();
     showToast('🎨 Skin Equipada', skin.name, 'Rare');
     saveState();
@@ -1321,9 +1337,14 @@ function renderAll() {
     document.getElementById('pityText').textContent = `${state.pityCounter} / 100`;
     document.getElementById('pityBarFill').style.width = `${Math.min(100, state.pityCounter)}%`;
 
-    // Lucky Cube Skin
+    // Lucky Cube Skin & Image
     const cube = document.getElementById('luckyCube');
-    cube.setAttribute('data-skin', state.selectedSkin);
+    if (cube) cube.setAttribute('data-skin', state.selectedSkin);
+
+    const blockImg = document.getElementById('luckyBlockImg');
+    if (blockImg) {
+        blockImg.src = getSkinImage(state.selectedSkin);
+    }
 
     // Auto-clicker banner & toggle
     const banner = document.getElementById('autoclickerBanner');
@@ -1475,7 +1496,7 @@ function renderSkinsAndThemes() {
 
         return `
                     <div class="custom-card ${equipped ? 'selected' : ''}">
-                        <div class="custom-preview-box">${skin.icon}</div>
+                        <div class="custom-preview-box">${skin.image ? `<img src="${skin.image}" style="width: 50px; height: 50px; object-fit: contain;">` : skin.icon}</div>
                         <div class="custom-card-title">${skin.name}</div>
                         <div class="custom-card-desc">${unlocked ? 'Desbloqueado' : `Req. Niv ${skin.reqLevel}`}</div>
                         <button class="btn-custom-action ${equipped ? 'equipped' : ''}" onclick="selectSkin('${skin.id}')">
@@ -2125,6 +2146,171 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('btnOwnerGodMode')?.addEventListener('click', triggerGodMode);
     document.getElementById('floatGodMode')?.addEventListener('click', triggerGodMode);
+
+    // ==========================================
+    // NUEVAS MECÁNICAS — OWNER CONTROLS
+    // ==========================================
+    
+    // Risk It Admin
+    document.getElementById('btnApplyRiskItForce')?.addEventListener('click', () => {
+        const val = document.getElementById('modRiskItForceResult')?.value;
+        if (val) {
+            window.ownerForcedRiskItOutcome = val; // We'll handle this global var in `doRiskIt` or just let it exist for future implementation
+            showToast('🎲 RISK IT OVERRIDE', `Resultado forzado a: ${val}`, 'Legendary');
+        }
+    });
+    
+    document.getElementById('btnOwnerForcedRiskIt')?.addEventListener('click', () => {
+        if (!lastRevealedItem) return showToast('⚠️ Error', 'Abre un bloque primero', 'Common');
+        // Simple instant sim
+        doRiskIt();
+    });
+
+    // Prestige Admin
+    const forcePrestige = () => {
+        state.prestige = (state.prestige || 0) + 1;
+        state.level = 1;
+        state.coins = 0;
+        state.xp = 0;
+        state.luckLevel = 1;
+        state.traderLevel = 1;
+        state.autoClickerLevel = 0;
+        state.autoClickerEnabled = false;
+        state.inventory = state.inventory.filter(i => i.rarity === 'Secret' || CONFIG.PRESTIGE.keep.includes(i.id));
+        state.prestigeBonus = CONFIG.PRESTIGE.getBonuses(state.prestige);
+        saveState();
+        renderAll();
+        showToast('🌀 PRESTIGIO FORZADO', `Has renacido por la fuerza (Niv ${state.prestige})`, 'Omnisciente');
+    };
+    document.getElementById('btnOwnerForcePrestige')?.addEventListener('click', forcePrestige);
+    document.getElementById('floatForcePrestige')?.addEventListener('click', forcePrestige);
+    
+    document.getElementById('btnOwnerResetPrestige')?.addEventListener('click', () => {
+        state.prestige = 0;
+        state.prestigeBonus = null;
+        saveState();
+        renderAll();
+        showToast('🌀 PRESTIGIO RESET', 'Nivel de prestigio reiniciado a 0', 'Legendary');
+    });
+
+    // Eventos Admin
+    const forceEvent = (eventId) => {
+        const evt = CONFIG.EVENTS.find(e => e.id === eventId);
+        if (!evt) return;
+        state.activeEventId = evt.id;
+        state.activeEventExpiry = Date.now() + (evt.duration * 1000);
+        
+        if (evt.effect.type === 'coinsAll') {
+            state.coins += evt.effect.value;
+            state.totalCoinsEarned += evt.effect.value;
+        } else if (evt.effect.type === 'freeBlocks') {
+            for(let i=0; i<evt.effect.value; i++) openLuckyBlock(false);
+        }
+        
+        saveState();
+        renderAll();
+        showToast('⭐ EVENTO FORZADO', evt.name, 'Legendary');
+        if (typeof socket !== 'undefined' && socket && socket.connected) {
+            socket.emit('chat:send', { text: `📢 ¡EL OWNER HA INICIADO EL EVENTO: ${evt.name}!` });
+        }
+    };
+    
+    document.getElementById('ownerEvtLuckyHour')?.addEventListener('click', () => forceEvent('lucky_hour'));
+    document.getElementById('ownerEvtGoldenRain')?.addEventListener('click', () => forceEvent('golden_rain'));
+    document.getElementById('ownerEvtCursedHour')?.addEventListener('click', () => forceEvent('cursed_hour'));
+    document.getElementById('ownerEvtBlockRain')?.addEventListener('click', () => forceEvent('block_rain'));
+    
+    document.getElementById('floatEvtLucky')?.addEventListener('click', () => forceEvent('lucky_hour'));
+    document.getElementById('floatEvtGolden')?.addEventListener('click', () => forceEvent('golden_rain'));
+    document.getElementById('floatEvtCursed')?.addEventListener('click', () => forceEvent('cursed_hour'));
+    document.getElementById('floatEvtBlocks')?.addEventListener('click', () => forceEvent('block_rain'));
+
+    const clearEvent = () => {
+        state.activeEventId = null;
+        state.activeEventExpiry = 0;
+        saveState();
+        renderAll();
+        showToast('❌ EVENTO CANCELADO', 'Se ha limpiado el evento activo', 'Common');
+    };
+    document.getElementById('btnOwnerClearEvent')?.addEventListener('click', clearEvent);
+    document.getElementById('floatClearEvent')?.addEventListener('click', clearEvent);
+
+    // Secretos Admin
+    const unlockSecret = (secretId) => {
+        const s = SECRET_ITEMS.find(i => i.id === secretId);
+        if(!s) return;
+        const droppedItem = { ...s, sellValue: s.baseValue, obtainedAt: Date.now() };
+        addToInventory(droppedItem);
+        state.collection[secretId] = { firstObtained: Date.now(), totalCount: 1 };
+        saveState();
+        renderAll();
+        showToast(`👁️ SECRETO FORZADO`, `Has añadido ${s.name} al inventario`, 'Secret');
+    };
+    
+    document.getElementById('ownerUnlockNull')?.addEventListener('click', () => unlockSecret('s1'));
+    document.getElementById('ownerUnlockVoid')?.addEventListener('click', () => unlockSecret('s2'));
+    document.getElementById('ownerUnlockCosmicGod')?.addEventListener('click', () => unlockSecret('s3'));
+    
+    const unlockAllSecrets = () => {
+        SECRET_ITEMS.forEach(s => {
+            const droppedItem = { ...s, sellValue: s.baseValue, obtainedAt: Date.now() };
+            addToInventory(droppedItem);
+            state.collection[s.id] = { firstObtained: Date.now(), totalCount: 1 };
+        });
+        saveState();
+        renderAll();
+        showToast('👁️ SECRETOS DESBLOQUEADOS', 'Todos los ítems secretos añadidos', 'Secret');
+    };
+    document.getElementById('btnOwnerUnlockAllSecrets')?.addEventListener('click', unlockAllSecrets);
+    document.getElementById('floatUnlockAllSecrets')?.addEventListener('click', unlockAllSecrets);
+
+    // Battles Admin
+    const forceBattleWin = () => {
+        if (!state.activeBattleId) return showToast('⚠️ Sin Batalla', 'No hay batalla activa', 'Common');
+        socket.emit('battle:update_score', { battleId: state.activeBattleId, points: 9999999 });
+        showToast('⚔️ BATALLA HACKEADA', '+9,999,999 puntos añadidos', 'Legendary');
+    };
+    document.getElementById('btnOwnerBattleWin')?.addEventListener('click', forceBattleWin);
+    document.getElementById('floatBattleWin')?.addEventListener('click', forceBattleWin);
+    
+    document.getElementById('btnOwnerResetBattleCooldown')?.addEventListener('click', () => {
+        // Implement if we added client-side cooldowns
+        showToast('🔄 BATALLA', 'Cooldown reiniciado', 'Common');
+    });
+
+    // Streak Admin
+    const setStreak = (val) => {
+        state.luckStreak = Math.max(0, parseInt(val) || 0);
+        saveState();
+        renderAll();
+        showToast('🔥 RACHA MODIFICADA', `Racha actual: ${state.luckStreak}`, 'Rare');
+    };
+    
+    document.getElementById('btnOwnerSetStreak')?.addEventListener('click', () => {
+        setStreak(document.getElementById('ownerStreakSetVal')?.value);
+    });
+    document.getElementById('floatSetStreak')?.addEventListener('click', () => {
+        setStreak(document.getElementById('floatStreakVal')?.value);
+    });
+    
+    document.getElementById('btnOwnerResetStreak')?.addEventListener('click', () => setStreak(0));
+    
+    // ==========================================
+    // FLOATING MOD MENU TABS
+    // ==========================================
+    const floatTabs = ['Basic', 'Mech', 'Event'];
+    floatTabs.forEach(t => {
+        document.getElementById(`floatTab${t}`)?.addEventListener('click', (e) => {
+            floatTabs.forEach(tb => {
+                document.getElementById(`floatTab${tb}`)?.classList.remove('active');
+                const panel = document.getElementById(`floatPanel${tb}`);
+                if (panel) panel.style.display = 'none';
+            });
+            e.target.classList.add('active');
+            const p = document.getElementById(`floatPanel${t}`);
+            if (p) p.style.display = 'block';
+        });
+    });
 
     // Server & Broadcast
     document.getElementById('btnSendServerBroadcast')?.addEventListener('click', () => {

@@ -94,7 +94,9 @@
                         <!-- 3D Block View -->
                         <div class="block-stage" id="blockClickArea">
                             <div class="cube-wrapper" id="luckyCube" data-skin="classic">
-                                <div class="cube-face">?</div>
+                                <div class="cube-face">
+                                    <img id="luckyBlockImg" alt="Lucky Block" class="lucky-block-img">
+                                </div>
                             </div>
                         </div>
 
@@ -626,6 +628,13 @@
                                         <span class="rail-sub">Anuncios y Regalos</span>
                                     </div>
                                 </button>
+                                <button class="mod-rail-btn" data-mod-tab="mechanics" type="button">
+                                    <span class="rail-icon">⚙️</span>
+                                    <div class="rail-info">
+                                        <span class="rail-title">Nuevas Mecánicas</span>
+                                        <span class="rail-sub">Risk It, Prestige & más</span>
+                                    </div>
+                                </button>
                             </nav>
 
                             <!-- Right Main Workspace -->
@@ -939,43 +948,7 @@
                         </div>
                     </div>
 
-                    <!-- Ventana Flotante / Pop-out Mod Menu Overlay -->
-                    <div class="floating-mod-menu-overlay" id="floatingModMenu" style="display: none;">
-                        <div class="floating-mod-header" id="floatingModHeader">
-                            <span class="floating-mod-title">⚡ OWNER MOD MENU HUD v4.0</span>
-                            <div class="floating-mod-controls">
-                                <button class="btn-float-control" id="btnMinimizeFloatingMod" type="button">—</button>
-                                <button class="btn-float-control close" id="btnCloseFloatingMod"
-                                    type="button">✖</button>
-                            </div>
-                        </div>
-                        <div class="floating-mod-content" id="floatingModContent">
-                            <div class="floating-quick-row">
-                                <button class="mod-chip-btn" id="floatLvl10" type="button">+10 Niv</button>
-                                <button class="mod-chip-btn highlight" id="floatLvl1k" type="button">+1,000 Niv</button>
-                                <button class="mod-chip-btn epic" id="floatLvl10k" type="button">+10,000 Niv</button>
-                            </div>
-                            <div class="floating-quick-row" style="margin-top:0.4rem;">
-                                <button class="mod-chip-btn" id="floatCoin1m" type="button">+1M Coins</button>
-                                <button class="mod-chip-btn epic" id="floatCoin100m" type="button">+100M Coins</button>
-                            </div>
-                            <div class="floating-quick-row" style="margin-top:0.4rem;">
-                                <select id="floatingDropRarityOverride" class="mod-select"
-                                    style="font-size:0.75rem; padding:0.25rem;">
-                                    <option value="OFF">Drop: Normal</option>
-                                    <option value="Omnisciente">Drop: 100% Omnisciente</option>
-                                    <option value="Secret">Drop: 100% Secret</option>
-                                    <option value="Mythic">Drop: 100% Mythic</option>
-                                </select>
-                            </div>
-                            <div class="floating-quick-row" style="margin-top:0.4rem;">
-                                <button class="btn-mod-action gold" id="floatBatchOpen10" type="button"
-                                    style="font-size:0.75rem; padding:0.3rem;">🎁 10x Open</button>
-                                <button class="btn-mod-action danger" id="floatGodMode" type="button"
-                                    style="font-size:0.75rem; padding:0.3rem;">🔥 God Mode</button>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- placeholder (dock moved to global scope) -->
 
                     <!-- 🌀 SISTEMA DE PRESTIGIO -->
                     <div class="upgrades-section-title" style="margin: 1.5rem 0 1rem 0;">
@@ -1073,6 +1046,75 @@
                 <span>PERFIL</span>
             </button>
         </nav>
+    </div>
+
+    <!-- ⚡ FLOATING OWNER DOCK — Global (visible en todas las tabs) -->
+    <div class="floating-mod-menu-overlay" id="floatingModMenu" style="display: none;">
+        <div class="floating-mod-header" id="floatingModHeader">
+            <span class="floating-mod-title">⚡ OWNER MOD MENU HUD v4.0</span>
+            <div class="floating-mod-controls">
+                <button class="btn-float-control" id="btnMinimizeFloatingMod" type="button">—</button>
+                <button class="btn-float-control close" id="btnCloseFloatingMod" type="button">✖</button>
+            </div>
+        </div>
+        <div class="floating-mod-content" id="floatingModContent">
+            <!-- TABS del dock -->
+            <div style="display:flex; gap:0.3rem; margin-bottom:0.5rem; border-bottom:1px solid rgba(241,196,15,0.2); padding-bottom:0.4rem;">
+                <button class="mod-chip-btn active" id="floatTabBasic" data-float-tab="basic" style="font-size:0.65rem; padding:0.2rem 0.5rem;">⚡ Básico</button>
+                <button class="mod-chip-btn" id="floatTabMech" data-float-tab="mech" style="font-size:0.65rem; padding:0.2rem 0.5rem;">⚙️ Mecánicas</button>
+                <button class="mod-chip-btn" id="floatTabEvent" data-float-tab="event" style="font-size:0.65rem; padding:0.2rem 0.5rem;">⭐ Eventos</button>
+            </div>
+
+            <!-- Tab: Básico -->
+            <div id="floatPanelBasic">
+                <div class="floating-quick-row">
+                    <button class="mod-chip-btn" id="floatLvl10" type="button">+10 Niv</button>
+                    <button class="mod-chip-btn highlight" id="floatLvl1k" type="button">+1,000 Niv</button>
+                    <button class="mod-chip-btn epic" id="floatLvl10k" type="button">+10,000 Niv</button>
+                </div>
+                <div class="floating-quick-row" style="margin-top:0.4rem;">
+                    <button class="mod-chip-btn" id="floatCoin1m" type="button">+1M Coins</button>
+                    <button class="mod-chip-btn epic" id="floatCoin100m" type="button">+100M Coins</button>
+                </div>
+                <div class="floating-quick-row" style="margin-top:0.4rem;">
+                    <select id="floatingDropRarityOverride" class="mod-select" style="font-size:0.72rem; padding:0.25rem; width:100%;">
+                        <option value="OFF">Drop: Normal</option>
+                        <option value="Omnisciente">Drop: 100% Omnisciente</option>
+                        <option value="Secret">Drop: 100% Secret</option>
+                        <option value="Mythic">Drop: 100% Mythic</option>
+                        <option value="Legendary">Drop: 100% Legendary</option>
+                    </select>
+                </div>
+                <div class="floating-quick-row" style="margin-top:0.4rem;">
+                    <button class="btn-mod-action gold" id="floatBatchOpen10" type="button" style="font-size:0.72rem; padding:0.3rem; flex:1;">🎁 10x Open</button>
+                    <button class="btn-mod-action danger" id="floatGodMode" type="button" style="font-size:0.72rem; padding:0.3rem; flex:1;">🔥 God Mode</button>
+                </div>
+            </div>
+
+            <!-- Tab: Mecánicas -->
+            <div id="floatPanelMech" style="display:none;">
+                <div class="floating-quick-row" style="flex-direction:column; gap:0.35rem;">
+                    <button class="btn-mod-action gold" id="floatForcePrestige" type="button" style="font-size:0.72rem;">🌀 Forzar Prestigio</button>
+                    <button class="btn-mod-action epic" id="floatUnlockAllSecrets" type="button" style="font-size:0.72rem;">👁️ Desbloquear Secretos</button>
+                    <button class="btn-mod-action primary" id="floatBattleWin" type="button" style="font-size:0.72rem;">⚔️ Ganar Batalla Activa</button>
+                    <div style="display:flex; gap:0.3rem; align-items:center;">
+                        <input type="number" id="floatStreakVal" value="500" min="0" style="flex:1; font-size:0.72rem; padding:0.25rem; background:rgba(0,0,0,0.4); border:1px solid rgba(241,196,15,0.3); color:#fff; border-radius:4px;">
+                        <button class="btn-mod-action primary" id="floatSetStreak" type="button" style="font-size:0.72rem; padding:0.3rem;">🔥 Fijar Racha</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Eventos -->
+            <div id="floatPanelEvent" style="display:none;">
+                <div class="floating-quick-row" style="flex-direction:column; gap:0.35rem;">
+                    <button class="mod-chip-btn highlight" id="floatEvtLucky" type="button">🍀 Lucky Hour</button>
+                    <button class="mod-chip-btn highlight" id="floatEvtGolden" type="button">💰 Lluvia Dorada</button>
+                    <button class="mod-chip-btn" id="floatEvtCursed" type="button">☠️ Hora Maldita</button>
+                    <button class="mod-chip-btn" id="floatEvtBlocks" type="button">🎁 Lluvia de Cajas</button>
+                    <button class="btn-mod-action danger" id="floatClearEvent" type="button" style="font-size:0.72rem;">❌ Cancelar Evento</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Toast Notifications Container -->
