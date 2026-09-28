@@ -12,129 +12,17 @@
         "ADMIN",
         "VIP"
       ],
-      "coins": 4999985650,
-      "totalCoinsEarned": 5000000350,
-      "xp": 3374,
-      "level": 1000000,
-      "blocksOpened": 51,
+      "coins": 2007232700,
+      "totalCoinsEarned": 7009508350,
+      "xp": 2062,
+      "level": 13,
+      "blocksOpened": 756,
       "pityCounter": 0,
-      "luckLevel": 0,
-      "traderLevel": 0,
-      "autoClickerLevel": 0,
+      "luckLevel": 1,
+      "traderLevel": 1,
+      "autoClickerLevel": 1,
       "autoClickerEnabled": false,
       "inventory": [
-        {
-          "id": "s3",
-          "name": "COSMIC GOD",
-          "rarity": "Secret",
-          "emoji": "👁️",
-          "baseValue": 2000000,
-          "condition": "prestige_3",
-          "hint": "???",
-          "description": "Solo los renacidos 3 veces pueden verlo.",
-          "sellValue": 2000000,
-          "obtainedAt": 1790577425401,
-          "count": 1
-        },
-        {
-          "id": "l1",
-          "name": "Corona Dorada",
-          "rarity": "Legendary",
-          "image": "images/Legendario/Corona_Dorada.jpg",
-          "emoji": "👑",
-          "baseValue": 5000,
-          "sellValue": 14850,
-          "obtainedAt": 1790578266255,
-          "count": 4
-        },
-        {
-          "id": "r3",
-          "name": "Varita de Cristal",
-          "rarity": "Rare",
-          "image": "images/Raro/Varita_Cristal.jpg",
-          "emoji": "🪄",
-          "baseValue": 220,
-          "sellValue": 653,
-          "obtainedAt": 1790578847048,
-          "count": 7
-        },
-        {
-          "id": "u3",
-          "name": "Flecha de Plata",
-          "rarity": "Uncommon",
-          "image": "images/Poco comun/Flecha_Plata.jpg",
-          "emoji": "🏹",
-          "baseValue": 40,
-          "sellValue": 118,
-          "obtainedAt": 1790578847360,
-          "count": 5
-        },
-        {
-          "id": "r2",
-          "name": "Arco Encantado",
-          "rarity": "Rare",
-          "image": "images/Raro/Arco_Encantado.jpg",
-          "emoji": "🏹",
-          "baseValue": 180,
-          "sellValue": 534,
-          "obtainedAt": 1790578855280,
-          "count": 3
-        },
-        {
-          "id": "c3",
-          "name": "Pico de Piedra",
-          "rarity": "Common",
-          "image": "images/Comun/Pico_Madera.jpg",
-          "emoji": "⛏️",
-          "baseValue": 12,
-          "sellValue": 35,
-          "obtainedAt": 1790578887065,
-          "count": 1
-        },
-        {
-          "id": "e4",
-          "name": "Orbe del Vacío",
-          "rarity": "Epic",
-          "image": "images/Epico/Orbe_Vacio.jpg",
-          "emoji": "🔮",
-          "baseValue": 1200,
-          "sellValue": 3564,
-          "obtainedAt": 1790578888393,
-          "count": 3
-        },
-        {
-          "id": "c4",
-          "name": "Pan de Centeno",
-          "rarity": "Common",
-          "image": "images/Comun/Pan_Centeno.jpg",
-          "emoji": "🍞",
-          "baseValue": 5,
-          "sellValue": 14,
-          "obtainedAt": 1790579114602,
-          "count": 2
-        },
-        {
-          "id": "r4",
-          "name": "Manto de Sombras",
-          "rarity": "Rare",
-          "image": "images/Raro/Manto_Sombra.jpg",
-          "emoji": "🧥",
-          "baseValue": 250,
-          "sellValue": 742,
-          "obtainedAt": 1790579169135,
-          "count": 4
-        },
-        {
-          "id": "m2",
-          "name": "Cetro del Caos",
-          "rarity": "Mythic",
-          "image": "images/Mitico/Cetro_Caos.jpg",
-          "emoji": "🔱",
-          "baseValue": 30000,
-          "sellValue": 89100,
-          "obtainedAt": 1790579197117,
-          "count": 1
-        },
         {
           "id": "e3",
           "name": "Martillo de Tormenta",
@@ -142,108 +30,9 @@
           "image": "images/Epico/Martillo_Tormenta.jpg",
           "emoji": "🔨",
           "baseValue": 1100,
-          "sellValue": 3267,
-          "obtainedAt": 1790579233422,
-          "count": 2
-        },
-        {
-          "id": "m1",
-          "name": "Armadura Vampírica",
-          "rarity": "Mythic",
-          "image": "images/Mitico/Armadura_Vampirica.jpg",
-          "emoji": "🧛",
-          "baseValue": 25000,
-          "sellValue": 74250,
-          "obtainedAt": 1790579252524,
-          "count": 3
-        },
-        {
-          "id": "u1",
-          "name": "Poción Slime",
-          "rarity": "Uncommon",
-          "image": "images/Poco comun/Pocion_Slime.jpg",
-          "emoji": "🧪",
-          "baseValue": 50,
-          "sellValue": 148,
-          "obtainedAt": 1790579333541,
-          "count": 4
-        },
-        {
-          "id": "u2",
-          "name": "Escudo de Hierro",
-          "rarity": "Uncommon",
-          "image": "images/Poco comun/Escudo_Hierro.jpg",
-          "emoji": "🛡️",
-          "baseValue": 45,
-          "sellValue": 133,
-          "obtainedAt": 1790579334332,
-          "count": 1
-        },
-        {
-          "id": "m3",
-          "name": "Reliquia Ancestral",
-          "rarity": "Mythic",
-          "image": "images/Mitico/Reliquia_Ancestral.jpg",
-          "emoji": "⚱️",
-          "baseValue": 28000,
-          "sellValue": 83160,
-          "obtainedAt": 1790579334645,
-          "count": 1
-        },
-        {
-          "id": "u4",
-          "name": "Botas de Velocidad",
-          "rarity": "Uncommon",
-          "image": "images/Poco comun/Botas_Velocidad.jpg",
-          "emoji": "👟",
-          "baseValue": 60,
-          "sellValue": 178,
-          "obtainedAt": 1790579334805,
-          "count": 1
-        },
-        {
-          "id": "e2",
-          "name": "Escama de Dragón",
-          "rarity": "Epic",
-          "image": "images/Epico/Escama_Dragon.jpg",
-          "emoji": "🐉",
-          "baseValue": 900,
-          "sellValue": 2673,
-          "obtainedAt": 1790579335165,
-          "count": 3
-        },
-        {
-          "id": "o3",
-          "name": "Orbe Celestial [+10x]",
-          "rarity": "Omnisciente",
-          "image": "images/Omnisciente/Orbe_Celestial.jpg",
-          "emoji": "🔮",
-          "baseValue": 500000,
-          "sellValue": 14850000,
-          "obtainedAt": 1790579336893,
-          "count": 1
-        },
-        {
-          "id": "r1",
-          "name": "Anillo Mágico",
-          "rarity": "Rare",
-          "image": "images/Raro/Anillo_Magico.jpg",
-          "emoji": "💍",
-          "baseValue": 200,
-          "sellValue": 594,
-          "obtainedAt": 1790579581373,
-          "count": 1
-        },
-        {
-          "id": "o1",
-          "name": "Artefacto Cósmico",
-          "rarity": "Omnisciente",
-          "image": "images/Omnisciente/Artefacto_Cosmico.jpg",
-          "emoji": "✨",
-          "baseValue": 100000,
-          "sellValue": 100000,
-          "obtainedAt": 1790580011077,
-          "count": 5
+          "sellValue": 3593,
+          "obtainedAt": 1790580898886,
+          "count": 13
         },
         {
           "id": "c5",
@@ -252,20 +41,86 @@
           "image": "images/Comun/Cuerda_Resistente.jpg",
           "emoji": "🪢",
           "baseValue": 7,
-          "sellValue": 20,
-          "obtainedAt": 1790580135631,
-          "count": 1
+          "sellValue": 22,
+          "obtainedAt": 1790580899414,
+          "count": 29
         },
         {
-          "id": "c1",
-          "name": "Espada de Madera",
+          "id": "u4",
+          "name": "Botas de Velocidad",
+          "rarity": "Uncommon",
+          "image": "images/Poco comun/Botas_Velocidad.jpg",
+          "emoji": "👟",
+          "baseValue": 60,
+          "sellValue": 196,
+          "obtainedAt": 1790580900014,
+          "count": 38
+        },
+        {
+          "id": "m1",
+          "name": "Armadura Vampírica",
+          "rarity": "Mythic",
+          "image": "images/Mitico/Armadura_Vampirica.jpg",
+          "emoji": "🧛",
+          "baseValue": 25000,
+          "sellValue": 81675,
+          "obtainedAt": 1790580900206,
+          "count": 13
+        },
+        {
+          "id": "r3",
+          "name": "Varita de Cristal",
+          "rarity": "Rare",
+          "image": "images/Raro/Varita_Cristal.jpg",
+          "emoji": "🪄",
+          "baseValue": 220,
+          "sellValue": 718,
+          "obtainedAt": 1790580900398,
+          "count": 16
+        },
+        {
+          "id": "u3",
+          "name": "Flecha de Plata",
+          "rarity": "Uncommon",
+          "image": "images/Poco comun/Flecha_Plata.jpg",
+          "emoji": "🏹",
+          "baseValue": 40,
+          "sellValue": 130,
+          "obtainedAt": 1790580900614,
+          "count": 30
+        },
+        {
+          "id": "u2",
+          "name": "Escudo de Hierro",
+          "rarity": "Uncommon",
+          "image": "images/Poco comun/Escudo_Hierro.jpg",
+          "emoji": "🛡️",
+          "baseValue": 45,
+          "sellValue": 147,
+          "obtainedAt": 1790580900838,
+          "count": 31
+        },
+        {
+          "id": "r2",
+          "name": "Arco Encantado",
+          "rarity": "Rare",
+          "image": "images/Raro/Arco_Encantado.jpg",
+          "emoji": "🏹",
+          "baseValue": 180,
+          "sellValue": 588,
+          "obtainedAt": 1790580901054,
+          "count": 29
+        },
+        {
+          "id": "c2",
+          "name": "Armadura de Cuero",
           "rarity": "Common",
-          "image": "images/Comun/Espada_Madera.jpg",
-          "emoji": "🗡️",
-          "baseValue": 10,
-          "sellValue": 29,
-          "obtainedAt": 1790580200798,
-          "count": 1
+          "image": "images/Comun/Armadura_Cuero.jpg",
+          "emoji": "👘",
+          "baseValue": 8,
+          "sellValue": 26,
+          "obtainedAt": 1790580901350,
+          "count": 14
         },
         {
           "id": "l3",
@@ -274,8 +129,195 @@
           "image": "images/Legendario/Escudo_Titan.jpg",
           "emoji": "🛡️",
           "baseValue": 6000,
-          "sellValue": 17820,
-          "obtainedAt": 1790580201502,
+          "sellValue": 19602,
+          "obtainedAt": 1790580907710,
+          "count": 22
+        },
+        {
+          "id": "l1",
+          "name": "Corona Dorada",
+          "rarity": "Legendary",
+          "image": "images/Legendario/Corona_Dorada.jpg",
+          "emoji": "👑",
+          "baseValue": 5000,
+          "sellValue": 16335,
+          "obtainedAt": 1790580908422,
+          "count": 29
+        },
+        {
+          "id": "m3",
+          "name": "Reliquia Ancestral",
+          "rarity": "Mythic",
+          "image": "images/Mitico/Reliquia_Ancestral.jpg",
+          "emoji": "⚱️",
+          "baseValue": 28000,
+          "sellValue": 91476,
+          "obtainedAt": 1790580909085,
+          "count": 25
+        },
+        {
+          "id": "u1",
+          "name": "Poción Slime",
+          "rarity": "Uncommon",
+          "image": "images/Poco comun/Pocion_Slime.jpg",
+          "emoji": "🧪",
+          "baseValue": 50,
+          "sellValue": 163,
+          "obtainedAt": 1790580909237,
+          "count": 26
+        },
+        {
+          "id": "l2",
+          "name": "Pluma de Fénix",
+          "rarity": "Legendary",
+          "image": "images/Legendario/Pluma_Fenix.jpg",
+          "emoji": "🪶",
+          "baseValue": 4500,
+          "sellValue": 14701,
+          "obtainedAt": 1790580955609,
+          "count": 34
+        },
+        {
+          "id": "c3",
+          "name": "Pico de Piedra",
+          "rarity": "Common",
+          "image": "images/Comun/Pico_Madera.jpg",
+          "emoji": "⛏️",
+          "baseValue": 12,
+          "sellValue": 39,
+          "obtainedAt": 1790580955706,
+          "count": 20
+        },
+        {
+          "id": "o3",
+          "name": "Orbe Celestial",
+          "rarity": "Omnisciente",
+          "image": "images/Omnisciente/Orbe_Celestial.jpg",
+          "emoji": "🔮",
+          "baseValue": 500000,
+          "sellValue": 1633500,
+          "obtainedAt": 1790580955952,
+          "count": 5
+        },
+        {
+          "id": "c4",
+          "name": "Pan de Centeno",
+          "rarity": "Common",
+          "image": "images/Comun/Pan_Centeno.jpg",
+          "emoji": "🍞",
+          "baseValue": 5,
+          "sellValue": 16,
+          "obtainedAt": 1790580956020,
+          "count": 17
+        },
+        {
+          "id": "c1",
+          "name": "Espada de Madera",
+          "rarity": "Common",
+          "image": "images/Comun/Espada_Madera.jpg",
+          "emoji": "🗡️",
+          "baseValue": 10,
+          "sellValue": 32,
+          "obtainedAt": 1790580956053,
+          "count": 11
+        },
+        {
+          "id": "e2",
+          "name": "Escama de Dragón",
+          "rarity": "Epic",
+          "image": "images/Epico/Escama_Dragon.jpg",
+          "emoji": "🐉",
+          "baseValue": 900,
+          "sellValue": 2940,
+          "obtainedAt": 1790580956103,
+          "count": 12
+        },
+        {
+          "id": "e4",
+          "name": "Orbe del Vacío",
+          "rarity": "Epic",
+          "image": "images/Epico/Orbe_Vacio.jpg",
+          "emoji": "🔮",
+          "baseValue": 1200,
+          "sellValue": 3920,
+          "obtainedAt": 1790580956404,
+          "count": 25
+        },
+        {
+          "id": "r1",
+          "name": "Anillo Mágico",
+          "rarity": "Rare",
+          "image": "images/Raro/Anillo_Magico.jpg",
+          "emoji": "💍",
+          "baseValue": 200,
+          "sellValue": 653,
+          "obtainedAt": 1790580957303,
+          "count": 21
+        },
+        {
+          "id": "e1",
+          "name": "Hoja de Plasma",
+          "rarity": "Epic",
+          "image": "images/Epico/Hoja_Plasma.jpg",
+          "emoji": "⚔️",
+          "baseValue": 1000,
+          "sellValue": 3267,
+          "obtainedAt": 1790580957551,
+          "count": 11
+        },
+        {
+          "id": "o1",
+          "name": "Artefacto Cósmico",
+          "rarity": "Omnisciente",
+          "image": "images/Omnisciente/Artefacto_Cosmico.jpg",
+          "emoji": "✨",
+          "baseValue": 100000,
+          "sellValue": 326700,
+          "obtainedAt": 1790580957703,
+          "count": 6
+        },
+        {
+          "id": "o2",
+          "name": "Cristal del Universo",
+          "rarity": "Omnisciente",
+          "image": "images/Omnisciente/Cristal_Universo.jpg",
+          "emoji": "🌌",
+          "baseValue": 150000,
+          "sellValue": 490050,
+          "obtainedAt": 1790580957903,
+          "count": 5
+        },
+        {
+          "id": "m2",
+          "name": "Cetro del Caos",
+          "rarity": "Mythic",
+          "image": "images/Mitico/Cetro_Caos.jpg",
+          "emoji": "🔱",
+          "baseValue": 30000,
+          "sellValue": 98010,
+          "obtainedAt": 1790580958153,
+          "count": 12
+        },
+        {
+          "id": "r4",
+          "name": "Manto de Sombras",
+          "rarity": "Rare",
+          "image": "images/Raro/Manto_Sombra.jpg",
+          "emoji": "🧥",
+          "baseValue": 250,
+          "sellValue": 816,
+          "obtainedAt": 1790580959603,
+          "count": 11
+        },
+        {
+          "id": "l3",
+          "name": "Escudo de Titán [+5x]",
+          "rarity": "Legendary",
+          "image": "images/Legendario/Escudo_Titan.jpg",
+          "emoji": "🛡️",
+          "baseValue": 6000,
+          "sellValue": 98010,
+          "obtainedAt": 1790580907710,
           "count": 1
         }
       ],
@@ -297,133 +339,144 @@
       ],
       "stats": {
         "highestValueItem": {
-          "id": "s3",
-          "name": "COSMIC GOD",
-          "rarity": "Secret",
-          "emoji": "👁️",
-          "baseValue": 2000000,
-          "condition": "prestige_3",
-          "hint": "???",
-          "description": "Solo los renacidos 3 veces pueden verlo.",
-          "sellValue": 2000000,
-          "obtainedAt": 1790577425401
+          "id": "o3",
+          "name": "Orbe Celestial",
+          "rarity": "Omnisciente",
+          "image": "images/Omnisciente/Orbe_Celestial.jpg",
+          "emoji": "🔮",
+          "baseValue": 500000,
+          "sellValue": 2970000,
+          "obtainedAt": 1790580638817
         },
-        "omniscienteCount": 58,
-        "legendariesObtained": 157
+        "omniscienteCount": 83,
+        "legendariesObtained": 373
       },
       "startDate": "22/9/2026",
       "luckStreak": 16,
-      "streakBest": 440,
+      "streakBest": 679,
       "collection": {
         "u1": {
           "firstObtained": 1790574350596,
-          "totalCount": 12
+          "totalCount": 46
         },
         "r4": {
           "firstObtained": 1790574352485,
-          "totalCount": 14
+          "totalCount": 40
         },
         "u2": {
           "firstObtained": 1790574353906,
-          "totalCount": 16
+          "totalCount": 62
         },
         "m2": {
           "firstObtained": 1790574354050,
-          "totalCount": 8
+          "totalCount": 30
         },
         "r2": {
           "firstObtained": 1790574355866,
-          "totalCount": 13
+          "totalCount": 51
         },
         "m1": {
           "firstObtained": 1790574356435,
-          "totalCount": 8
+          "totalCount": 31
         },
         "r3": {
           "firstObtained": 1790574357050,
-          "totalCount": 18
+          "totalCount": 42
         },
         "u4": {
           "firstObtained": 1790574357195,
-          "totalCount": 14
+          "totalCount": 71
         },
         "c2": {
           "firstObtained": 1790574374090,
-          "totalCount": 12
+          "totalCount": 29
         },
         "c4": {
           "firstObtained": 1790574377490,
-          "totalCount": 11
+          "totalCount": 28
         },
         "l1": {
           "firstObtained": 1790574378242,
-          "totalCount": 9
+          "totalCount": 45
         },
         "l3": {
           "firstObtained": 1790574382466,
-          "totalCount": 6
+          "totalCount": 40
         },
         "e3": {
           "firstObtained": 1790574382627,
-          "totalCount": 8
+          "totalCount": 32
         },
         "r1": {
           "firstObtained": 1790574382786,
-          "totalCount": 10
+          "totalCount": 38
         },
         "u3": {
           "firstObtained": 1790574383082,
-          "totalCount": 18
+          "totalCount": 59
         },
         "m3": {
           "firstObtained": 1790574383931,
-          "totalCount": 5
+          "totalCount": 34
         },
         "e1": {
           "firstObtained": 1790574384098,
-          "totalCount": 9
+          "totalCount": 32
         },
         "c3": {
           "firstObtained": 1790574416308,
-          "totalCount": 8
+          "totalCount": 30
         },
         "c5": {
           "firstObtained": 1790574416563,
-          "totalCount": 9
+          "totalCount": 40
         },
         "l2": {
           "firstObtained": 1790574416763,
-          "totalCount": 6
+          "totalCount": 53
         },
         "c1": {
           "firstObtained": 1790574417012,
-          "totalCount": 8
+          "totalCount": 21
         },
         "e4": {
           "firstObtained": 1790574418455,
-          "totalCount": 13
+          "totalCount": 44
         },
         "e2": {
           "firstObtained": 1790574419355,
-          "totalCount": 8
+          "totalCount": 25
         },
         "o1": {
           "firstObtained": 1790574439724,
-          "totalCount": 4
+          "totalCount": 13
         },
         "o2": {
           "firstObtained": 1790574441260,
-          "totalCount": 2
+          "totalCount": 11
         },
         "o3": {
           "firstObtained": 1790574442684,
-          "totalCount": 3
+          "totalCount": 10
+        },
+        "s1": {
+          "firstObtained": 1790580875766,
+          "totalCount": 1
+        },
+        "s2": {
+          "firstObtained": 1790580875766,
+          "totalCount": 1
+        },
+        "s3": {
+          "firstObtained": 1790580875766,
+          "totalCount": 1
         }
       },
       "discoveredSecrets": [
-        "s3"
+        "s3",
+        "s1"
       ],
-      "prestige": 10,
+      "prestige": 11,
       "prestigeBonus": {
         "luck": 0.5,
         "sellValue": 0.5,
@@ -459,7 +512,7 @@
             "rewardCoins": 300,
             "rewardXp": 35,
             "type": "sell_items",
-            "current": 0,
+            "current": 3,
             "claimed": false
           },
           {
@@ -498,8 +551,8 @@
             "rewardCoins": 3000,
             "rewardXp": 350,
             "type": "open_any",
-            "current": 52,
-            "claimed": false
+            "current": 80,
+            "claimed": true
           },
           {
             "id": "w_earn_coins",
@@ -510,8 +563,8 @@
             "rewardCoins": 5000,
             "rewardXp": 500,
             "type": "earn_coins",
-            "current": 0,
-            "claimed": false
+            "current": 10000,
+            "claimed": true
           }
         ],
         "activeCategory": "daily",
@@ -519,6 +572,6 @@
       }
     },
     "createdAt": 1790576857965,
-    "updatedAt": 1790580245204
+    "updatedAt": 1790581036198
   }
 }

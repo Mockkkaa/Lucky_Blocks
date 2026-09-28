@@ -92,16 +92,17 @@ const CONFIG = {
    SECRET ITEMS — Conditions hidden until discovered
    ========================================================================== */
 const SECRET_ITEMS = [
-    { id: 's1', name: 'NULL',       rarity: 'Secret', emoji: '⬛', baseValue: 500000,  condition: 'streak_500',            hint: '???',                                         description: 'Un ítem que no debería existir.' },
-    { id: 's2', name: 'VOID',       rarity: 'Secret', emoji: '🌑', baseValue: 750000,  condition: 'open_1000_no_legendary', hint: 'La oscuridad recompensa la perseverancia...',  description: 'Encontrado tras 1000 aperturas sin gloria.' },
-    { id: 's3', name: 'COSMIC GOD', rarity: 'Secret', emoji: '👁️', baseValue: 2000000, condition: 'prestige_3',             hint: '???',                                         description: 'Solo los renacidos 3 veces pueden verlo.' }
+    { id: 's1', name: 'NULL',       rarity: 'Secret', image: "",emoji: '⬛', baseValue: 500000,  condition: 'streak_500',            hint: '???',                                         description: 'Un ítem que no debería existir.' },
+    { id: 's2', name: 'VOID',       rarity: 'Secret', image: 'images/Secreto/Vacio.jpg', emoji: '🌑', baseValue: 750000,  condition: 'open_1000_no_legendary', hint: 'La oscuridad recompensa la perseverancia...',  description: 'Encontrado tras 1000 aperturas sin gloria.' },
+    { id: 's3', name: 'COSMIC GOD', rarity: 'Secret', image: 'images/Secreto/Cosmico.jpg', emoji: '👁️', baseValue: 2000000, condition: 'prestige_3',             hint: '???',                                         description: 'Solo los renacidos 3 veces pueden verlo.' }
 ];
 
 function getItemIcon(item, extraClass = '') {
     if (!item) return '📦';
     const lootDef = LOOT_TABLE.find(i => i.id === item.id || i.name === item.name);
-    const imagePath = item.image || (lootDef && lootDef.image);
-    const emojiIcon = item.emoji || (lootDef && lootDef.emoji) || '📦';
+    const secretDef = SECRET_ITEMS.find(i => i.id === item.id || i.name === item.name);
+    const imagePath = item.image || (lootDef && lootDef.image) || (secretDef && secretDef.image);
+    const emojiIcon = item.emoji || (lootDef && lootDef.emoji) || (secretDef && secretDef.emoji) || '📦';
 
     if (imagePath) {
         if (imagePath.startsWith('<img')) return imagePath;
@@ -1583,8 +1584,8 @@ function renderCollection() {
     let discovered = 0;
     
     // Sort logic to match inventory: rarity -> value
-    const sortedTable = [...LOOT_TABLE].sort((a, b) => {
-        const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic', 'Omnisciente'];
+    const sortedTable = [...LOOT_TABLE, ...SECRET_ITEMS].sort((a, b) => {
+        const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic', 'Omnisciente', 'Secret'];
         return rarities.indexOf(a.rarity) - rarities.indexOf(b.rarity);
     });
 
@@ -1598,7 +1599,7 @@ function renderCollection() {
         if (disc) {
             html += `
                 <div class="item-card rarity-${item.rarity.toLowerCase()}">
-                    <div class="item-emoji-large">${item.emoji}</div>
+                    <div class="item-emoji-large" style="display:flex; justify-content:center; align-items:center; height:60px;">${getItemIcon(item)}</div>
                     <div class="item-name">${item.name}</div>
                     <div class="item-rarity-tag">${item.rarity}</div>
                     <div class="item-value" style="font-size: 0.75rem;">Obtenidos: ${disc.totalCount}</div>
@@ -1607,7 +1608,7 @@ function renderCollection() {
         } else {
             html += `
                 <div class="item-card" style="opacity: 0.5; filter: grayscale(1);">
-                    <div class="item-emoji-large">❓</div>
+                    <div class="item-emoji-large" style="display:flex; justify-content:center; align-items:center; height:60px;">❓</div>
                     <div class="item-name">Desconocido</div>
                     <div class="item-rarity-tag">${item.rarity}</div>
                     <div class="item-value" style="font-size: 0.75rem;">Sigue buscando...</div>
@@ -1618,7 +1619,7 @@ function renderCollection() {
 
     grid.innerHTML = html;
     
-    const maxItems = LOOT_TABLE.length;
+    const maxItems = LOOT_TABLE.length + SECRET_ITEMS.length;
     const progressEl = document.getElementById('collectionProgress');
     if(progressEl) progressEl.textContent = `${discovered} / ${maxItems}`;
     
