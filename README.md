@@ -63,3 +63,51 @@ Esta es la arquitectura estandar que utilizan "Juegos" como Slither.io o Agar.io
 * 📁 Fotos para diferenciar de mejor manera los objetos
 
 *Secreto para el rol Owner 👀*
+
+# NUEVO
+## 🚀 Nuevas Funcionalidades y Mecánicas de Juego
+
+### ☁️ 1. Sistema de Cuentas y Guardado en la Nube (Cloud Save & Auth)
+* **Registro e Inicio de Sesión Persistente:** Autenticación segura mediante contraseñas encriptadas (SHA-256) y gestión de tokens de sesión.
+* **Sincronización Automática:** El nivel, las monedas, los ítems del inventario, skins y multiplicadores se guardan automáticamente en el servidor (`users_db.json`).
+* **Multi-dispositivo e Incógnito:** Accede a tu progreso desde cualquier navegador o ventana privada sin perder tu avance.
+
+### 🎲 2. Mecánica "Risk It" (Doble o Nada)
+* **Apuesta tu Último Hallazgo:** Opción de arriesgar el valor del último ítem obtenido directamente desde el panel de revelado.
+* **Multiplicadores Dinámicos:** Multiplica el valor de venta del ítem ($x1.5$, $x2.0$, etc.) si tienes suerte.
+* **Desapilado Inteligente:** Si posees múltiples copias de un objeto, el sistema desapilará una sola unidad de forma segura para arriesgarla sin comprometer el resto de tu inventario.
+
+### 🌀 3. Sistema de Prestigio (Renacer / Rebirth)
+* **Reinicio de Progreso Estratégico:** Al alcanzar el nivel máximo requerido, puedes realizar un Prestigio para reiniciar tus monedas y nivel.
+* **Bonificaciones Permanentes:** Otorga multiplicadores permanentes acumulativos de Suerte (+%), Ganancia de XP (+%) y Precio de Venta (+%).
+* **Preservación de Ítems Secretos:** Los objetos de rareza *Secret* conservan su permanencia tras cada renacimiento.
+
+### ⚔️ 4. Luck Battles (Batallas de Suerte 1v1 en Tiempo Real)
+* **Desafíos Multijugador:** Reta a cualquier jugador en línea a una batalla rápida por una apuesta de monedas.
+* **Competencia de 30 Segundos:** Durante 30 segundos, ambos jugadores abren cajas sin costo para acumular la mayor cantidad de puntos de valor.
+* **Premio al Ganador:** El jugador con el mayor puntaje se lleva el pozo de monedas.
+
+### ⭐ 5. Eventos Globales Aleatorios
+* **Eventos en Tiempo Real:** El servidor activa automáticamente eventos aleatorios para todos los jugadores conectados:
+  * 🍀 **Lucky Hour:** +50% de probabilidad de suerte global.
+  * 💰 **Lluvia Dorada:** Inyección instantánea de monedas gratis a todos los jugadores.
+  * ☠️ **Hora Maldita:** Reducción temporal de suerte con recompensas de alto riesgo.
+  * 🎁 **Lluvia de Cajas:** Cajas gratis durante el periodo del evento.
+
+### 📖 6. Sistema de Colección Enciclopédica
+* **Registro de Descubrimiento:** Registro visual de todos los ítems descubiertos en la Loot Table del juego.
+* **Bonus por Completitud:** Desbloquear nuevos ítems otorga bonificaciones pasivas permanentes a la Suerte, al Precio de Venta y a la XP recibida.
+* **Ocultamiento de Secretos:** Los objetos secretos permanecen ocultos en la enciclopedia hasta ser descubiertos por primera vez.
+
+### 🔥 7. Racha de Suerte (Luck Streak)
+* **Multiplicador Progresivo:** Al abrir cajas consecutivamente, acumulas una racha de suerte que incrementa ligeramente las probabilidades de rareza.
+* **Reinicio Dinámico:** La racha se reinicia al obtener un ítem de rareza alta (*Legendary*, *Mythic* o *Omnisciente*).
+
+### 🤝 8. Sistema de Intercambios Estilo "Adopt Me"
+* **Intercambio Seguro de 4 Slots:** Comercio en vivo con otros jugadores mediante WebSockets.
+* **Conteo de Seguridad de 5 Segundos:** Temporizador de bloqueo obligatorio al aceptar una oferta para prevenir estafas o cambios de último segundo.
+* **Sincronización de Inventarios:** Transferencia automática e inmediata de ítems al confirmar la transacción.
+
+### 📢 9. Feed Global de Hallazgos y Notificaciones
+* **Transmisión en Vivo:** Anuncios automáticos en el chat y feed global cuando un jugador obtiene ítems de rareza *Mythic*, *Omnisciente* o realiza un Prestigio.
+* **Indicador de Estado de Servidor:** Badge visual interactivo (`🟢 Online` / `🔴 Offline`) con contador de usuarios conectados en tiempo real.
