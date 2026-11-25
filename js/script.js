@@ -175,7 +175,35 @@ const DEFAULT_STATE = {
     activeEventId: null,
     activeEventExpiry: 0,
     battleCooldownExpiry: 0,
-    battleHistory: []
+    battleHistory: [],
+    // === AURA BATTLE & CHARACTER CUSTOMIZER ===
+    character: {
+        body: 'classic',
+        aura: 'none',
+        head: 'none',
+        weapon: 'none',
+        color: '#00f0ff',
+        auraColor: '#ff0055',
+        pose: 'guard'
+    },
+    unlockedCosmetics: {
+        bodies: ['classic', 'cyber', 'shadow'],
+        auras: ['none', 'fire'],
+        heads: ['none'],
+        weapons: ['none']
+    },
+    defeatedBosses: [],
+    currentBossId: 'b1',
+    auraBattlesWon: 0,
+    auraBattlesLost: 0,
+    // === ARCADE & MINIGAMES ===
+    arcade: {
+        lastDailyWheel: 0,
+        wheelSpinsTotal: 0,
+        minesGamesWon: 0,
+        minesTotalWon: 0,
+        coinFlipWon: 0
+    }
 };
 
 let state = { ...DEFAULT_STATE };
@@ -197,6 +225,17 @@ function loadState() {
                         item.image = lootDef.image;
                     }
                 });
+            }
+            // Ensure character and arcade structures
+            if (!state.character) {
+                state.character = { body: 'classic', aura: 'none', head: 'none', weapon: 'none', color: '#00f0ff', auraColor: '#ff0055', pose: 'guard' };
+            }
+            if (!state.unlockedCosmetics) {
+                state.unlockedCosmetics = { bodies: ['classic', 'cyber', 'shadow'], auras: ['none', 'fire'], heads: ['none'], weapons: ['none'] };
+            }
+            if (!Array.isArray(state.defeatedBosses)) state.defeatedBosses = [];
+            if (!state.arcade) {
+                state.arcade = { lastDailyWheel: 0, wheelSpinsTotal: 0, minesGamesWon: 0, minesTotalWon: 0, coinFlipWon: 0 };
             }
         }
         ensureMissionsInitialized();
@@ -308,6 +347,73 @@ class SoundManager {
             osc.start(now + idx * 0.1);
             osc.stop(now + idx * 0.1 + 0.8);
         });
+    }
+
+    playClash() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(120, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 0.4);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.4);
+    }
+
+    playVictory() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        [440, 554.37, 659.25, 880].forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+            gain.gain.setValueAtTime(0.25, now + idx * 0.12);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.12 + 0.6);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now + idx * 0.12);
+            osc.stop(now + idx * 0.12 + 0.6);
+        });
+    }
+
+    playSpin() {
+        this.init();
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.04);
+    }
+
+    playLaser() {
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(1200, now);
+        osc.frequency.exponentialRampToValueAtTime(200, now + 0.15);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.15);
     }
 }
 const sounds = new SoundManager();
@@ -1373,6 +1479,11 @@ function renderAll() {
     if (typeof renderLuckStreak === 'function') renderLuckStreak();
     if (typeof renderEventBanner === 'function') renderEventBanner();
     if (typeof renderPrestige === 'function') renderPrestige();
+    // Battle tab — keep aura summary fresh when it's visible
+    if (typeof renderAuraSummaryBar === 'function' &&
+        document.getElementById('tab-battle')?.classList.contains('active')) {
+        renderAuraSummaryBar();
+    }
 }
 
 function renderRevealedItem(item) {
@@ -2648,6 +2759,12 @@ function initSocketConnection() {
         // Online Players list update
         socket.on('players:online_list', (players) => {
             updateOnlinePlayersDropdown(players);
+            // Also refresh PVP battle grid if visible
+            const pvpGrid = document.getElementById('pvpOnlinePlayersGrid');
+            if (pvpGrid) {
+                const cards = players.map(p => buildPvpPlayerCard(p)).filter(Boolean).join('');
+                pvpGrid.innerHTML = cards || `<p style="text-align:center; color:var(--text-dim); padding:2rem;">No hay jugadores disponibles en este momento.</p>`;
+            }
         });
 
         // Global Chat messages
@@ -2874,6 +2991,9 @@ function initSocketConnection() {
         socket.on('battle:error', (data) => {
             showToast('⚠️ Error de Batalla', data.message, 'Common');
         });
+
+        // Hook Aura PVP socket events (after socket is established)
+        hookAuraSocketEvents();
 
     } catch (e) {
         console.error('Socket.io connection error:', e);
@@ -3423,5 +3543,1051 @@ function initAuthSystem() {
 
 document.addEventListener('DOMContentLoaded', () => {
     initAuthSystem();
+});
+
+/* ==========================================================================
+   ⚔️ AURA BATTLE SYSTEM — Coliseo de Aura & Torre de Jefes
+   ========================================================================== */
+
+const AURA_WEIGHTS = {
+    Common: 1,
+    Uncommon: 3,
+    Rare: 8,
+    Epic: 20,
+    Legendary: 60,
+    Mythic: 200,
+    Omnisciente: 800,
+    Secret: 2500
+};
+
+const AURA_RANK_TIERS = [
+    { min: 0,       max: 999,     name: 'Iniciado',      color: '#aaa',    icon: '🌱' },
+    { min: 1000,    max: 4999,    name: 'Aprendiz',      color: '#2ecc71', icon: '⚡' },
+    { min: 5000,    max: 14999,   name: 'Guerrero',      color: '#3498db', icon: '⚔️' },
+    { min: 15000,   max: 39999,   name: 'Élite',         color: '#9b59b6', icon: '🟣' },
+    { min: 40000,   max: 99999,   name: 'Legendario',    color: '#f1c40f', icon: '🌟' },
+    { min: 100000,  max: 299999,  name: 'Mítico',        color: '#e74c3c', icon: '🔥' },
+    { min: 300000,  max: 999999,  name: 'Omnisciente',   color: '#00f0ff', icon: '👁️' },
+    { min: 1000000, max: Infinity, name: 'CÓSMICO',       color: '#fff',    icon: '🌌' }
+];
+
+const AURA_COSMETIC_MULTIPLIERS = {
+    aura: { none: 1.0, fire: 1.05, electric: 1.10, void: 1.15, golden: 1.20, cosmic: 1.30 }
+};
+
+const BOSSES = [
+    { id: 'b1', name: 'Sombra Novata',   emoji: '👤', aura: 650,   lore: '"Apenas comienzas, forastero."',           reward: { coins: 1000,  xp: 100 },  unlocks: { body: 'shadow' } },
+    { id: 'b2', name: 'Cazador Cyber',   emoji: '🤖', aura: 3500,  lore: '"Mi inventario es tu pesadilla."',         reward: { coins: 5000,  xp: 350 },  unlocks: { aura: 'electric', head: 'visor' } },
+    { id: 'b3', name: 'Señor del Caos',  emoji: '🔱', aura: 12000, lore: '"El caos es mi naturaleza."',              reward: { coins: 15000, xp: 1000 }, unlocks: { weapon: 'sword', head: 'horns' } },
+    { id: 'b4', name: 'Rey Legendario',  emoji: '👑', aura: 35000, lore: '"Solo los dignos pueden mirarme."',        reward: { coins: 40000, xp: 3000 }, unlocks: { body: 'golden', head: 'crown', aura: 'void' } },
+    { id: 'b5', name: 'Espectro Mítico', emoji: '☠️', aura: 90000, lore: '"Morirás sin haber conocido el poder."',  reward: { coins: 100000, xp: 8000 }, unlocks: { weapon: 'scythe', aura: 'golden' } },
+    { id: 'b6', name: 'Guardián Omni',   emoji: '👁️', aura: 280000, lore: '"Soy la suma de todos los mundos."',    reward: { coins: 500000, xp: 25000 }, unlocks: { weapon: 'orb', head: 'halo', aura: 'cosmic' } },
+    { id: 'b7', name: 'ENTIDAD CÓSMICA', emoji: '🌌', aura: 850000, lore: '"Tu universo entero cabe en mi palma."', reward: { coins: 2000000, xp: 100000 }, unlocks: { body: 'void', weapon: 'blaster' } }
+];
+
+function computeAuraScore() {
+    let itemAura = 0;
+    state.inventory.forEach(item => {
+        const weight = AURA_WEIGHTS[item.rarity] || 1;
+        const count  = item.count || 1;
+        const val    = item.sellValue || item.baseValue || 0;
+        // Base: weight × count + bonus from value
+        itemAura += weight * count + Math.floor(val * 0.001);
+    });
+
+    // Level & prestige bonus
+    const levelBonus  = (state.level || 1) * 10;
+    const prestigeBonus = (state.prestige || 0) * 500;
+
+    // Cosmetic multiplier (from character aura type)
+    const auraMult = AURA_COSMETIC_MULTIPLIERS.aura[state.character?.aura || 'none'] || 1.0;
+
+    const total = Math.floor((itemAura + levelBonus + prestigeBonus) * auraMult);
+    return { total, itemAura, levelBonus, prestigeBonus, auraMult };
+}
+
+function getAuraRank(total) {
+    return AURA_RANK_TIERS.find(r => total >= r.min && total <= r.max) || AURA_RANK_TIERS[0];
+}
+
+function renderAuraSummaryBar() {
+    const { total, itemAura, levelBonus, prestigeBonus, auraMult } = computeAuraScore();
+    const rank = getAuraRank(total);
+
+    const myAuraHeaderVal    = document.getElementById('myAuraHeaderVal');
+    const myAuraRankBadge    = document.getElementById('myAuraRankBadge');
+    const auraStatItemCount  = document.getElementById('auraStatItemCount');
+    const auraStatItemAura   = document.getElementById('auraStatItemAura');
+    const auraStatBonusAura  = document.getElementById('auraStatBonusAura');
+    const auraStatCosmeticBuff = document.getElementById('auraStatCosmeticBuff');
+
+    if (myAuraHeaderVal)    myAuraHeaderVal.textContent   = total.toLocaleString();
+    if (myAuraRankBadge)    { myAuraRankBadge.textContent = `${rank.icon} ${rank.name}`; myAuraRankBadge.style.color = rank.color; myAuraRankBadge.style.borderColor = rank.color + '66'; }
+    if (auraStatItemCount)  auraStatItemCount.textContent  = state.inventory.reduce((s, i) => s + (i.count || 1), 0);
+    if (auraStatItemAura)   auraStatItemAura.textContent   = itemAura.toLocaleString();
+    if (auraStatBonusAura)  auraStatBonusAura.textContent  = `+${(levelBonus + prestigeBonus).toLocaleString()}`;
+    if (auraStatCosmeticBuff) auraStatCosmeticBuff.textContent = `x${auraMult.toFixed(2)}`;
+
+    // Header player name + perks
+    const arenaPlayerName  = document.getElementById('arenaPlayerName');
+    const arenaPlayerAuraNum = document.getElementById('arenaPlayerAuraNum');
+    const arenaPlayerAuraBar = document.getElementById('arenaPlayerAuraBar');
+    const arenaPlayerPerks   = document.getElementById('arenaPlayerPerks');
+    if (arenaPlayerName)    arenaPlayerName.textContent  = state.playerName;
+    if (arenaPlayerAuraNum) arenaPlayerAuraNum.textContent = total.toLocaleString();
+    if (arenaPlayerPerks)   arenaPlayerPerks.textContent = `Niv. ${state.level} • Prestigio ${state.prestige || 0} • ${rank.icon} ${rank.name}`;
+
+    return { total, rank };
+}
+
+function selectBoss(bossId) {
+    const boss = BOSSES.find(b => b.id === bossId);
+    if (!boss) return;
+    state.currentBossId = bossId;
+    saveState();
+
+    const { total } = computeAuraScore();
+    const rivalAuraNum = document.getElementById('arenaRivalAuraNum');
+    const rivalAuraBar = document.getElementById('arenaRivalAuraBar');
+    const arenaRivalName  = document.getElementById('arenaRivalName');
+    const arenaRivalPerks = document.getElementById('arenaRivalPerks');
+    const arenaRivalDialogue = document.getElementById('arenaRivalDialogue');
+    const currentRivalLabel  = document.getElementById('currentRivalLabel');
+
+    if (rivalAuraNum)   rivalAuraNum.textContent  = boss.aura.toLocaleString();
+    if (arenaRivalName) arenaRivalName.textContent = `${boss.emoji} ${boss.name}`;
+    if (arenaRivalPerks) arenaRivalPerks.textContent = `Jefe Torre • Aura ${boss.aura.toLocaleString()}`;
+    if (arenaRivalDialogue) arenaRivalDialogue.textContent = boss.lore;
+    if (currentRivalLabel)  currentRivalLabel.textContent  = `${boss.emoji} ${boss.name} (Aura: ${boss.aura.toLocaleString()})`;
+
+    // Update power struggle bar
+    updatePowerStruggleBar(total, boss.aura);
+
+    // Update rival bar width
+    if (rivalAuraBar) {
+        const max = Math.max(total, boss.aura);
+        rivalAuraBar.style.width = `${Math.min(100, Math.round((boss.aura / max) * 100))}%`;
+    }
+    if (document.getElementById('arenaPlayerAuraBar')) {
+        const max = Math.max(total, boss.aura);
+        document.getElementById('arenaPlayerAuraBar').style.width = `${Math.min(100, Math.round((total / max) * 100))}%`;
+    }
+}
+
+function updatePowerStruggleBar(playerAura, rivalAura) {
+    const pointer   = document.getElementById('powerStrugglePointer');
+    const advText   = document.getElementById('clashAdvantageText');
+    if (!pointer) return;
+
+    const total = playerAura + rivalAura || 1;
+    const playerPct = (playerAura / total) * 100;
+    pointer.style.left = `${Math.min(95, Math.max(5, playerPct))}%`;
+
+    const diff = playerAura - rivalAura;
+    const pct  = Math.abs(diff / (rivalAura || 1)) * 100;
+    if (Math.abs(diff) < rivalAura * 0.05) {
+        advText.textContent = '⚡ EQUILIBRADO';
+        advText.style.color = '#f1c40f';
+    } else if (diff > 0) {
+        advText.textContent = `🔵 DOMINAS +${Math.round(pct)}%`;
+        advText.style.color = '#00f0ff';
+    } else {
+        advText.textContent = `🔴 DESVENTAJA -${Math.round(pct)}%`;
+        advText.style.color = '#ff0055';
+    }
+}
+
+function executeAuraClash() {
+    const { total: playerAura, rank: playerRank } = renderAuraSummaryBar();
+    const boss = BOSSES.find(b => b.id === (state.currentBossId || 'b1'));
+    if (!boss) return;
+
+    const rivalAura = boss.aura;
+    sounds.playClash();
+
+    // Animate stickmen clashing
+    const playerSvg = document.querySelector('#playerStickmanContainer svg');
+    const rivalSvg  = document.querySelector('#rivalStickmanContainer svg');
+    if (playerSvg) { playerSvg.classList.remove('animate-breathe'); playerSvg.classList.add('animate-clash-left'); }
+    if (rivalSvg)  { rivalSvg.classList.remove('animate-breathe'); rivalSvg.classList.add('animate-clash-right'); }
+
+    setTimeout(() => {
+        const won = playerAura >= rivalAura;
+        const logPanel = document.getElementById('clashLogContent');
+        if (!logPanel) return;
+
+        // Build breakdown table
+        const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary', 'Mythic', 'Omnisciente', 'Secret'];
+        const playerCounts = {};
+        rarities.forEach(r => playerCounts[r] = 0);
+        state.inventory.forEach(item => { if (playerCounts[item.rarity] !== undefined) playerCounts[item.rarity] += (item.count || 1); });
+
+        let tableHtml = `<div style="font-weight:800; color:${won ? '#2ecc71' : '#e74c3c'}; font-size:1rem; text-align:center; margin-bottom:0.8rem;">
+            ${won ? '🏆 ¡VICTORIA! — Tu Aura APLASTÓ al rival' : '💀 DERROTA — Tu Aura fue insuficiente'}
+        </div>`;
+        tableHtml += `<div style="display:grid; grid-template-columns:1fr auto auto; gap:0.3rem 1rem; align-items:center; font-size:0.82rem;">
+            <span style="color:var(--text-muted); font-weight:700;">CATEGORÍA</span>
+            <span style="color:#00f0ff; font-weight:700;">TUYO</span>
+            <span style="color:#ff0055; font-weight:700;">RIVAL</span>`;
+
+        rarities.forEach(r => {
+            const pc = playerCounts[r];
+            const pAura = pc * AURA_WEIGHTS[r];
+            tableHtml += `<span style="color:var(--text-dim);">${r}</span>
+                <span style="color:#00f0ff;">${pc} ítem${pc !== 1 ? 's' : ''} = <strong>${pAura.toLocaleString()} pts</strong></span>
+                <span style="color:#ff0055;">—</span>`;
+        });
+
+        tableHtml += `<span style="color:#f1c40f; font-weight:800; border-top:1px solid rgba(255,255,255,0.1); padding-top:0.4rem;">TOTAL AURA</span>
+            <span style="color:#00f0ff; font-weight:900; font-size:1rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:0.4rem;">${playerAura.toLocaleString()}</span>
+            <span style="color:#ff0055; font-weight:900; font-size:1rem; border-top:1px solid rgba(255,255,255,0.1); padding-top:0.4rem;">${rivalAura.toLocaleString()}</span>
+        </div>`;
+
+        logPanel.innerHTML = tableHtml;
+
+        if (won) {
+            sounds.playVictory();
+            if (playerSvg) { playerSvg.classList.remove('animate-clash-left'); playerSvg.classList.add('animate-victory'); }
+            if (rivalSvg)  { rivalSvg.classList.remove('animate-clash-right'); }
+
+            if (!state.defeatedBosses.includes(boss.id)) {
+                state.defeatedBosses.push(boss.id);
+                state.coins += boss.reward.coins;
+                state.xp    += boss.reward.xp;
+                state.auraBattlesWon = (state.auraBattlesWon || 0) + 1;
+
+                // Unlock cosmetics
+                if (boss.unlocks.body   && !state.unlockedCosmetics.bodies.includes(boss.unlocks.body))   state.unlockedCosmetics.bodies.push(boss.unlocks.body);
+                if (boss.unlocks.aura   && !state.unlockedCosmetics.auras.includes(boss.unlocks.aura))     state.unlockedCosmetics.auras.push(boss.unlocks.aura);
+                if (boss.unlocks.head   && !state.unlockedCosmetics.heads.includes(boss.unlocks.head))     state.unlockedCosmetics.heads.push(boss.unlocks.head);
+                if (boss.unlocks.weapon && !state.unlockedCosmetics.weapons.includes(boss.unlocks.weapon)) state.unlockedCosmetics.weapons.push(boss.unlocks.weapon);
+
+                showToast(`🏆 ¡${boss.name} DERROTADO!`, `+${boss.reward.coins.toLocaleString()} 💰 · +${boss.reward.xp.toLocaleString()} XP · ¡Cosméticos desbloqueados!`, 'Legendary');
+                saveState();
+                renderAll();
+                renderBossGrid();
+                renderCustomizerChips();
+            } else {
+                showToast('⚔️ ¡VICTORIA!', `Tu Aura (${playerAura.toLocaleString()}) venció a ${boss.name} (${rivalAura.toLocaleString()}).`, 'Epic');
+            }
+
+            // Auto-advance to next boss
+            const bossIdx = BOSSES.findIndex(b => b.id === boss.id);
+            if (bossIdx < BOSSES.length - 1) {
+                const nextBoss = BOSSES[bossIdx + 1];
+                if (!state.defeatedBosses.includes(nextBoss.id)) {
+                    setTimeout(() => selectBoss(nextBoss.id), 800);
+                }
+            }
+        } else {
+            state.auraBattlesLost = (state.auraBattlesLost || 0) + 1;
+            if (playerSvg) { playerSvg.classList.remove('animate-clash-left'); playerSvg.classList.add('animate-breathe'); }
+            if (rivalSvg)  { rivalSvg.classList.remove('animate-clash-right'); rivalSvg.classList.add('animate-breathe'); }
+            showToast(`💀 DERROTA`, `Tu Aura (${playerAura.toLocaleString()}) no fue suficiente. Necesitas ${(rivalAura - playerAura).toLocaleString()} más.`, 'Common');
+            saveState();
+        }
+    }, 900);
+}
+
+function renderBossGrid() {
+    const grid = document.getElementById('bossCardsGrid');
+    if (!grid) return;
+    const { total: playerAura } = computeAuraScore();
+
+    grid.innerHTML = BOSSES.map((boss, idx) => {
+        const defeated = state.defeatedBosses.includes(boss.id);
+        const prevDefeated = idx === 0 || state.defeatedBosses.includes(BOSSES[idx - 1].id);
+        const isCurrent = state.currentBossId === boss.id;
+        const locked = !prevDefeated && !defeated;
+        const pct = Math.min(100, Math.round((playerAura / boss.aura) * 100));
+
+        return `<div class="boss-card ${defeated ? 'defeated' : ''} ${locked ? 'locked' : ''}" data-boss="${boss.id}">
+            <div class="boss-card-top">
+                <div class="boss-avatar-box" style="font-size:2.2rem;">${boss.emoji}</div>
+                <div class="boss-info-meta">
+                    <div class="boss-title-name">${boss.name}${defeated ? ' ✅' : locked ? ' 🔒' : ''}</div>
+                    <div class="boss-aura-tag">Aura Requerida: ${boss.aura.toLocaleString()} pts</div>
+                    <div style="margin-top:0.3rem;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text-muted); margin-bottom:2px;">
+                            <span>Tu poder vs este jefe</span><span>${pct}%</span>
+                        </div>
+                        <div style="height:4px; background:rgba(255,255,255,0.08); border-radius:999px; overflow:hidden;">
+                            <div style="width:${pct}%; height:100%; background:${pct >= 100 ? '#2ecc71' : pct >= 70 ? '#f1c40f' : '#ff0055'}; transition:width 0.4s;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="boss-lore-desc">${boss.lore}</div>
+            <div class="boss-reward-pill">🏆 Recompensa: +${boss.reward.coins.toLocaleString()} 💰 · +${boss.reward.xp.toLocaleString()} XP</div>
+            ${locked ? '' : `<button class="btn-select-boss ${isCurrent ? 'active' : ''}" data-boss-btn="${boss.id}">
+                ${defeated ? '⚔️ Reto Rematch' : isCurrent ? '🎯 Seleccionado' : '⚔️ Seleccionar Rival'}
+            </button>`}
+        </div>`;
+    }).join('');
+
+    grid.querySelectorAll('[data-boss-btn]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            sounds.playClick();
+            selectBoss(btn.dataset.bossBtn);
+            // Switch to arena view
+            document.querySelectorAll('.battle-subnav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.battle-view-pane').forEach(v => v.classList.remove('active'));
+            document.querySelector('[data-battle-sub="arena"]')?.classList.add('active');
+            document.getElementById('battleViewArena')?.classList.add('active');
+        });
+    });
+}
+
+/* ==========================================================================
+   🎨 CHARACTER CUSTOMIZER — SVG Stickman Renderer
+   ========================================================================== */
+function buildStickmanSVG(char, side = 'left', size = 180) {
+    const c = char || { body: 'classic', aura: 'none', head: 'none', weapon: 'none', color: '#00f0ff', auraColor: '#ff0055', pose: 'guard' };
+    const col    = c.color || '#00f0ff';
+    const aCol   = c.auraColor || '#ff0055';
+    const flip   = side === 'right' ? `transform="scale(-1,1) translate(-${size},0)"` : '';
+    const pose   = c.pose || 'guard';
+
+    // Body variant fill
+    const bodyFill  = c.body === 'cyber' ? col : c.body === 'shadow' ? '#111' : c.body === 'golden' ? '#f1c40f' : c.body === 'void' ? '#330066' : col;
+    const bodyStroke = c.body === 'shadow' ? '#333' : bodyFill;
+    const strokeW = 3;
+
+    // Pose-based SVG paths
+    const poses = {
+        guard: {
+            torso:  'M90,80 L90,135',
+            armL:   'M90,95 L60,115 L50,130',
+            armR:   'M90,95 L118,110 L130,125',
+            legL:   'M90,135 L70,170 L60,195',
+            legR:   'M90,135 L108,170 L118,195'
+        },
+        attack: {
+            torso:  'M90,80 L85,135',
+            armL:   'M87,95 L55,80 L35,65',
+            armR:   'M87,95 L115,115 L128,130',
+            legL:   'M85,135 L60,165 L50,195',
+            legR:   'M85,135 L105,172 L118,197'
+        },
+        powerup: {
+            torso:  'M90,80 L90,138',
+            armL:   'M90,96 L65,70 L55,50',
+            armR:   'M90,96 L115,70 L125,50',
+            legL:   'M90,138 L78,172 L70,200',
+            legR:   'M90,138 L102,172 L110,200'
+        },
+        victory: {
+            torso:  'M90,80 L90,140',
+            armL:   'M90,100 L70,78 L62,55',
+            armR:   'M90,100 L110,78 L118,55',
+            legL:   'M90,140 L82,175 L78,200',
+            legR:   'M90,140 L100,175 L104,200'
+        }
+    };
+    const p = poses[pose] || poses.guard;
+
+    // Head accessories
+    let headAcc = '';
+    if (c.head === 'crown')  headAcc = `<text x="90" y="28" text-anchor="middle" font-size="22" fill="#f1c40f">👑</text>`;
+    if (c.head === 'visor')  headAcc = `<rect x="70" y="40" width="40" height="12" rx="4" fill="${col}" opacity="0.9"/><rect x="70" y="40" width="40" height="4" rx="2" fill="${col}"/>`;
+    if (c.head === 'horns')  headAcc = `<polygon points="78,30 72,10 85,25" fill="#c0392b"/><polygon points="102,30 108,10 95,25" fill="#c0392b"/>`;
+    if (c.head === 'halo')   headAcc = `<ellipse cx="90" cy="22" rx="22" ry="6" fill="none" stroke="#f1c40f" stroke-width="3" opacity="0.9"/>`;
+    if (c.head === 'tophat') headAcc = `<rect x="72" y="14" width="36" height="20" rx="2" fill="#222"/><rect x="66" y="34" width="48" height="6" rx="2" fill="#222"/>`;
+
+    // Weapon
+    let weapon = '';
+    if (c.weapon === 'sword')   weapon = `<line x1="130" y1="100" x2="165" y2="65" stroke="${col}" stroke-width="4" stroke-linecap="round"/>
+        <line x1="148" y1="82" x2="138" y2="72" stroke="#fff" stroke-width="2.5" opacity="0.6"/>`;
+    if (c.weapon === 'scepter') weapon = `<line x1="128" y1="98" x2="155" y2="55" stroke="#f1c40f" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="155" cy="52" r="8" fill="${aCol}" stroke="#f1c40f" stroke-width="2"/>`;
+    if (c.weapon === 'scythe')  weapon = `<line x1="125" y1="100" x2="162" y2="52" stroke="#9b59b6" stroke-width="4" stroke-linecap="round"/>
+        <path d="M162,52 Q185,30 165,22 Q145,14 150,38" fill="none" stroke="${aCol}" stroke-width="3"/>`;
+    if (c.weapon === 'blaster') weapon = `<rect x="120" y="102" width="32" height="14" rx="4" fill="${col}"/>
+        <rect x="148" y="106" width="10" height="6" rx="2" fill="${aCol}"/>`;
+    if (c.weapon === 'orb')     weapon = `<circle cx="140" cy="88" r="14" fill="${aCol}" opacity="0.4" stroke="${col}" stroke-width="2"/>
+        <circle cx="140" cy="88" r="7" fill="${aCol}"/>`;
+
+    // Aura glow / particles
+    let aura = '';
+    if (c.aura === 'fire')     aura = `<ellipse cx="90" cy="150" rx="45" ry="12" fill="${aCol}" opacity="0.18"/><ellipse cx="90" cy="130" rx="38" ry="40" fill="${aCol}" opacity="0.08" filter="url(#auraBlur)"/>`;
+    if (c.aura === 'electric') aura = `<polyline points="82,60 95,80 78,100 92,120 80,145" fill="none" stroke="${aCol}" stroke-width="2" opacity="0.7"/>
+        <polyline points="98,60 110,85 95,105 108,125 100,145" fill="none" stroke="${col}" stroke-width="1.5" opacity="0.5"/>`;
+    if (c.aura === 'void')     aura = `<ellipse cx="90" cy="130" rx="52" ry="52" fill="${aCol}" opacity="0.1"/><ellipse cx="90" cy="130" rx="38" ry="38" fill="${aCol}" opacity="0.1"/>`;
+    if (c.aura === 'golden')   aura = `<ellipse cx="90" cy="130" rx="58" ry="58" fill="#f1c40f" opacity="0.07"/>
+        ${Array.from({length:8}, (_,i) => `<circle cx="${90 + Math.round(50*Math.cos(i*Math.PI/4))}" cy="${130 + Math.round(50*Math.sin(i*Math.PI/4))}" r="4" fill="#f1c40f" opacity="0.5"/>`).join('')}`;
+    if (c.aura === 'cosmic')   aura = `<ellipse cx="90" cy="130" rx="70" ry="70" fill="${aCol}" opacity="0.06"/>
+        <ellipse cx="90" cy="130" rx="50" ry="50" fill="${col}" opacity="0.07"/>
+        ${Array.from({length:12}, (_,i) => `<circle cx="${90 + Math.round(60*Math.cos(i*Math.PI/6))}" cy="${130 + Math.round(60*Math.sin(i*Math.PI/6))}" r="3" fill="${i%2===0?col:aCol}" opacity="0.6"/>`).join('')}`;
+
+    return `<svg class="stickman-svg animate-breathe" width="${size}" height="${size + 20}" viewBox="0 0 180 215" xmlns="http://www.w3.org/2000/svg" ${flip}>
+        <defs>
+            <filter id="auraBlur"><feGaussianBlur stdDeviation="8"/></filter>
+            <filter id="glow"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="${bodyFill}" flood-opacity="0.9"/></filter>
+        </defs>
+        <!-- Aura layer -->
+        ${aura}
+        <!-- Head -->
+        <circle cx="90" cy="45" r="22" fill="none" stroke="${bodyFill}" stroke-width="${strokeW}" filter="url(#glow)"/>
+        ${headAcc}
+        <!-- Body & Limbs -->
+        <path d="${p.torso}" stroke="${bodyFill}" stroke-width="${strokeW}" fill="none" stroke-linecap="round"/>
+        <path d="${p.armL}"  stroke="${bodyFill}" stroke-width="${strokeW}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="${p.armR}"  stroke="${bodyFill}" stroke-width="${strokeW}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="${p.legL}"  stroke="${bodyFill}" stroke-width="${strokeW}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="${p.legR}"  stroke="${bodyFill}" stroke-width="${strokeW}" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Weapon -->
+        ${weapon}
+    </svg>`;
+}
+
+function renderStickmen() {
+    const pc = document.getElementById('playerStickmanContainer');
+    const rc = document.getElementById('rivalStickmanContainer');
+    const cp = document.getElementById('customizerCanvasPreview');
+
+    const boss = BOSSES.find(b => b.id === (state.currentBossId || 'b1'));
+    const rivalChar = {
+        body: boss ? (BOSSES.indexOf(boss) >= 4 ? 'void' : BOSSES.indexOf(boss) >= 2 ? 'cyber' : 'shadow') : 'shadow',
+        aura: boss ? (BOSSES.indexOf(boss) >= 5 ? 'cosmic' : BOSSES.indexOf(boss) >= 3 ? 'golden' : BOSSES.indexOf(boss) >= 1 ? 'electric' : 'fire') : 'fire',
+        head: boss ? (BOSSES.indexOf(boss) >= 4 ? 'halo' : BOSSES.indexOf(boss) >= 2 ? 'horns' : 'none') : 'none',
+        weapon: boss ? (BOSSES.indexOf(boss) >= 5 ? 'orb' : BOSSES.indexOf(boss) >= 3 ? 'scythe' : BOSSES.indexOf(boss) >= 1 ? 'sword' : 'none') : 'none',
+        color: boss ? ['#aaa','#00f0ff','#9b59b6','#f1c40f','#e74c3c','#ff0055','#fff'][Math.min(6, BOSSES.indexOf(boss))] : '#aaa',
+        auraColor: '#ff0055',
+        pose: boss ? (BOSSES.indexOf(boss) >= 2 ? 'attack' : 'guard') : 'guard'
+    };
+
+    if (pc) pc.innerHTML = buildStickmanSVG(state.character, 'left');
+    if (rc) rc.innerHTML = buildStickmanSVG(rivalChar, 'right');
+    if (cp) cp.innerHTML = buildStickmanSVG(state.character, 'left', 160);
+}
+
+function renderCustomizerChips() {
+    // Lock chips that are not unlocked
+    const categories = {
+        body:   { el: 'chipsBodyTypes',   stateKey: 'bodies',  attrKey: 'body'   },
+        aura:   { el: 'chipsAuraTypes',   stateKey: 'auras',   attrKey: 'aura'   },
+        head:   { el: 'chipsHeadTypes',   stateKey: 'heads',   attrKey: 'head'   },
+        weapon: { el: 'chipsWeaponTypes', stateKey: 'weapons', attrKey: 'weapon' }
+    };
+
+    Object.entries(categories).forEach(([type, cfg]) => {
+        const container = document.getElementById(cfg.el);
+        if (!container) return;
+        const unlocked = state.unlockedCosmetics[cfg.stateKey] || [];
+        container.querySelectorAll('[data-cust-type]').forEach(btn => {
+            const val = btn.dataset.custVal;
+            const isLocked = !unlocked.includes(val);
+            btn.disabled = isLocked;
+            btn.style.opacity = isLocked ? '0.35' : '1';
+            btn.title = isLocked ? '🔒 Derrota un Jefe de Torre para desbloquear' : '';
+            btn.classList.toggle('active', state.character[type] === val);
+        });
+    });
+
+    // Sync color pickers
+    const bodyColorPicker = document.getElementById('custColorBody');
+    const auraColorPicker = document.getElementById('custColorAura');
+    const poseSelect      = document.getElementById('custPoseSelect');
+    if (bodyColorPicker) bodyColorPicker.value = state.character.color || '#00f0ff';
+    if (auraColorPicker) auraColorPicker.value = state.character.auraColor || '#ff0055';
+    if (poseSelect)      poseSelect.value       = state.character.pose || 'guard';
+
+    // Update preview badges
+    const auraBadge = document.getElementById('previewAuraBadge');
+    const headBadge = document.getElementById('previewHeadBadge');
+    if (auraBadge) auraBadge.textContent = `Aura: ${state.character.aura}`;
+    if (headBadge) headBadge.textContent = `Cabeza: ${state.character.head}`;
+}
+
+/* ==========================================================================
+   🎰 ARCADE SYSTEM — Ruleta, Minas & Coin Flip
+   ========================================================================== */
+
+// --- LUCKY WHEEL ---
+const WHEEL_SEGMENTS = [
+    { label: '1,000 💰',       color: '#2ecc71', type: 'coins',   value: 1000  },
+    { label: '+5% Suerte 30s', color: '#00f0ff', type: 'luck',    value: 0.05  },
+    { label: '5,000 💰',       color: '#3498db', type: 'coins',   value: 5000  },
+    { label: 'BOMBA 💣',       color: '#e74c3c', type: 'bomb',    value: 0     },
+    { label: '25,000 💰',      color: '#f1c40f', type: 'coins',   value: 25000 },
+    { label: 'Premium x1 🎁',  color: '#9b59b6', type: 'premium', value: 1     },
+    { label: '100,000 💰',     color: '#e67e22', type: 'coins',   value: 100000},
+    { label: '+10% Suerte 1m', color: '#1abc9c', type: 'luck',    value: 0.10  },
+    { label: '500,000 💰',     color: '#ff0055', type: 'coins',   value: 500000},
+    { label: 'NADA 😶',        color: '#555',    type: 'nothing', value: 0     }
+];
+
+let wheelSpinning = false;
+let wheelCurrentAngle = 0;
+
+function drawWheel(canvas) {
+    const ctx = canvas.getContext('2d');
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const r  = cx - 10;
+    const seg = (2 * Math.PI) / WHEEL_SEGMENTS.length;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    WHEEL_SEGMENTS.forEach((s, i) => {
+        const start = i * seg;
+        const end   = start + seg;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r, start, end);
+        ctx.closePath();
+        ctx.fillStyle = s.color;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Label
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(start + seg / 2);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 11px Orbitron, sans-serif';
+        ctx.shadowColor = 'rgba(0,0,0,0.8)';
+        ctx.shadowBlur = 4;
+        ctx.fillText(s.label, r - 8, 4);
+        ctx.restore();
+    });
+
+    // Center circle
+    ctx.beginPath();
+    ctx.arc(cx, cy, 22, 0, 2 * Math.PI);
+    ctx.fillStyle = '#0e111a';
+    ctx.fill();
+    ctx.strokeStyle = '#00f0ff';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+}
+
+function spinWheel() {
+    if (wheelSpinning) return;
+    const now = Date.now();
+    const lastSpin = state.arcade.lastDailyWheel || 0;
+    const msInDay  = 86400000;
+    if (now - lastSpin < msInDay) {
+        const remaining = Math.ceil((msInDay - (now - lastSpin)) / 3600000);
+        showToast('⏰ Ya Giraste', `Vuelta diaria disponible en ${remaining}h`, 'Common');
+        return;
+    }
+
+    wheelSpinning = true;
+    sounds.playSpin();
+
+    const canvas = document.getElementById('luckyWheelCanvas');
+    if (!canvas) { wheelSpinning = false; return; }
+
+    // Pick a random segment
+    const winIdx    = Math.floor(Math.random() * WHEEL_SEGMENTS.length);
+    const seg       = (360 / WHEEL_SEGMENTS.length);
+    const extraSpins = (5 + Math.floor(Math.random() * 5)) * 360;
+    const targetAngle = extraSpins + (360 - winIdx * seg) - seg / 2;
+
+    // Animate via CSS
+    const disc = document.getElementById('luckyWheelDisc');
+    if (disc) {
+        disc.style.transition = 'transform 4s cubic-bezier(0.15, 0.9, 0.2, 1)';
+        wheelCurrentAngle += targetAngle;
+        disc.style.transform = `rotate(${wheelCurrentAngle}deg)`;
+    }
+
+    setTimeout(() => {
+        wheelSpinning = false;
+        const prize = WHEEL_SEGMENTS[winIdx];
+        const rewardText = document.getElementById('wheelRewardText');
+        const rewardVal  = document.getElementById('wheelRewardVal');
+
+        // Apply reward
+        if (prize.type === 'coins') {
+            state.coins += prize.value;
+            if (rewardText) { rewardText.style.display = 'block'; }
+            if (rewardVal)  rewardVal.textContent = `${prize.value.toLocaleString()} 💰`;
+            showToast('🎡 ¡RULETA!', `+${prize.value.toLocaleString()} Coins`, 'Legendary');
+            sounds.playVictory();
+        } else if (prize.type === 'luck') {
+            state.freeBlocks = (state.freeBlocks || 0) + 3;
+            if (rewardText) { rewardText.style.display = 'block'; }
+            if (rewardVal)  rewardVal.textContent = `Buff de Suerte ${(prize.value * 100).toFixed(0)}%`;
+            showToast('🍀 ¡SUERTE EXTRA!', `Buff de suerte activado`, 'Rare');
+        } else if (prize.type === 'premium') {
+            state.freeBlocks = (state.freeBlocks || 0) + 1;
+            if (rewardText) { rewardText.style.display = 'block'; }
+            if (rewardVal)  rewardVal.textContent = `1 Caja Premium Gratis`;
+            showToast('🎁 ¡CAJA GRATIS!', '1 Caja Premium añadida', 'Epic');
+        } else if (prize.type === 'bomb') {
+            if (rewardText) rewardText.style.display = 'none';
+            showToast('💣 BOMBA', '¡Mala suerte! Nada esta vez.', 'Common');
+        } else {
+            if (rewardText) rewardText.style.display = 'none';
+            showToast('😶 NADA', 'Sin suerte. Vuelve mañana.', 'Common');
+        }
+
+        state.arcade.lastDailyWheel = now;
+        state.arcade.wheelSpinsTotal = (state.arcade.wheelSpinsTotal || 0) + 1;
+        const spinBtn = document.getElementById('btnSpinWheel');
+        const costLabel = document.getElementById('wheelSpinCostLabel');
+        if (spinBtn) spinBtn.textContent = '⏰ VUELVE MAÑANA';
+        if (costLabel) costLabel.textContent = '1 tirada diaria agotada';
+        saveState();
+        renderAll();
+    }, 4200);
+}
+
+// --- MINES GAME ---
+let minesState = {
+    active: false,
+    bet: 500,
+    multiplier: 1.0,
+    revealedSafe: 0,
+    mines: []
+};
+const MINES_MULT_TABLE = [1.12, 1.26, 1.44, 1.65, 1.90, 2.22, 2.60, 3.10, 3.75, 4.60, 5.70, 7.20, 9.30, 12.5];
+
+function renderMinesGrid() {
+    const grid = document.getElementById('minesGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    for (let i = 0; i < 16; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'mines-box-cell';
+        cell.dataset.idx = i;
+        cell.innerHTML = '📦';
+        if (minesState.active) {
+            cell.addEventListener('click', () => revealMinesCell(i, cell));
+        } else {
+            cell.style.opacity = '0.5';
+            cell.style.cursor = 'default';
+        }
+        grid.appendChild(cell);
+    }
+}
+
+function startMinesGame() {
+    if (state.coins < minesState.bet) {
+        showToast('❌ Sin fondos', `Necesitas ${minesState.bet.toLocaleString()} 💰`, 'Common');
+        return;
+    }
+    sounds.playClick();
+    state.coins -= minesState.bet;
+    minesState.active = true;
+    minesState.multiplier = 1.0;
+    minesState.revealedSafe = 0;
+
+    // Place 2 mines randomly
+    const positions = Array.from({length: 16}, (_, i) => i);
+    minesState.mines = positions.sort(() => Math.random() - 0.5).slice(0, 2);
+
+    renderMinesGrid();
+    updateMinesDisplay();
+
+    const startBtn  = document.getElementById('btnStartMinesGame');
+    const cashoutBtn = document.getElementById('btnCashoutMines');
+    if (startBtn)  { startBtn.textContent = `🎮 EN JUEGO (${minesState.bet.toLocaleString()} 💰 apostados)`; startBtn.disabled = true; }
+    if (cashoutBtn) { cashoutBtn.style.display = 'block'; }
+    saveState();
+    renderAll();
+}
+
+function revealMinesCell(idx, cellEl) {
+    if (!minesState.active || cellEl.classList.contains('revealed-safe') || cellEl.classList.contains('revealed-bomb')) return;
+    sounds.playLaser();
+
+    if (minesState.mines.includes(idx)) {
+        // HIT BOMB
+        cellEl.classList.add('revealed-bomb');
+        cellEl.innerHTML = '💣';
+        minesState.active = false;
+        minesState.mines.forEach(mIdx => {
+            const bombCell = document.querySelector(`[data-idx="${mIdx}"]`);
+            if (bombCell) { bombCell.classList.add('revealed-bomb'); bombCell.innerHTML = '💣'; }
+        });
+        showToast('💥 ¡EXPLOSIÓN!', `Perdiste ${minesState.bet.toLocaleString()} 💰. Mala suerte.`, 'Common');
+        const startBtn  = document.getElementById('btnStartMinesGame');
+        const cashoutBtn = document.getElementById('btnCashoutMines');
+        if (startBtn)  { startBtn.textContent = '🎮 NUEVA PARTIDA'; startBtn.disabled = false; }
+        if (cashoutBtn) cashoutBtn.style.display = 'none';
+        minesState.auraBattlesLost = (minesState.auraBattlesLost || 0) + 1;
+        saveState();
+        renderAll();
+    } else {
+        // SAFE
+        cellEl.classList.add('revealed-safe');
+        minesState.revealedSafe++;
+        const multIdx = Math.min(minesState.revealedSafe - 1, MINES_MULT_TABLE.length - 1);
+        minesState.multiplier = MINES_MULT_TABLE[multIdx];
+        cellEl.innerHTML = ['💎','⭐','🏆','✨','🎯','🌟','💰','🔥','⚡'][Math.floor(Math.random()*9)];
+        sounds.playClick();
+        updateMinesDisplay();
+    }
+}
+
+function cashoutMines() {
+    if (!minesState.active) return;
+    const winAmount = Math.floor(minesState.bet * minesState.multiplier);
+    state.coins += winAmount;
+    state.arcade.minesGamesWon = (state.arcade.minesGamesWon || 0) + 1;
+    state.arcade.minesTotalWon = (state.arcade.minesTotalWon || 0) + winAmount;
+    minesState.active = false;
+    showToast('💰 ¡RETIRADO!', `+${winAmount.toLocaleString()} 💰 (x${minesState.multiplier.toFixed(2)})`, 'Epic');
+    sounds.playVictory();
+
+    const startBtn  = document.getElementById('btnStartMinesGame');
+    const cashoutBtn = document.getElementById('btnCashoutMines');
+    if (startBtn)  { startBtn.textContent = '🎮 NUEVA PARTIDA'; startBtn.disabled = false; }
+    if (cashoutBtn) cashoutBtn.style.display = 'none';
+
+    renderMinesGrid();
+    saveState();
+    renderAll();
+}
+
+function updateMinesDisplay() {
+    const mult  = document.getElementById('minesCurrentMultiplier');
+    const potential = document.getElementById('minesPotentialWin');
+    if (mult)     mult.textContent = `x${minesState.multiplier.toFixed(2)}`;
+    if (potential) potential.textContent = `${Math.floor(minesState.bet * minesState.multiplier).toLocaleString()} 🪙`;
+}
+
+// --- COIN FLIP ---
+let coinFlipBet    = 1000;
+let coinFlipChoice = 'heads';
+let coinFlipping   = false;
+
+function flipCoin() {
+    if (coinFlipping) return;
+    if (state.coins < coinFlipBet) {
+        showToast('❌ Sin fondos', `Necesitas ${coinFlipBet.toLocaleString()} 💰`, 'Common');
+        return;
+    }
+    coinFlipping = true;
+    sounds.playLaser();
+    state.coins -= coinFlipBet;
+    saveState();
+    renderAll();
+
+    const disc = document.getElementById('cyberCoinDisc');
+    const result = Math.random() < 0.5 ? 'heads' : 'tails';
+    const targetRot = result === 'heads' ? 720 : 900;
+
+    if (disc) {
+        disc.style.transition = `transform 2.5s cubic-bezier(0.15, 0.9, 0.2, 1)`;
+        disc.style.transform = `rotateY(${targetRot}deg)`;
+    }
+
+    setTimeout(() => {
+        const won = result === coinFlipChoice;
+        const banner = document.getElementById('coinResultBanner');
+        if (won) {
+            state.coins += coinFlipBet * 2;
+            state.arcade.coinFlipWon = (state.arcade.coinFlipWon || 0) + 1;
+            if (banner) { banner.style.display = 'block'; banner.style.color = '#2ecc71'; banner.textContent = `✅ ¡ACERTASTE! +${(coinFlipBet).toLocaleString()} 💰`; }
+            sounds.playVictory();
+            showToast('🪙 ¡GANASTE!', `+${coinFlipBet.toLocaleString()} 💰 (x2)`, 'Legendary');
+        } else {
+            if (banner) { banner.style.display = 'block'; banner.style.color = '#e74c3c'; banner.textContent = `❌ FALLASTE — Perdiste ${coinFlipBet.toLocaleString()} 💰`; }
+            showToast('💀 Perdiste', `Mala suerte en el lanzamiento.`, 'Common');
+        }
+        coinFlipping = false;
+        saveState();
+        renderAll();
+    }, 2700);
+}
+
+/* ==========================================================================
+   PVP ONLINE — Duelo de Aura en Tiempo Real
+   ========================================================================== */
+function renderPvpPlayers() {
+    const grid = document.getElementById('pvpOnlinePlayersGrid');
+    if (!grid || !socket) return;
+    socket.emit('players:request_list');
+}
+
+function buildPvpPlayerCard(player) {
+    const { total } = computeAuraScore();
+    const isMe = socket && player.socketId === socket.id;
+    if (isMe) return '';
+    const playerAura = player.auraScore || 0;
+    const rank = getAuraRank(playerAura);
+    return `<div class="pvp-player-card">
+        <div class="pvp-player-top">
+            <span style="font-size:1.3rem;">${player.avatar || '⚡'}</span>
+            <div>
+                <div style="font-weight:800; color:#fff; font-size:0.9rem;">${player.username}</div>
+                <div style="font-size:0.72rem; color:var(--text-muted);">${rank.icon} ${rank.name} · Niv. ${player.level}</div>
+            </div>
+        </div>
+        <div style="font-size:0.78rem; color:#00f0ff; font-weight:700;">Aura: ${playerAura.toLocaleString()} pts</div>
+        <div style="font-size:0.72rem; color:${playerAura > total ? '#e74c3c' : '#2ecc71'};">
+            ${playerAura > total ? `+${(playerAura-total).toLocaleString()} de ventaja` : `Desventaja de ${(total-playerAura).toLocaleString()}`}
+        </div>
+        <button class="btn-select-boss" data-pvp-challenge="${player.socketId}" style="margin-top:0.5rem; background:rgba(255,0,85,0.2); border-color:#ff0055; color:#ff0055;">
+            ⚔️ Desafiar Aura
+        </button>
+    </div>`;
+}
+
+/* ==========================================================================
+   🎛️ BATTLE & ARCADE INIT — Sub-nav, Listeners, Boot
+   ========================================================================== */
+function initBattleTab() {
+    // Sub-nav wiring for BATTLE
+    document.querySelectorAll('.battle-subnav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            sounds.playClick();
+            document.querySelectorAll('.battle-subnav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.battle-view-pane').forEach(v => v.classList.remove('active'));
+            btn.classList.add('active');
+            const sub = btn.dataset.battleSub;
+            const pane = document.getElementById(`battleView${sub.charAt(0).toUpperCase() + sub.slice(1)}`);
+            if (pane) pane.classList.add('active');
+
+            if (sub === 'arena') {
+                renderAuraSummaryBar();
+                renderStickmen();
+                const boss = BOSSES.find(b => b.id === (state.currentBossId || 'b1'));
+                if (boss) selectBoss(boss.id);
+            } else if (sub === 'bosses') {
+                renderBossGrid();
+            } else if (sub === 'customizer') {
+                renderCustomizerChips();
+                renderStickmen();
+            } else if (sub === 'pvp') {
+                renderPvpPlayers();
+            }
+        });
+    });
+
+    // Clash button
+    const clashBtn = document.getElementById('btnStartAuraClash');
+    if (clashBtn) clashBtn.addEventListener('click', () => executeAuraClash());
+
+    // Customizer chips
+    document.querySelectorAll('[data-cust-type]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (btn.disabled) return;
+            sounds.playClick();
+            const type = btn.dataset.custType;
+            const val  = btn.dataset.custVal;
+            if (state.character[type] !== undefined) {
+                state.character[type] = val;
+            }
+            renderCustomizerChips();
+            renderStickmen();
+            renderAuraSummaryBar();
+        });
+    });
+
+    // Color pickers
+    ['custColorBody', 'custColorAura'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('input', () => {
+            if (id === 'custColorBody') state.character.color    = el.value;
+            else                        state.character.auraColor = el.value;
+            renderStickmen();
+            renderAuraSummaryBar();
+        });
+    });
+
+    // Pose select
+    const poseSelect = document.getElementById('custPoseSelect');
+    if (poseSelect) poseSelect.addEventListener('change', () => {
+        state.character.pose = poseSelect.value;
+        renderStickmen();
+    });
+
+    // Save customizer
+    const saveBtn = document.getElementById('btnSaveCustomizer');
+    if (saveBtn) saveBtn.addEventListener('click', () => {
+        sounds.playVictory();
+        saveState();
+        // Emit character update to server
+        if (socket) {
+            const { total } = computeAuraScore();
+            socket.emit('user:update_profile', {
+                username: state.playerName,
+                role: state.role,
+                level: state.level,
+                avatar: state.character.head !== 'none' ? '👑' : state.character.aura !== 'none' ? '⚡' : '🎮',
+                auraScore: total,
+                character: state.character
+            });
+        }
+        showToast('💾 ¡GUARDADO!', 'Tu personaje ha sido equipado y sincronizado.', 'Rare');
+        renderBossGrid();
+        renderAuraSummaryBar();
+    });
+
+    // PVP Challenge delegation
+    document.addEventListener('click', e => {
+        const pvpBtn = e.target.closest('[data-pvp-challenge]');
+        if (!pvpBtn || !socket) return;
+        const { total } = computeAuraScore();
+        const rank = getAuraRank(total);
+        socket.emit('aura:invite', {
+            targetSocketId: pvpBtn.dataset.pvpChallenge,
+            senderAura: total,
+            senderRank: rank.name,
+            senderCharacter: state.character
+        });
+        showToast('⚔️ Desafío Enviado', 'Esperando respuesta del rival...', 'Rare');
+    });
+
+    // Initial render on first tab open
+    renderAuraSummaryBar();
+    renderStickmen();
+    const startBoss = BOSSES.find(b => !state.defeatedBosses.includes(b.id)) || BOSSES[0];
+    selectBoss(startBoss.id);
+}
+
+function initArcadeTab() {
+    // Sub-nav wiring for ARCADE
+    document.querySelectorAll('.arcade-subnav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            sounds.playClick();
+            document.querySelectorAll('.arcade-subnav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.arcade-view-pane').forEach(v => v.classList.remove('active'));
+            btn.classList.add('active');
+            const sub  = btn.dataset.arcadeSub;
+            const pane = document.getElementById(`arcadeView${sub.charAt(0).toUpperCase() + sub.slice(1)}`);
+            if (pane) pane.classList.add('active');
+        });
+    });
+
+    // Wheel init
+    const canvas = document.getElementById('luckyWheelCanvas');
+    if (canvas) drawWheel(canvas);
+
+    const spinBtn = document.getElementById('btnSpinWheel');
+    if (spinBtn) {
+        spinBtn.addEventListener('click', () => spinWheel());
+        // Update label based on cooldown
+        const remaining = 86400000 - (Date.now() - (state.arcade.lastDailyWheel || 0));
+        if (remaining > 0) {
+            const h = Math.ceil(remaining / 3600000);
+            spinBtn.textContent = `⏰ Disponible en ${h}h`;
+            const lbl = document.getElementById('wheelSpinCostLabel');
+            if (lbl) lbl.textContent = '1 tirada diaria agotada';
+        }
+    }
+
+    // Mines bet chips
+    document.querySelectorAll('[data-mines-bet]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (minesState.active) return;
+            sounds.playClick();
+            document.querySelectorAll('[data-mines-bet]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            minesState.bet = parseInt(btn.dataset.minesBet);
+            const startBtn = document.getElementById('btnStartMinesGame');
+            if (startBtn) startBtn.textContent = `🎮 INICIAR PARTIDA (${minesState.bet.toLocaleString()} 🪙)`;
+            updateMinesDisplay();
+        });
+    });
+
+    document.getElementById('btnStartMinesGame')?.addEventListener('click', startMinesGame);
+    document.getElementById('btnCashoutMines')?.addEventListener('click', cashoutMines);
+    renderMinesGrid();
+
+    // Coin flip choice
+    document.querySelectorAll('.coin-choice-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            sounds.playClick();
+            document.querySelectorAll('.coin-choice-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            coinFlipChoice = btn.dataset.choice;
+        });
+    });
+
+    // Coin flip bet chips
+    document.querySelectorAll('[data-flip-bet]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            sounds.playClick();
+            document.querySelectorAll('[data-flip-bet]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            coinFlipBet = parseInt(btn.dataset.flipBet);
+            const flipBtn = document.getElementById('btnFlipCoinAction');
+            if (flipBtn) flipBtn.textContent = `🪙 LANZAR MONEDA (${coinFlipBet.toLocaleString()} 🪙)`;
+        });
+    });
+
+    document.getElementById('btnFlipCoinAction')?.addEventListener('click', () => flipCoin());
+}
+
+// Hook into aura socket events
+function hookAuraSocketEvents() {
+    if (!socket) return;
+
+    socket.on('aura:incoming_invite', (data) => {
+        const accept = confirm(`⚔️ ${data.senderName} te desafía a un Duelo de Aura (${data.senderAura?.toLocaleString() || 0} pts de Aura). ¿Aceptas?`);
+        const { total } = computeAuraScore();
+        const rank = getAuraRank(total);
+        socket.emit('aura:respond', {
+            accept,
+            senderSocketId: data.senderSocketId,
+            senderAura: data.senderAura,
+            senderCharacter: data.senderCharacter,
+            senderRank: data.senderRank,
+            responderAura: total,
+            responderRank: rank.name,
+            responderCharacter: state.character
+        });
+    });
+
+    socket.on('aura:duel_start', (data) => {
+        showToast('⚔️ DUELO DE AURA', `Rival: ${data.rivalName} (${data.rivalAura?.toLocaleString() || 0} Aura)`, 'Legendary');
+        sounds.playClash();
+        // Switch to battle arena tab
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelector('[data-tab="battle"]')?.classList.add('active');
+        document.getElementById('tab-battle')?.classList.add('active');
+        // Show rival in arena
+        const { total: playerAura } = renderAuraSummaryBar();
+        renderStickmen();
+        const rivalNameEl = document.getElementById('arenaRivalName');
+        const rivalAuraEl = document.getElementById('arenaRivalAuraNum');
+        if (rivalNameEl) rivalNameEl.textContent = `🌐 ${data.rivalName}`;
+        if (rivalAuraEl) rivalAuraEl.textContent = (data.rivalAura || 0).toLocaleString();
+        updatePowerStruggleBar(playerAura, data.rivalAura || 0);
+
+        // Auto-resolve with a slight delay for drama
+        setTimeout(() => {
+            const won = playerAura >= (data.rivalAura || 0);
+            if (won) {
+                state.coins += 10000;
+                state.auraBattlesWon = (state.auraBattlesWon || 0) + 1;
+                showToast('🏆 ¡GANASTE EL DUELO PVP!', `+10,000 💰 — Tu Aura dominó a ${data.rivalName}`, 'Legendary');
+                sounds.playVictory();
+            } else {
+                state.auraBattlesLost = (state.auraBattlesLost || 0) + 1;
+                showToast('💀 PERDISTE EL DUELO PVP', `${data.rivalName} tenía más Aura.`, 'Common');
+            }
+            saveState();
+            renderAll();
+        }, 1800);
+    });
+
+    socket.on('aura:error', (data) => showToast('⚠️ Error de Aura', data.message, 'Common'));
+}
+
+// Boot both systems on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    initBattleTab();
+    initArcadeTab();
+
+    // Hook battle tab on click to refresh aura display
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.dataset.tab;
+            if (tab === 'battle') {
+                setTimeout(() => { renderAuraSummaryBar(); renderStickmen(); }, 50);
+            }
+        });
+    });
 });
 

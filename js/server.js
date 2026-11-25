@@ -9,6 +9,7 @@ const crypto = require('crypto');
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
+app.use(express.static(path.join(__dirname, '..')));
 
 // Database Persistence (users_db.json)
 const DB_FILE = path.join(__dirname, 'users_db.json');
@@ -191,6 +192,8 @@ io.on('connection', (socket) => {
             role: userData.role || 'JUGADOR',
             level: userData.level || 1,
             avatar: userData.avatar || '⚡',
+            auraScore: userData.auraScore || 0,
+            character: userData.character || null,
             joinedAt: Date.now()
         };
         onlinePlayers.set(socket.id, player);
@@ -215,6 +218,8 @@ io.on('connection', (socket) => {
             player.role = userData.role || player.role;
             player.level = userData.level || player.level;
             player.avatar = userData.avatar || player.avatar;
+            if (userData.auraScore !== undefined) player.auraScore = userData.auraScore;
+            if (userData.character) player.character = userData.character;
             onlinePlayers.set(socket.id, player);
             io.emit('players:online_list', Array.from(onlinePlayers.values()));
         }
@@ -509,6 +514,51 @@ io.on('connection', (socket) => {
         }
     });
 
+    // Aura Battle Events (Inventory & Character Clash)
+    socket.on('aura:invite', (data) => {
+        const sender = onlinePlayers.get(socket.id);
+        const target = onlinePlayers.get(data.targetSocketId);
+        if (!sender || !target) return socket.emit('aura:error', { message: 'Jugador no disponible.' });
+        if (sender.socketId === target.socketId) return socket.emit('aura:error', { message: 'No puedes luchar contra ti mismo.' });
+
+        io.to(target.socketId).emit('aura:incoming_invite', {
+            senderSocketId: sender.socketId,
+            senderName: sender.username,
+            senderAura: data.senderAura || 0,
+            senderCharacter: data.senderCharacter,
+            senderRank: data.senderRank || 'Iniciado',
+            senderStats: data.senderStats
+        });
+    });
+
+    socket.on('aura:respond', (data) => {
+        const sender = onlinePlayers.get(data.senderSocketId);
+        const responder = onlinePlayers.get(socket.id);
+        if (!sender || !responder) return;
+
+        if (data.accept) {
+            const duelId = 'aura_duel_' + Date.now();
+            io.to(data.senderSocketId).emit('aura:duel_start', {
+                duelId,
+                rivalName: responder.username,
+                rivalAura: data.responderAura || 0,
+                rivalCharacter: data.responderCharacter,
+                rivalRank: data.responderRank || 'Iniciado',
+                rivalStats: data.responderStats
+            });
+            io.to(socket.id).emit('aura:duel_start', {
+                duelId,
+                rivalName: sender.username,
+                rivalAura: data.senderAura || 0,
+                rivalCharacter: data.senderCharacter,
+                rivalRank: data.senderRank || 'Iniciado',
+                rivalStats: data.senderStats
+            });
+        } else {
+            io.to(data.senderSocketId).emit('aura:error', { message: `${responder.username} ha rechazado el Duelo de Aura.` });
+        }
+    });
+
     socket.on('disconnect', () => {
         const player = onlinePlayers.get(socket.id);
         if (player) {
@@ -533,6 +583,23 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
+server.on('error', (e) => {
+    if (e.code === 'EADDRINUSE') {
+        console.error(`⚠️ [WEBSOCKET & AUTH SERVER] El puerto ${PORT} ya está en uso. Cierra cualquier proceso previo en este puerto.`);
+    } else {
+        console.error('Error en el servidor:', e);
+    }
+});
+
+process.on('SIGINT', () => {
+    server.close(() => process.exit(0));
+});
+
+process.on('SIGTERM', () => {
+    server.close(() => process.exit(0));
+});
+
 server.listen(PORT, () => {
     console.log(`🚀 [WEBSOCKET & AUTH SERVER] Servidor iniciado en http://localhost:${PORT}`);
 });
